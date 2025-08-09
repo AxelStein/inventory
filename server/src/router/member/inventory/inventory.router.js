@@ -6,7 +6,7 @@ import postRouter from './post.router.js';
 import writeAccessRouter from './write.access.router.js';
 import customIdRouter from './custom.id.router.js';
 import controller from '../../../inventory/inventory.controller.js';
-import inventoryCheckAccess from '../../../middleware/inventory.check.access.js';
+import { inventoryCheckAccess } from '../../../middleware/inventory.check.access.js';
 import { INVENTORY, INVENTORY_IMAGE } from '../../../inventory/access/inventory.access.control.js';
 
 const router = express.Router();

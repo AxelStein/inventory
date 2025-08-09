@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import db from '../db/index.js';
+import db from '../../../db/index.js';
 import Item from '../item.model.js';
 import User from '../../../user/user.model.js';
 

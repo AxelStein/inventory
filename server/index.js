@@ -8,6 +8,17 @@ import passport from 'passport';
 import { createPassportJwtStrategy } from './src/auth/auth.passport.js';
 import errorHandler from './src/middleware/error.handler.js';
 
+import User from './src/user/user.model.js';
+import Inventory from './src/inventory/inventory.model.js';
+import Item from './src/inventory/item/item.model.js';
+import ItemLike from './src/inventory/item/like/item.like.model.js';
+import Category from './src/inventory/category/category.model.js';
+import CustomId from './src/inventory/custom_id/custom.id.model.js';
+import Post from './src/inventory/post/post.model.js';
+import PostComment from './src/inventory/post/comment/comment.model.js';
+import Tag from './src/inventory/tag/tag.model.js';
+import WriteAccess from './src/inventory/write_access/write.access.model.js';
+
 const app = express();
 app.use(express.json());
 app.use(cookieParser());

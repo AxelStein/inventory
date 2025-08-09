@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
-import db from '../db/index.js';
+import db from '../../db/index.js';
 import User from '../../user/user.model.js';
+import Inventory from '../inventory.model.js';
 
 class Post extends Model {}
 
@@ -29,9 +30,20 @@ User.hasMany(Post, {
     onDelete: 'CASCADE',
     as: 'inventoryPosts'
 });
-Post.belongsTo(Post, {
+Post.belongsTo(User, {
     foreignKey: 'authorId',
     as: 'author'
+});
+
+Inventory.hasMany(Post, {
+    foreignKey: 'inventoryId',
+    onDelete: 'CASCADE',
+    as: 'posts'
+});
+Post.belongsTo(Inventory, {
+    foreignKey: 'inventoryId',
+    onDelete: 'CASCADE',
+    as: 'inventory'
 });
 
 export default Post;

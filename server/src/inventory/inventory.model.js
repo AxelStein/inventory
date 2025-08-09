@@ -24,6 +24,11 @@ Inventory.init({
     },
     customFields: {
         type: DataTypes.JSONB
+    },
+    isPublic: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
     }
 }, {
     sequelize: db,
@@ -52,13 +57,18 @@ Inventory.belongsTo(Category, {
     as: 'category'
 });
 
-Tag.hasMany(Inventory, {
-    foreignKey: "inventoryId",
+Tag.belongsToMany(Inventory, {
+    through: 'inventory_tags_embedded',
+    foreignKey: 'tagId',
+    otherKey: 'inventoryId',
     onDelete: 'CASCADE',
     as: 'inventories'
 });
-Inventory.hasMany(Tag, {
-    foreignKey: 'tagId',
+Inventory.belongsToMany(Tag, {
+    through: 'inventory_tags_embedded',
+    foreignKey: 'inventoryId',
+    otherKey: 'tagId',
+    onDelete: 'CASCADE',
     as: 'tags'
 });
 
