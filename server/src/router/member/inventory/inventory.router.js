@@ -6,13 +6,27 @@ import postRouter from './post.router.js';
 import writeAccessRouter from './write.access.router.js';
 import customIdRouter from './custom.id.router.js';
 import controller from '../../../inventory/inventory.controller.js';
+import inventoryCheckAccess from '../../../middleware/inventory.check.access.js';
+import { INVENTORY, INVENTORY_IMAGE } from '../../../inventory/access/inventory.access.control.js';
 
 const router = express.Router();
 router.get('/list', controller.getList);
 router.post('/create', controller.create);
-router.post('/:id/update', controller.update);
-router.post('/:id/upload-image', controller.uploadImage);
-router.delete('/:id', controller.delete);
+router.post(
+    '/:inventoryId/update', 
+    inventoryCheckAccess('update', INVENTORY), 
+    controller.update
+);
+router.post(
+    '/:inventoryId/upload-image', 
+    inventoryCheckAccess('update', INVENTORY_IMAGE), 
+    controller.uploadImage
+);
+router.delete(
+    '/:inventoryId', 
+    inventoryCheckAccess('delete', INVENTORY), 
+    controller.delete
+);
 
 router.use('/item', itemRouter);
 router.use('/tag', tagRouter);

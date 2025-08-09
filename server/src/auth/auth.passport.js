@@ -1,5 +1,6 @@
 import { Strategy as JwtStrategy } from "passport-jwt";
 import express from 'express';
+import service from '../user/user.service.js';
 
 /**
  * @param {express.Request} req 
@@ -20,11 +21,8 @@ export function createPassportJwtStrategy() {
         secretOrKey: process.env.JWT_SECRET,
         jwtFromRequest: cookieTokenExtractor,
     }, async (payload, done) => {
-        done(new Error(), null);
-        /*
-        userService.getUserById(payload.id)
+        service.getNotBlocked(payload.id)
             .then(user => done(null, user))
             .catch(err => done(err, null));
-            */
     });
 }
