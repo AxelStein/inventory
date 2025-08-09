@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import db from './src/db/index.js';
-import apiRouter from './src/api.router.js';
+import apiRouter from './src/router/api.router.js';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import { createPassportJwtStrategy } from './src/auth/auth.passport.js';
