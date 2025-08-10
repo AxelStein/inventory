@@ -3,10 +3,12 @@ import db from '../db/index.js';
 import User from '../user/user.model.js';
 import Category from './category/category.model.js';
 import Tag from './tag/tag.model.js';
+import { CustomFieldState, inflateInventoryCustomFields } from './inventory.custom.field.js';
+import { snakeToCamel } from '../util/string.util.js';
 
-class Inventory extends Model {}
+class Inventory extends Model { }
 
-Inventory.init({
+const columns = {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -22,15 +24,26 @@ Inventory.init({
     imageLink: {
         type: DataTypes.STRING,
     },
-    customFields: {
-        type: DataTypes.JSONB
-    },
     isPublic: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,
-    }
-}, {
+    },
+};
+
+inflateInventoryCustomFields((prefix) => {
+    columns[`${prefix}Name`] = {
+        type: DataTypes.STRING,
+    };
+    columns[`${prefix}Description`] = {
+        type: DataTypes.STRING,
+    };
+    columns[`${prefix}State`] = {
+        type: DataTypes.ENUM(...CustomFieldState.values()),
+    };
+});
+
+Inventory.init(columns, {
     sequelize: db,
     modelName: "Inventory",
     tableName: "inventories",
@@ -38,22 +51,34 @@ Inventory.init({
 });
 
 User.hasMany(Inventory, {
-    foreignKey: 'ownerId',
+    foreignKey: {
+        name: 'ownerId',
+        allowNull: false,
+    },
     onDelete: 'CASCADE',
     as: 'inventories'
 });
 Inventory.belongsTo(User, {
-    foreignKey: 'ownerId',
+    foreignKey: {
+        name: 'ownerId',
+        allowNull: false
+    },
     as: 'owner'
 });
 
 Category.hasMany(Inventory, {
-    foreignKey: 'categoryId',
+    foreignKey: {
+        name: 'categoryId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'inventories'
 });
 Inventory.belongsTo(Category, {
-    foreignKey: 'categoryId',
+    foreignKey: {
+        name: 'categoryId',
+        allowNull: false
+    },
     as: 'category'
 });
 

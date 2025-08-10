@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../../db/index.js';
 
-class Category extends Model {}
+class Category extends Model { }
 
 Category.init({
     id: {
@@ -16,7 +16,15 @@ Category.init({
 }, {
     sequelize: db,
     modelName: "InventoryCategory",
-    tableName: "inventory_categories"
+    tableName: "inventory_categories",
+    defaultScope: {
+        attributes: {
+            exclude: [
+                'createdAt',
+                'updatedAt'
+            ]
+        }
+    }
 });
 
 export default Category;

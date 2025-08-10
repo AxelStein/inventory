@@ -31,8 +31,13 @@ export class NotFoundError extends ApiError {
 }
 
 export class ValidationError extends ApiError {
-
     constructor(message = 'Validation error', data) {
         super(message, 400, data);
+    }
+}
+
+export class ConfictError extends ApiError {
+    constructor(message = 'Confict') {
+        super(message, 409);
     }
 }

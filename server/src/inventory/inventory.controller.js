@@ -1,28 +1,30 @@
 import express from 'express';
+import service from './inventory.service.js';
 
 const controller = {
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    getList: (req, res) => {
-        res.sendStatus(200);
+    getList: async (req, res) => {
+        res.send(await service.getList());
     },
 
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    create: (req, res) => {
-        res.sendStatus(200);
+    create: async (req, res) => {
+        req.body.ownerId = req.user.id;
+        res.send(await service.create(req.body));
     },
 
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    update: (req, res) => {
-        res.sendStatus(200);
+    update: async (req, res) => {
+        res.send(await service.update(req.params.inventoryId, req.body));
     },
 
     /**

@@ -14,7 +14,7 @@ WriteAccess.init({
 }, {
     sequelize: db,
     modelName: 'InventoryWriteAccess',
-    tableName: 'inventory_write_access',
+    tableName: 'inventory_write_access'
 });
 
 Inventory.hasMany(WriteAccess, {

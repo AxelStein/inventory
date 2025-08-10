@@ -1,11 +1,12 @@
-import { DataTypes, Model } from 'sequelize';
+import { col, DataTypes, Model } from 'sequelize';
 import db from '../../db/index.js';
 import Inventory from '../inventory.model.js';
 import User from '../../user/user.model.js';
+import { inflateInventoryCustomFields } from '../inventory.custom.field.js';
 
-class Item extends Model {}
+class Item extends Model { }
 
-Item.init({
+const columns = {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -19,8 +20,14 @@ Item.init({
     values: {
         type: DataTypes.JSONB,
         allowNull: false,
-    }
-}, {
+    },
+}
+
+inflateInventoryCustomFields((prefix, field) => {
+    columns[prefix] = { type: field.dbType };
+});
+
+Item.init(columns, {
     sequelize: db,
     modelName: "InventoryItem",
     tableName: "inventory_items",

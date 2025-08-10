@@ -8,11 +8,20 @@ import customIdRouter from './custom.id.router.js';
 import controller from '../../../inventory/inventory.controller.js';
 import { checkInventoryAccess } from '../../../middleware/check.access.js';
 import AccessAction from '../../../inventory/access/access.action.js';
+import { validateBody } from '../../../middleware/request.validator.js';
+import { createInventorySchema, updateInventorySchema } from '../../../inventory/inventory.schemas.js';
+import customFieldValidator from '../../../middleware/custom.field.validator.js';
 
 const router = express.Router();
 router.get('/list', controller.getList);
-router.post('/create', controller.create);
-router.post('/:inventoryId/update', checkInventoryAccess(AccessAction.UPDATE), controller.update);
+router.post('/create', validateBody(createInventorySchema), customFieldValidator, controller.create);
+router.post(
+    '/:inventoryId/update', 
+    validateBody(updateInventorySchema),
+    customFieldValidator,
+    checkInventoryAccess(AccessAction.UPDATE), 
+    controller.update
+);
 router.post('/:inventoryId/upload-image', checkInventoryAccess(AccessAction.UPDATE), controller.uploadImage);
 router.delete('/:inventoryId', checkInventoryAccess(AccessAction.DELETE), controller.delete);
 

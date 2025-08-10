@@ -1,12 +1,13 @@
 import express from 'express';
+import service from './category.service.js';
 
 const controller = {
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    getList: (req, res) => {
-        res.sendStatus(200);
+    getList: async (req, res) => {
+        res.send(await service.getList());
     },
 }
 
