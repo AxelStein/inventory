@@ -1,8 +1,6 @@
-import repository from "./post.repository.js";
+import repository from './custom.id.repository.js';
 
 const service = {
-
-    getById: (id) => repository.getById(id),
 
     getByIdWithInventory: (id) => repository.getByIdWithInventory(id)
 }

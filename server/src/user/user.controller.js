@@ -31,7 +31,7 @@ const controller = {
      * @param {express.Response} res 
      */
     getOwnAccount: (req, res) => {
-        res.sendStatus(200);
+        res.send(req.user);
     },
 
     /**

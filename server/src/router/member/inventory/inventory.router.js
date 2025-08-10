@@ -6,27 +6,15 @@ import postRouter from './post.router.js';
 import writeAccessRouter from './write.access.router.js';
 import customIdRouter from './custom.id.router.js';
 import controller from '../../../inventory/inventory.controller.js';
-import { inventoryCheckAccess } from '../../../middleware/inventory.check.access.js';
-import { INVENTORY, INVENTORY_IMAGE } from '../../../inventory/access/inventory.access.control.js';
+import { checkInventoryAccess } from '../../../middleware/check.access.js';
+import AccessAction from '../../../inventory/access/access.action.js';
 
 const router = express.Router();
 router.get('/list', controller.getList);
 router.post('/create', controller.create);
-router.post(
-    '/:inventoryId/update', 
-    inventoryCheckAccess('update', INVENTORY), 
-    controller.update
-);
-router.post(
-    '/:inventoryId/upload-image', 
-    inventoryCheckAccess('update', INVENTORY_IMAGE), 
-    controller.uploadImage
-);
-router.delete(
-    '/:inventoryId', 
-    inventoryCheckAccess('delete', INVENTORY), 
-    controller.delete
-);
+router.post('/:inventoryId/update', checkInventoryAccess(AccessAction.UPDATE), controller.update);
+router.post('/:inventoryId/upload-image', checkInventoryAccess(AccessAction.UPDATE), controller.uploadImage);
+router.delete('/:inventoryId', checkInventoryAccess(AccessAction.DELETE), controller.delete);
 
 router.use('/item', itemRouter);
 router.use('/tag', tagRouter);

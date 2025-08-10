@@ -1,7 +1,7 @@
 import { ForbiddenError } from "../error/index.js";
 import UserRole from '../user/user.role.js';
 
-const checkIsAdmin = (action, resource) => async (req, res, next) => {
+const checkIsAdmin = () => async (req, res, next) => {
     if (req.user.role === UserRole.ADMIN) {
         next();
     } else {

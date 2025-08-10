@@ -1,36 +1,59 @@
 import { AccessControl } from 'accesscontrol';
 import AccessRole from './inventory.access.role.js';
 
-export const ITEM = 'item';
-export const INVENTORY = 'inventory';
-export const INVENTORY_IMAGE = 'inventory-image';
-export const POST = 'post';
-export const POST_COMMENT = 'post-comment';
+export const RESOURCE_ITEM = 'item';
+export const RESOURCE_INVENTORY = 'inventory';
+export const RESOURCE_POST = 'post';
+export const RESOURCE_POST_COMMENT = 'post-comment';
+export const RESOURCE_TAG = 'tag';
+export const RESOURCE_WRITE_ACCESS = 'write-access';
+export const RESOURCE_CUSTOM_ID = 'custom-id';
 
 export const control = new AccessControl();
 control.grant(AccessRole.VIEWER)
-    .read(INVENTORY)
-    .read(ITEM);
+    .read(RESOURCE_INVENTORY)
+    .read(RESOURCE_ITEM)
+    .read(RESOURCE_TAG);
 
 control.grant(AccessRole.EDITOR)
     .extend(AccessRole.VIEWER)
-    .create(ITEM)
-    .update(ITEM)
-    .delete(ITEM)
-    
-    .createOwn(POST)
-    .updateOwn(POST)
-    .deleteOwn(POST)
+    .create(RESOURCE_ITEM)
+    .update(RESOURCE_ITEM)
+    .delete(RESOURCE_ITEM)
 
-    .createOwn(POST_COMMENT)
-    .updateOwn(POST_COMMENT)
-    .deleteOwn(POST_COMMENT);
+    .create(RESOURCE_TAG)
+    .delete(RESOURCE_TAG)
+    
+    .createOwn(RESOURCE_POST)
+    .updateOwn(RESOURCE_POST)
+    .deleteOwn(RESOURCE_POST)
+    .read(RESOURCE_POST)
+
+    .createOwn(RESOURCE_POST_COMMENT)
+    .updateOwn(RESOURCE_POST_COMMENT)
+    .deleteOwn(RESOURCE_POST_COMMENT)
+    .read(RESOURCE_POST_COMMENT);
 
 control.grant(AccessRole.OWNER)
     .extend(AccessRole.EDITOR)
-    .update(INVENTORY)
-    .update(INVENTORY_IMAGE)
-    .delete(INVENTORY)
-    .delete(ITEM)
-    .deleteAny(POST)
-    .deleteAny(POST_COMMENT);
+    
+    .update(RESOURCE_INVENTORY)
+    .delete(RESOURCE_INVENTORY)
+    
+    .delete(RESOURCE_ITEM)
+    .delete(RESOURCE_POST)
+    .delete(RESOURCE_POST_COMMENT)
+
+    .read(RESOURCE_WRITE_ACCESS)
+    .create(RESOURCE_WRITE_ACCESS)
+    .delete(RESOURCE_WRITE_ACCESS)
+
+    .read(RESOURCE_CUSTOM_ID)
+    .create(RESOURCE_CUSTOM_ID)
+    .update(RESOURCE_CUSTOM_ID)
+    .delete(RESOURCE_CUSTOM_ID);
+
+control.grant(AccessRole.ADMIN)
+    .extend(AccessRole.OWNER)
+    .updateAny(RESOURCE_POST)
+    .updateAny(RESOURCE_POST_COMMENT);
