@@ -10,6 +10,9 @@
   "type": "module",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.864.0",
+    "@aws-sdk/lib-storage": "^3.864.0",
+    "@aws-sdk/s3-request-presigner": "^3.864.0",
     "accesscontrol": "^2.2.1",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -18,9 +21,13 @@
     "express": "^5.1.0",
     "joi": "^18.0.0",
     "jsonwebtoken": "^9.0.2",
+    "mime-types": "^3.0.1",
+    "multer": "^2.0.2",
+    "multer-s3": "^3.0.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.16.3",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "uuid": "^11.1.0"
   }
 }

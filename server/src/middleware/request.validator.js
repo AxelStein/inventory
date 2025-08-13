@@ -2,22 +2,11 @@ import Joi from "joi";
 import { ValidationError } from "../error/index.js";
 
 /**
- * 
  * @param {Joi.Schema} schema 
  * @param {string} prop
  */
-const validateSchema = (schema, prop = 'body') => (req, res, next) => {
-    const { error, value } = schema.validate(req[prop], { abortEarly: false });
-    if (error) {
-        console.error(error);
-        const details = {};
-        error.details.forEach((el) => {
-            const path = el.path[0];
-            const msg = el.message;
-            details[path] = msg;
-        });
-        throw new ValidationError(error.toString(), details);
-    }
+const validateSchemaFromRequest = (schema, prop) => (req, res, next) => {
+    const value = validateSchema(schema, req[prop]);
     if (prop === 'query') {
         req.validatedQuery = value;
     } else {
@@ -26,10 +15,24 @@ const validateSchema = (schema, prop = 'body') => (req, res, next) => {
     next();
 }
 
-export function validateBody(schema) {
-    return validateSchema(schema, "body");
+/**
+ * @param {Joi.Schema} schema 
+ * @param {any} data
+ */
+export const validateSchema = (schema, data) => {
+    const { error, value } = schema.validate(data, { abortEarly: false });
+    if (error) {
+        const details = {};
+        error.details.forEach((el) => {
+            const path = el.path[0];
+            const msg = el.message;
+            details[path] = msg;
+        });
+        throw new ValidationError(error.toString(), details);
+    }
+    return value;
 }
 
-export function validateQuery(schema) {
-    return validateSchema(schema, "query");
-}
+export const validateBody = (schema) => validateSchemaFromRequest(schema, "body")
+
+export const validateQuery = (schema) => validateSchemaFromRequest(schema, "query")

@@ -1,3 +1,4 @@
+import { MulterError } from "multer";
 import { ApiError } from "../error/index.js";
 import express from 'express';
 
@@ -29,6 +30,9 @@ const errorHandler = (err, req, res, _) => {
                 message = `The ${fieldName} '${fieldValue}' is already taken.`;
             }
         }
+    } else if (err instanceof MulterError) {
+        statusCode = 400;
+        message = err.message;
     }
 
     res.status(statusCode).send({ message, details });

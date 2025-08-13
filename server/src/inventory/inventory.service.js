@@ -1,15 +1,16 @@
 import repository from "./inventory.repository.js";
-import db from "../db/index.js";
 
 const service = {
 
     getByIdWithWriteAccess: (id) => repository.getByIdWithWriteAccess(id),
 
-    getList: () => repository.getList(),
+    getList: (userId, filter, sortBy, sortAsc) => repository.getList(userId, filter, sortBy, sortAsc),
 
-    create: (data) => repository.create(data),
+    create: (ownerId, data) => repository.create(ownerId, data),
 
     update: (id, data) => repository.update(id, data),
+
+    delete: (id) => repository.delete(id),
 }
 
 export default service;

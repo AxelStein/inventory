@@ -8,13 +8,22 @@ import customIdRouter from './custom.id.router.js';
 import controller from '../../../inventory/inventory.controller.js';
 import { checkInventoryAccess } from '../../../middleware/check.access.js';
 import AccessAction from '../../../inventory/access/access.action.js';
-import { validateBody } from '../../../middleware/request.validator.js';
-import { createInventorySchema, updateInventorySchema } from '../../../inventory/inventory.schemas.js';
+import { validateBody, validateQuery } from '../../../middleware/request.validator.js';
+import { createInventorySchema, getInventoryListSchema, updateInventorySchema, uploadImageSchema } from '../../../inventory/inventory.schemas.js';
 import customFieldValidator from '../../../middleware/custom.field.validator.js';
+import inventoryImageUploader from '../../../middleware/inventory.image.uploader.js';
+import validateImageUpload from '../../../middleware/image.uploader.validator.js';
 
 const router = express.Router();
-router.get('/list', controller.getList);
-router.post('/create', validateBody(createInventorySchema), customFieldValidator, controller.create);
+router.get('/list', validateQuery(getInventoryListSchema), controller.getList);
+
+router.post(
+    '/create', 
+    validateBody(createInventorySchema), 
+    customFieldValidator, 
+    controller.create
+);
+
 router.post(
     '/:inventoryId/update', 
     validateBody(updateInventorySchema),
@@ -22,8 +31,21 @@ router.post(
     checkInventoryAccess(AccessAction.UPDATE), 
     controller.update
 );
-router.post('/:inventoryId/upload-image', checkInventoryAccess(AccessAction.UPDATE), controller.uploadImage);
-router.delete('/:inventoryId', checkInventoryAccess(AccessAction.DELETE), controller.delete);
+
+router.post(
+    '/:inventoryId/upload-image', 
+    checkInventoryAccess(AccessAction.UPDATE), 
+    validateQuery(uploadImageSchema),
+    inventoryImageUploader,
+    validateImageUpload,
+    controller.uploadImage
+);
+
+router.delete(
+    '/:inventoryId', 
+    checkInventoryAccess(AccessAction.DELETE), 
+    controller.delete
+);
 
 router.use('/item', itemRouter);
 router.use('/tag', tagRouter);

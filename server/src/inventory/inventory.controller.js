@@ -7,7 +7,8 @@ const controller = {
      * @param {express.Response} res 
      */
     getList: async (req, res) => {
-        res.send(await service.getList());
+        const { filter, sortBy, sortAsc } = req.validatedQuery;
+        res.send(await service.getList(req.user.id, filter, sortBy, sortAsc));
     },
 
     /**
@@ -15,8 +16,7 @@ const controller = {
      * @param {express.Response} res 
      */
     create: async (req, res) => {
-        req.body.ownerId = req.user.id;
-        res.send(await service.create(req.body));
+        res.send(await service.create(req.user.id, req.body));
     },
 
     /**
@@ -31,15 +31,24 @@ const controller = {
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    uploadImage: (req, res) => {
-        res.sendStatus(200);
+    uploadImage: async (req, res) => {
+        res.send(
+            await service.update(
+            req.params.inventoryId, 
+            { 
+                version: req.query.version,
+                imageLink: req.file.location
+            }
+        )
+        );
     },
 
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    delete: (req, res) => {
+    delete: async (req, res) => {
+        await service.delete(req.params.inventoryId);
         res.sendStatus(200);
     },
 }

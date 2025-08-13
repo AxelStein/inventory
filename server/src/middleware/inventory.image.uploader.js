@@ -1,0 +1,28 @@
+import multer from 'multer';
+import { ValidationError } from '../error/index.js';
+import { appConfig } from '../app/app.config.js';
+import multerS3 from 'multer-s3';
+import { S3Client } from '@aws-sdk/client-s3';
+import { v4 } from 'uuid';
+import mime from 'mime-types';
+
+const s3Client = new S3Client();
+
+const config = multer({
+    storage: multerS3({
+        s3: s3Client,
+        bucket: process.env.AWS_BUCKET,
+        metadata: (req, file, cb) => cb(null, { originalname: file.originalname }),
+        key: (req, file, cb) => cb(null, `${v4()}.${mime.extension(file.mimetype)}`)
+    }),
+    limits: { fileSize: appConfig.inventoryImage.maxFileSize },
+    fileFilter: (req, file, callback) => {
+        if (appConfig.inventoryImage.mimeTypes.find(e => e === file.mimetype) != null) {
+            callback(null, true);
+        } else {
+            callback(new ValidationError(`Invalid file type. Supported types: ${appConfig.inventoryImage.mimeTypes.join(', ')}`), false);
+        }
+    }
+});
+
+export default config.single('file');
