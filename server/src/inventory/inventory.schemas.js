@@ -13,7 +13,7 @@ const customFieldsSchema = Joi.array().items(
 
 export const createInventorySchema = Joi.object({
     title: Joi.string().trim().required(),
-    description: Joi.string().trim(),
+    description: Joi.string().trim().allow(''),
     categoryId: Joi.number().integer().required(),
     isPublic: Joi.boolean().required(),
     customFields: customFieldsSchema.required()
@@ -21,7 +21,7 @@ export const createInventorySchema = Joi.object({
 
 export const updateInventorySchema = Joi.object({
     title: Joi.string().trim(),
-    description: Joi.string().trim(),
+    description: Joi.string().trim().allow(''),
     categoryId: Joi.number().integer(),
     isPublic: Joi.boolean(),
     version: Joi.number().integer().required(),

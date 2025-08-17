@@ -4,7 +4,6 @@ import User from '../user/user.model.js';
 import Category from './category/category.model.js';
 import Tag from './tag/tag.model.js';
 import { CustomFieldState, inflateInventoryCustomFields } from './inventory.custom.field.js';
-import { snakeToCamel } from '../util/string.util.js';
 
 class Inventory extends Model { }
 

@@ -2,32 +2,55 @@ import { literal } from 'sequelize';
 import Inventory from './inventory.model.js';
 import { ConfictError } from '../error/index.js';
 import InventoryListFilter from './inventory.list.filters.js';
+import { mapInventory, mapInventoryList } from './inventory.mapper.js';
 
 const repository = {
 
-    getByIdWithWriteAccess: (id) => Inventory.findOne({ where: { id }, include: 'writeAccess' }),
+    getByIdWithWriteAccess: (id) => Inventory.findOne({
+        where: { id },
+        include: [
+            { association: 'writeAccess' },
+            { association: 'owner' },
+        ]
+    }),
 
-    getById: (id, transaction, lock) => Inventory.findOne({ where: { id }, transaction, lock }),
+    getById: async (id, transaction, lock) => mapInventory(await Inventory.findOne({
+        where: { id },
+        include: [
+            { association: 'owner' },
+            { association: 'category' },
+        ],
+        transaction,
+        lock
+    })),
 
-    getList: (userId, filter, sortBy, sortAsc) => {
+    getList: async (userId, filter, sortBy, sortAsc) => {
         const where = {};
-        let include = null;
+        let include = [
+            { association: 'owner' },
+            { association: 'category' },
+        ];
         switch (filter) {
             case InventoryListFilter.OWN:
                 where.ownerId = userId;
                 break;
+
             case InventoryListFilter.WRITE_ACCESS:
-                include = {
+                include.push({
                     association: 'writeAccess',
                     where: { userId },
                     required: true
-                };
+                });
                 break;
         }
-        return Inventory.findAll({ where, order: [[sortBy, sortAsc ? 'ASC' : 'DESC']], include });
+        return mapInventoryList(await Inventory.findAll({
+            where,
+            order: [[sortBy, sortAsc ? 'ASC' : 'DESC']],
+            include
+        }));
     },
 
-    create: (ownerId, data) => Inventory.create({ ...data, ownerId }),
+    create: async (ownerId, data) => mapInventory(await Inventory.create({ ...data, ownerId }, { returning: true })),
 
     update: async (id, data) => {
         const [rows, inventory] = await Inventory.update({
@@ -43,7 +66,7 @@ const repository = {
         if (rows === 0) {
             throw new ConfictError();
         }
-        return inventory;
+        return mapInventory(inventory[0]);
     },
 
     delete: (id) => Inventory.destroy({ where: { id } }),

@@ -34,12 +34,12 @@ const controller = {
     uploadImage: async (req, res) => {
         res.send(
             await service.update(
-            req.params.inventoryId, 
-            { 
-                version: req.query.version,
-                imageLink: req.file.location
-            }
-        )
+                req.params.inventoryId,
+                {
+                    version: req.query.version,
+                    imageLink: req.file.location
+                }
+            )
         );
     },
 

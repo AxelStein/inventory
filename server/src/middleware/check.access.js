@@ -23,7 +23,7 @@ const getInventoryAccessRole = (user, inventory) => {
     if (user.role === UserRole.ADMIN) {
         return InventoryAccessRole.ADMIN;
     }
-    if (inventory.ownerId === user.id) {
+    if (inventory.owner.id === user.id) {
         return InventoryAccessRole.OWNER;
     }
     if (inventory.isPublic) {
