@@ -12,6 +12,7 @@ export const mapInventory = (inventory) => {
         imageLink: inventory.imageLink,
         isPublic: inventory.isPublic,
         owner: inventory.owner,
+        ownerId: inventory.ownerId,
         category: inventory.category,
         createdAt: inventory.createdAt,
         updatedAt: inventory.updatedAt,

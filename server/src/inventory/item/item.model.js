@@ -18,10 +18,6 @@ const columns = {
         allowNull: false,
         unique: true,
     },
-    values: {
-        type: DataTypes.JSONB,
-        allowNull: false,
-    },
 }
 
 inflateInventoryCustomFields((prefix, field) => {
