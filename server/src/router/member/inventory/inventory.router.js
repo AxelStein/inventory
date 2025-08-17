@@ -35,8 +35,8 @@ router.post(
 
 router.post(
     '/:inventoryId/upload-image', 
-    checkInventoryAccess(AccessAction.UPDATE), 
     validateQuery(uploadImageSchema),
+    checkInventoryAccess(AccessAction.UPDATE), 
     inventoryImageUploader,
     validateImageUpload,
     controller.uploadImage

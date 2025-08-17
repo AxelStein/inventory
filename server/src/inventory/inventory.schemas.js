@@ -1,12 +1,12 @@
 import Joi from 'joi';
-import { customFields } from './inventory.custom.field.js';
+import { CustomFieldType } from './inventory.custom.field.js';
 import InventoryListFilters from './inventory.list.filters.js';
 
 const customFieldsSchema = Joi.array().items(
     Joi.object({
         title: Joi.string().trim().required(),
         description: Joi.string().trim().allow(''),
-        type: Joi.string().valid(...customFields.map(e => e.type)).required(),
+        type: Joi.string().valid(...Object.values(CustomFieldType)).required(),
         isVisible: Joi.boolean().required(),
     }).required()
 );

@@ -3,12 +3,20 @@ import { snakeToCamel } from "../util/string.util.js";
 
 export const MAX_FIELDS_PER_TYPE = 3;
 
+export const CustomFieldType = Object.freeze({
+    STRING: 'string',
+    TEXT: 'text',
+    INT: 'int',
+    LINK: 'link',
+    BOOLEAN: 'boolean',
+});
+
 export const customFields = [
-    { type: 'string', dbType: DataTypes.STRING },
-    { type: 'text', dbType: DataTypes.TEXT },
-    { type: 'int', dbType: DataTypes.INTEGER },
-    { type: 'link', dbType: DataTypes.TEXT },
-    { type: 'boolean', dbType: DataTypes.BOOLEAN },
+    { type: CustomFieldType.STRING, dbType: DataTypes.STRING },
+    { type: CustomFieldType.TEXT, dbType: DataTypes.TEXT },
+    { type: CustomFieldType.INT, dbType: DataTypes.INTEGER },
+    { type: CustomFieldType.LINK, dbType: DataTypes.TEXT },
+    { type: CustomFieldType.BOOLEAN, dbType: DataTypes.BOOLEAN },
 ]
 
 export const CustomFieldState = Object.freeze({
