@@ -33,6 +33,11 @@ const errorHandler = (err, req, res, _) => {
     } else if (err instanceof MulterError) {
         statusCode = 400;
         message = err.message;
+    } else if (err.name === 'SequelizeForeignKeyConstraintError') {
+        if (err.original.constraint === 'inventories_categoryId_fkey') {
+            statusCode = 400;
+            message = 'Invalid category id';
+        }
     }
 
     res.status(statusCode).send({ message, details });

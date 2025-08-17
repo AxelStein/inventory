@@ -4,7 +4,7 @@ const service = {
 
     getByIdWithInventory: (id) => repository.getByIdWithInventory(id),
 
-    getList: (inventoryId, sortBy, sortAsc) => repository.getList(inventoryId, sortBy, sortAsc),
+    getList: (inventoryId, sortBy, sortAsc, page, perPage) => repository.getList(inventoryId, sortBy, sortAsc, page, perPage),
 
     create: (creatorId, data) => repository.create(creatorId, data),
 

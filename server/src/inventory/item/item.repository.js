@@ -1,6 +1,4 @@
-import { Sequelize } from 'sequelize';
 import Item from './item.model.js';
-import ItemLike from './like/item.like.model.js';
 
 const repository = {
 
@@ -14,25 +12,21 @@ const repository = {
         }
     }),
 
-    getList: (inventoryId, sortBy, sortAsc) => {
-        const order = sortBy ? [[sortBy, sortAsc ? 'ASC' : 'DESC']] : undefined;
-        return Item.findAll({ 
-            attributes: {
-                include: [
-                    [
-                        Sequelize.cast(Sequelize.fn('COUNT', Sequelize.col('likes.id')), 'INTEGER'), 
-                        'likeCount'
-                    ]
-                ]
-            },
+    getList: async (inventoryId, sortBy, sortAsc, page, perPage) => {
+        const { count, rows } = await Item.findAndCountAll({
             include: [{
                 association: 'likes',
-                attributes: []
+                include: [{
+                    association: 'user'
+                }],
+                attributes: ['createdAt']
             }],
-            group: ['InventoryItem.id'],
-            where: { inventoryId }, 
-            order 
+            where: { inventoryId },
+            order: sortBy ? [[sortBy, sortAsc ? 'ASC' : 'DESC']] : undefined,
+            limit: perPage,
+            offset: (page - 1) * perPage,
         });
+        return { totalCount: count, hasMore: page * perPage < count, items: rows };
     },
 
     create: (creatorId, data) => Item.create({ ...data, creatorId }, { returning: true }),
