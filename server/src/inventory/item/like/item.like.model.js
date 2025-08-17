@@ -11,6 +11,14 @@ ItemLike.init({
         autoIncrement: true,
         primaryKey: true,
     },
+    itemId: {
+        type: DataTypes.INTEGER,
+        unique: 'user_item_unique_like',
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        unique: 'user_item_unique_like',
+    }
 }, {
     sequelize: db,
     modelName: "ItemLike",
@@ -18,22 +26,34 @@ ItemLike.init({
 });
 
 Item.hasMany(ItemLike, {
-    foreignKey: 'itemId',
+    foreignKey: {
+        name: 'itemId',
+        allowNull: false,
+    },
     onDelete: "CASCADE",
     as: 'likes'
 });
 ItemLike.belongsTo(Item, {
-    foreignKey: 'itemId',
-    as: 'item'
+    foreignKey: {
+        name: 'itemId',
+        allowNull: false
+    },
+    as: 'item',
 });
 
 User.hasMany(ItemLike, {
-    foreignKey: 'userId',
+    foreignKey: {
+        name: 'userId',
+        allowNull: false,
+    },
     onDelete: "CASCADE",
     as: 'itemLikes'
 });
 ItemLike.belongsTo(User, {
-    foreignKey: 'userId',
+    foreignKey: {
+        name: 'userId',
+        allowNull: false,
+    },
     as: 'user'
 });
 

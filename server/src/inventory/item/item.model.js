@@ -32,22 +32,34 @@ Item.init(columns, {
 });
 
 Inventory.hasMany(Item, {
-    foreignKey: 'inventoryId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'items'
 });
 Item.belongsTo(Inventory, {
-    foreignKey: 'inventoryId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     as: 'inventory'
 });
 
 User.hasMany(Item, {
-    foreignKey: 'creatorId',
+    foreignKey: {
+        name: 'creatorId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'inventoryItems'
 });
 Item.belongsTo(User, {
-    foreignKey: 'creatorId',
+    foreignKey: {
+        name: 'creatorId',
+        allowNull: false
+    },
     as: 'creator'
 });
 

@@ -18,22 +18,34 @@ WriteAccess.init({
 });
 
 Inventory.hasMany(WriteAccess, {
-    foreignKey: 'inventoryId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'writeAccess'
 });
 WriteAccess.belongsTo(WriteAccess, {
-    foreignKey: 'inventoryId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     as: 'inventory'
 });
 
 User.hasMany(WriteAccess, {
-    foreignKey: 'userId',
+    foreignKey: {
+        name: 'userId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'inventoryWriteAccess'
 });
 WriteAccess.belongsTo(User, {
-    foreignKey: 'userId',
+    foreignKey: {
+        name: 'userId',
+        allowNull: false
+    },
     as: 'user'
 });
 

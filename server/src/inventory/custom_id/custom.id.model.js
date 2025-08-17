@@ -30,12 +30,18 @@ CustomId.init({
 });
 
 Inventory.hasMany(CustomId, {
-    foreignKey: 'inventoryId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'customId'
 });
 CustomId.belongsTo(Inventory, {
-    foreignKey: 'inventoryId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     as: 'inventory'
 });
 

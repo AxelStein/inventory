@@ -84,15 +84,27 @@ Inventory.belongsTo(Category, {
 
 Tag.belongsToMany(Inventory, {
     through: 'inventory_tags_embedded',
-    foreignKey: 'tagId',
-    otherKey: 'inventoryId',
+    foreignKey: {
+        name: 'tagId',
+        allowNull: false
+    },
+    otherKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'inventories'
 });
 Inventory.belongsToMany(Tag, {
     through: 'inventory_tags_embedded',
-    foreignKey: 'inventoryId',
-    otherKey: 'tagId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
+    otherKey: {
+        name: 'tagId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'tags'
 });

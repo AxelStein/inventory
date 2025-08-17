@@ -3,7 +3,7 @@ import db from '../../../db/index.js';
 import Post from '../post.model.js';
 import User from '../../../user/user.model.js';
 
-class Comment extends Model {}
+class Comment extends Model { }
 
 Comment.init({
     id: {
@@ -22,22 +22,34 @@ Comment.init({
 });
 
 Post.hasMany(Comment, {
-    foreignKey: 'postId',
+    foreignKey: {
+        name: 'postId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'comments'
 });
 Comment.belongsTo(Post, {
-    foreignKey: 'postId',
+    foreignKey: {
+        name: 'postId',
+        allowNull: false
+    },
     as: 'post'
 });
 
 User.hasMany(Comment, {
-    foreignKey: 'authorId',
+    foreignKey: {
+        name: 'authorId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'inventoryPostComments'
 });
 Comment.belongsTo(User, {
-    foreignKey: 'authorId',
+    foreignKey: {
+        name: 'authorId',
+        allowNull: false
+    },
     as: 'author'
 });
 

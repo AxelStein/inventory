@@ -26,22 +26,34 @@ Post.init({
 });
 
 User.hasMany(Post, {
-    foreignKey: 'authorId',
+    foreignKey: {
+        name: 'authorId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'inventoryPosts'
 });
 Post.belongsTo(User, {
-    foreignKey: 'authorId',
+    foreignKey: {
+        name: 'authorId',
+        allowNull: false
+    },
     as: 'author'
 });
 
 Inventory.hasMany(Post, {
-    foreignKey: 'inventoryId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'posts'
 });
 Post.belongsTo(Inventory, {
-    foreignKey: 'inventoryId',
+    foreignKey: {
+        name: 'inventoryId',
+        allowNull: false
+    },
     onDelete: 'CASCADE',
     as: 'inventory'
 });
