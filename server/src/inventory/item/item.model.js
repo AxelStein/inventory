@@ -1,10 +1,11 @@
-import { col, DataTypes, Model } from 'sequelize';
+import { col, DataTypes } from 'sequelize';
 import db from '../../db/index.js';
 import Inventory from '../inventory.model.js';
 import User from '../../user/user.model.js';
 import { inflateInventoryCustomFields } from '../inventory.custom.field.js';
+import { OptimisticLockModel } from '../../db/optimistic.lock.model.js';
 
-class Item extends Model { }
+class Item extends OptimisticLockModel { }
 
 const columns = {
     id: {

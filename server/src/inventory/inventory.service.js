@@ -6,6 +6,8 @@ const service = {
 
     getList: (userId, filter, sortBy, sortAsc) => repository.getList(userId, filter, sortBy, sortAsc),
 
+    getById: (id) => repository.getById(id),
+
     create: (ownerId, data) => repository.create(ownerId, data),
 
     update: (id, data) => repository.update(id, data),

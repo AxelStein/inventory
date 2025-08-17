@@ -1,6 +1,10 @@
+import { NotFoundError } from "../error/index.js";
 import { inflateInventoryCustomFields } from "./inventory.custom.field.js";
 
 export const mapInventory = (inventory) => {
+    if (!inventory) {
+        throw new NotFoundError();
+    }
     const r = {
         id: inventory.id,
         title: inventory.title,

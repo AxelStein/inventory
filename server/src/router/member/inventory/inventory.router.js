@@ -16,6 +16,7 @@ import validateImageUpload from '../../../middleware/image.uploader.validator.js
 
 const router = express.Router();
 router.get('/list', validateQuery(getInventoryListSchema), controller.getList);
+router.get('/by-id/:inventoryId', controller.getById);
 
 router.post(
     '/create', 

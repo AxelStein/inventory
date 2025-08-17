@@ -4,6 +4,7 @@ import itemController from '../../inventory/item/item.controller.js';
 
 const router = express.Router();
 router.get('/list', inventoryController.getList);
+router.get('/by-id/:inventoryId', inventoryController.getById);
 router.get('/item/list', itemController.getList);
 
 export default router;
