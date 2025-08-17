@@ -1,6 +1,5 @@
 import express from 'express';
 import service from './item.service.js';
-import { v4 } from 'uuid';
 
 const controller = {
     /**
@@ -17,7 +16,7 @@ const controller = {
      * @param {express.Response} res 
      */
     create: async (req, res) => {
-        res.send(await service.create(req.user.id, { ...req.body, customId: v4() }));
+        res.send(await service.create(req.user.id, { ...req.body }));
     },
 
     /**

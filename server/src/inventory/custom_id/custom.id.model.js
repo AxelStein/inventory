@@ -2,8 +2,18 @@ import { DataTypes, Model } from 'sequelize';
 import db from '../../db/index.js';
 import Inventory from '../inventory.model.js';
 import CustomIdType from './custom.id.type.js';
+import {trimString} from "../../util/string.util.js";
+import {format} from "date-fns";
+import {generateRandomNumberForCustomId} from "./custom.id.random.number.generator.js";
+import crypto from "crypto";
+import {formatCustomId} from "./custom.id.formatter.js";
 
-class CustomId extends Model { }
+class CustomId extends Model {
+
+    toString() {
+        return formatCustomId(this);
+    }
+}
 
 CustomId.init({
     id: {
@@ -12,12 +22,11 @@ CustomId.init({
         primaryKey: true,
     },
     type: {
-        type: DataTypes.ENUM(...CustomIdType.values()),
+        type: DataTypes.ENUM(...Object.values(CustomIdType)),
         allowNull: false,
     },
     rule: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     position: {
         type: DataTypes.INTEGER,

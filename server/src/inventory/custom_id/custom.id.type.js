@@ -6,18 +6,6 @@ const CustomIdType = Object.freeze({
     RND_9_DIGIT: 'rnd_9_digit',
     GUID: 'guid',
     DATE_TIME: 'date_time',
-    SEQUENCE: 'sequence',
-    values: function() {
-        return [
-            this.FIXED, 
-            this.RND_20_BIT, 
-            this.RND_32_BIT, 
-            this.RND_6_DIGIT, 
-            this.RND_9_DIGIT, 
-            this.GUID, 
-            this.DATE_TIME, 
-            this.SEQUENCE
-        ];
-    }
+    SEQUENCE: 'sequence'
 });
 export default CustomIdType;

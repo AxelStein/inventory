@@ -36,8 +36,8 @@ export class ValidationError extends ApiError {
     }
 }
 
-export class ConfictError extends ApiError {
-    constructor(message = 'Confict') {
+export class ConflictError extends ApiError {
+    constructor(message = 'Conflict') {
         super(message, 409);
     }
 }

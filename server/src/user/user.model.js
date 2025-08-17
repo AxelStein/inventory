@@ -27,7 +27,7 @@ User.init({
         type: DataTypes.STRING,
     },
     role: {
-        type: DataTypes.ENUM(...UserRole.values()),
+        type: DataTypes.ENUM(...Object.values(UserRole)),
         allowNull: false,
         defaultValue: UserRole.USER,
     },

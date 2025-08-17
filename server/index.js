@@ -18,6 +18,7 @@ import Post from './src/inventory/post/post.model.js';
 import PostComment from './src/inventory/post/comment/comment.model.js';
 import Tag from './src/inventory/tag/tag.model.js';
 import WriteAccess from './src/inventory/write_access/write.access.model.js';
+import ItemSequence from './src/inventory/custom_id/sequence/item.sequence.model.js';
 
 const app = express();
 app.use(express.json());

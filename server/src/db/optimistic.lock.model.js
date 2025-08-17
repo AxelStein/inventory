@@ -1,5 +1,5 @@
 import { literal, Model } from "sequelize";
-import { ConfictError } from '../error/index.js';
+import { ConflictError } from '../error/index.js';
 
 export class OptimisticLockModel extends Model {
 
@@ -14,7 +14,7 @@ export class OptimisticLockModel extends Model {
             },
             returning: true,
         });
-        if (count === 0) throw new ConfictError();
+        if (count === 0) throw new ConflictError();
         return rows[0];
     }
 }

@@ -29,7 +29,10 @@ const repository = {
         return { totalCount: count, hasMore: page * perPage < count, items: rows };
     },
 
-    create: (creatorId, data) => Item.create({ ...data, creatorId }, { returning: true }),
+    create: (creatorId, data, transaction) => Item.create(
+        { ...data, creatorId },
+        { returning: true, transaction }
+    ),
 
     update: async (id, data) => Item.optimisticLockUpdate(id, data),
 

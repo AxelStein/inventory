@@ -11,20 +11,17 @@ export const CustomFieldType = Object.freeze({
     BOOLEAN: 'boolean',
 });
 
-export const customFields = [
+export const customFields = Object.freeze([
     { type: CustomFieldType.STRING, dbType: DataTypes.STRING },
     { type: CustomFieldType.TEXT, dbType: DataTypes.TEXT },
     { type: CustomFieldType.INT, dbType: DataTypes.INTEGER },
     { type: CustomFieldType.LINK, dbType: DataTypes.TEXT },
     { type: CustomFieldType.BOOLEAN, dbType: DataTypes.BOOLEAN },
-]
+]);
 
 export const CustomFieldState = Object.freeze({
     VISIBLE: 'visible',
     HIDDEN: 'hidden',
-    values: function() {
-        return [this.VISIBLE, this.HIDDEN];
-    }
 });
 
 export const inflateInventoryCustomFields = (inflate) => {

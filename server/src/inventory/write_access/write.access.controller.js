@@ -6,6 +6,7 @@ const controller = {
      * @param {express.Response} res 
      */
     getList: (req, res) => {
+
         res.sendStatus(200);
     },
 

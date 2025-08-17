@@ -1,4 +1,4 @@
-import { col, DataTypes } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import db from '../../db/index.js';
 import Inventory from '../inventory.model.js';
 import User from '../../user/user.model.js';
@@ -16,8 +16,13 @@ const columns = {
     customId: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: 'item_unique_custom_id',
     },
+    inventoryId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: 'item_unique_custom_id',
+    }
 }
 
 inflateInventoryCustomFields((prefix, field) => {

@@ -39,7 +39,7 @@ inflateInventoryCustomFields((prefix) => {
         type: DataTypes.STRING,
     };
     columns[`${prefix}State`] = {
-        type: DataTypes.ENUM(...CustomFieldState.values()),
+        type: DataTypes.ENUM(...Object.values(CustomFieldState)),
     };
 });
 
