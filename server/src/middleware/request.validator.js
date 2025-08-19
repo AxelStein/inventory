@@ -36,3 +36,5 @@ export const validateSchema = (schema, data) => {
 export const validateBody = (schema) => validateSchemaFromRequest(schema, "body")
 
 export const validateQuery = (schema) => validateSchemaFromRequest(schema, "query")
+
+export const validateParams = (schema) => validateSchemaFromRequest(schema, "params")

@@ -1,28 +1,30 @@
 import express from 'express';
+import service from "./write.access.service.js";
 
 const controller = {
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    getList: (req, res) => {
-
-        res.sendStatus(200);
+    getList: async (req, res) => {
+        res.send(await service.getList(req.validatedQuery.inventoryId));
     },
 
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    create: (req, res) => {
-        res.sendStatus(200);
+    create: async (req, res) => {
+        const { inventoryId, userId } = req.body;
+        res.send(await service.create(inventoryId, userId));
     },
     
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    delete: (req, res) => {
+    delete: async (req, res) => {
+        await service.delete(req.params.id);
         res.sendStatus(200);
     },
 }

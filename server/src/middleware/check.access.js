@@ -29,7 +29,7 @@ const getInventoryAccessRole = (user, inventory) => {
     if (inventory.isPublic) {
         return InventoryAccessRole.EDITOR;
     }
-    return inventory.writeAccess.find(e => e.userId === user.id) ? InventoryAccessRole.EDITOR : InventoryAccessRole.VIEWER;
+    return inventory.writeAccess?.find(e => e.userId === user.id) ? InventoryAccessRole.EDITOR : InventoryAccessRole.VIEWER;
 }
 
 const checkHasPermission = (role, action, resource, isOwn) => {

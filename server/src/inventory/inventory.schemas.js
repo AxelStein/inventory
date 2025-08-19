@@ -37,3 +37,7 @@ export const getInventoryListSchema = Joi.object({
     sortBy: Joi.string().valid('title', 'createdAt', 'updatedAt'),
     sortAsc: Joi.boolean().default(false),
 });
+
+export const checkInventoryParamsSchema = Joi.object({
+    inventoryId: Joi.number().integer().required(),
+})

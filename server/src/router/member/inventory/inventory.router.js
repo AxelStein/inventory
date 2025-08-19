@@ -8,8 +8,11 @@ import customIdRouter from './custom.id.router.js';
 import controller from '../../../inventory/inventory.controller.js';
 import { checkInventoryAccess } from '../../../middleware/check.access.js';
 import AccessAction from '../../../inventory/access/access.action.js';
-import { validateBody, validateQuery } from '../../../middleware/request.validator.js';
-import { createInventorySchema, getInventoryListSchema, updateInventorySchema, uploadImageSchema } from '../../../inventory/inventory.schemas.js';
+import {validateBody, validateParams, validateQuery} from '../../../middleware/request.validator.js';
+import {
+    checkInventoryParamsSchema,
+    createInventorySchema, getInventoryListSchema, updateInventorySchema, uploadImageSchema
+} from '../../../inventory/inventory.schemas.js';
 import customFieldValidator from '../../../middleware/custom.field.validator.js';
 import inventoryImageUploader from '../../../middleware/inventory.image.uploader.js';
 import validateImageUpload from '../../../middleware/image.uploader.validator.js';
@@ -26,7 +29,8 @@ router.post(
 );
 
 router.post(
-    '/:inventoryId/update', 
+    '/:inventoryId/update',
+    validateParams(checkInventoryParamsSchema),
     validateBody(updateInventorySchema),
     customFieldValidator,
     checkInventoryAccess(AccessAction.UPDATE), 
@@ -34,7 +38,8 @@ router.post(
 );
 
 router.post(
-    '/:inventoryId/upload-image', 
+    '/:inventoryId/upload-image',
+    validateParams(checkInventoryParamsSchema),
     validateQuery(uploadImageSchema),
     checkInventoryAccess(AccessAction.UPDATE), 
     inventoryImageUploader,
@@ -43,7 +48,8 @@ router.post(
 );
 
 router.delete(
-    '/:inventoryId', 
+    '/:inventoryId',
+    validateParams(checkInventoryParamsSchema),
     checkInventoryAccess(AccessAction.DELETE), 
     controller.delete
 );

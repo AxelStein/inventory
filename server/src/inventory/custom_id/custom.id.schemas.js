@@ -10,3 +10,7 @@ export  const createCustomIdSchema = Joi.object({
     type: Joi.string().valid(...Object.values(CustomIdType)).required(),
     rule: Joi.string().trim().allow(''),
 });
+
+export const checkCustomIdParamsSchema = Joi.object({
+    id: Joi.number().integer().required(),
+})

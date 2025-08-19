@@ -11,6 +11,16 @@ WriteAccess.init({
         autoIncrement: true,
         primaryKey: true,
     },
+    inventoryId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: 'inventory_unique_write_access',
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: 'inventory_unique_write_access',
+    }
 }, {
     sequelize: db,
     modelName: 'InventoryWriteAccess',
@@ -25,7 +35,7 @@ Inventory.hasMany(WriteAccess, {
     onDelete: 'CASCADE',
     as: 'writeAccess'
 });
-WriteAccess.belongsTo(WriteAccess, {
+WriteAccess.belongsTo(Inventory, {
     foreignKey: {
         name: 'inventoryId',
         allowNull: false
