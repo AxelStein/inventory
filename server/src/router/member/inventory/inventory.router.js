@@ -18,8 +18,18 @@ import inventoryImageUploader from '../../../middleware/inventory.image.uploader
 import validateImageUpload from '../../../middleware/image.uploader.validator.js';
 
 const router = express.Router();
-router.get('/list', validateQuery(getInventoryListSchema), controller.getList);
-router.get('/by-id/:inventoryId', controller.getById);
+
+router.get(
+    '/list',
+    validateQuery(getInventoryListSchema),
+    controller.getList
+);
+
+router.get(
+    '/by-id/:inventoryId',
+    validateParams(checkInventoryParamsSchema),
+    controller.getById
+);
 
 router.post(
     '/create', 

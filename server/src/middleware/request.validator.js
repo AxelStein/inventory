@@ -1,5 +1,5 @@
+import {ValidationError} from "../error/index.js";
 import Joi from "joi";
-import { ValidationError } from "../error/index.js";
 
 /**
  * @param {Joi.Schema} schema 
@@ -25,8 +25,7 @@ export const validateSchema = (schema, data) => {
         const details = {};
         error.details.forEach((el) => {
             const path = el.path[0];
-            const msg = el.message;
-            details[path] = msg;
+            details[path] = el.message;
         });
         throw new ValidationError(error.toString(), details);
     }
