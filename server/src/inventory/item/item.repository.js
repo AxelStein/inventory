@@ -1,4 +1,5 @@
 import Item from './item.model.js';
+import {Sequelize, Op} from "sequelize";
 
 const repository = {
 
@@ -12,7 +13,15 @@ const repository = {
         }
     }),
 
-    getList: async (inventoryId, sortBy, sortAsc, page, perPage) => {
+    getList: async (inventoryId, sortBy, sortAsc, page, perPage, q) => {
+        const where = { inventoryId };
+        if (q) {
+            where[Op.and] = Sequelize.where(
+                Sequelize.fn('to_tsquery', 'english', q),
+                '@@',
+                Sequelize.col('searchVector')
+            );
+        }
         const { count, rows } = await Item.findAndCountAll({
             include: [{
                 association: 'likes',
@@ -21,7 +30,7 @@ const repository = {
                 }],
                 attributes: ['createdAt']
             }],
-            where: { inventoryId },
+            where,
             order: sortBy ? [[sortBy, sortAsc ? 'ASC' : 'DESC']] : undefined,
             limit: perPage,
             offset: (page - 1) * perPage,
@@ -29,7 +38,7 @@ const repository = {
         return { totalCount: count, hasMore: page * perPage < count, items: rows };
     },
 
-    create: (creatorId, data, transaction) => Item.create(
+    create: async (creatorId, data, transaction) => Item.create(
         { ...data, creatorId },
         { returning: true, transaction }
     ),

@@ -13,6 +13,7 @@ export class OptimisticLockModel extends Model {
                 version: data.version,
             },
             returning: true,
+            individualHooks: true,
         });
         if (count === 0) throw new ConflictError();
         return rows[0];

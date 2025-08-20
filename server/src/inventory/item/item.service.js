@@ -1,15 +1,12 @@
 import repository from './item.repository.js';
-import customIdRepository from '../custom_id/custom.id.repository.js';
 import db from '../../db/index.js';
-import { Transaction } from 'sequelize';
 import { generateCustomId } from '../custom_id/custom.id.generator.js';
-import CustomIdType from '../custom_id/custom.id.type.js';
 
 const service = {
 
     getByIdWithInventory: (id) => repository.getByIdWithInventory(id),
 
-    getList: (inventoryId, sortBy, sortAsc, page, perPage) => repository.getList(inventoryId, sortBy, sortAsc, page, perPage),
+    getList: (inventoryId, sortBy, sortAsc, page, perPage, q) => repository.getList(inventoryId, sortBy, sortAsc, page, perPage, q),
 
     create: (creatorId, data) => db.transaction(async (transaction) => {
         if (!data.customId) {

@@ -1,7 +1,10 @@
 import Joi from 'joi';
 import { CustomFieldType, inflateInventoryCustomFields } from '../inventory.custom.field.js';
 
-const createItemSchemaData = {};
+const createItemSchemaData = {
+    customId: Joi.string(),
+};
+
 inflateInventoryCustomFields((prefix, field) => {
     switch (field.type) {
         case CustomFieldType.STRING:
@@ -22,7 +25,6 @@ inflateInventoryCustomFields((prefix, field) => {
         case CustomFieldType.BOOLEAN:
             createItemSchemaData[prefix] = Joi.boolean();
             break;
-
     }
 });
 
@@ -33,7 +35,6 @@ export const createItemSchema = Joi.object({
 
 export const updateItemSchema = Joi.object({
     version: Joi.number().integer().required(),
-    customId: Joi.string(),
     ...createItemSchemaData,
 }).required()
 
@@ -43,6 +44,7 @@ export const getItemListSchema = Joi.object({
     sortAsc: Joi.boolean().default(false),
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(1).max(50).default(10),
+    q: Joi.string().trim().allow(''),
 });
 
 export const checkItemParamsSchema = Joi.object({

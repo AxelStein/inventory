@@ -28,7 +28,9 @@ export const formatCustomId = (customId) => {
             const regex = /\{num}/gi;
             const padRegex = /\{num,(\d+)}/gi;
             const num = customId.nextSequence;
-            return rule.replace(padRegex, (match, n) => num.toString().padStart(n || 0, '0'))
+            if (!rule) return num.toString();
+            return rule
+                .replace(padRegex, (match, n) => num.toString().padStart(n || 0, '0'))
                 .replace(regex, num.toString());
 
         default:

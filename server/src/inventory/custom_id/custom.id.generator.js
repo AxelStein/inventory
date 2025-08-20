@@ -3,6 +3,7 @@ import itemSequenceRepository from "./sequence/item.sequence.repository.js";
 import customIdRepository from "./custom.id.repository.js";
 import { Transaction } from "sequelize";
 import customIdService from "./custom.id.service.js";
+import {formatCustomId} from "./custom.id.formatter.js";
 
 const getNextSequence = (inventoryId, transaction) => itemSequenceRepository.increment(inventoryId, transaction)
 
@@ -18,12 +19,25 @@ const setCustomIdPartsNextSequence = async (customIdParts, inventoryId, transact
     }
 }
 
+const createDefaultSequenceIdPart = () => {
+    return {
+        type: CustomIdType.SEQUENCE,
+        toString: function () {
+            return formatCustomId(this);
+        }
+    };
+}
+
 export const generateCustomId = async ({ inventoryId, transaction, parts }) => {
-    const customIdParts = parts ? parts : await customIdService.getList(
+    let customIdParts = parts ? parts : await customIdService.getList(
         inventoryId,
         transaction,
         transaction ? Transaction.LOCK.UPDATE : null
     );
+    if (customIdParts.length === 0) {
+        customIdParts = [createDefaultSequenceIdPart()];
+    }
+
     await setCustomIdPartsNextSequence(customIdParts, inventoryId, transaction);
     return customIdParts.join('');
 }

@@ -7,8 +7,8 @@ const controller = {
      * @param {express.Response} res 
      */
     getList: async (req, res) => {
-        const { inventoryId, sortBy, sortAsc, page, perPage } = req.validatedQuery;
-        res.send(await service.getList(inventoryId, sortBy, sortAsc, page, perPage));
+        const { inventoryId, sortBy, sortAsc, page, perPage, q } = req.validatedQuery;
+        res.send(await service.getList(inventoryId, sortBy, sortAsc, page, perPage, q));
     },
 
     /**
