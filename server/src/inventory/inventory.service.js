@@ -1,4 +1,6 @@
 import repository from "./inventory.repository.js";
+import {pusher} from "../events/pusher.js";
+import {ForbiddenError} from "../error/index.js";
 
 const service = {
 

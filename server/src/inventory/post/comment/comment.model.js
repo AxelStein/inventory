@@ -2,8 +2,9 @@ import { DataTypes, Model } from 'sequelize';
 import db from '../../../db/index.js';
 import Post from '../post.model.js';
 import User from '../../../user/user.model.js';
+import {PagingModel} from "../../../db/paging.model.js";
 
-class Comment extends Model { }
+class Comment extends PagingModel { }
 
 Comment.init({
     id: {

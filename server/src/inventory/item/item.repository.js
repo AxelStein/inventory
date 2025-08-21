@@ -17,12 +17,12 @@ const repository = {
         const where = { inventoryId };
         if (q) {
             where[Op.and] = Sequelize.where(
-                Sequelize.fn('to_tsquery', 'english', q),
+                Sequelize.fn('to_tsquery', 'english', `${q}:*`),
                 '@@',
                 Sequelize.col('searchVector')
             );
         }
-        const { count, rows } = await Item.findAndCountAll({
+        return Item.getPage(page, perPage, {
             include: [{
                 association: 'likes',
                 include: [{
@@ -32,10 +32,7 @@ const repository = {
             }],
             where,
             order: sortBy ? [[sortBy, sortAsc ? 'ASC' : 'DESC']] : undefined,
-            limit: perPage,
-            offset: (page - 1) * perPage,
         });
-        return { totalCount: count, hasMore: page * perPage < count, items: rows };
     },
 
     create: async (creatorId, data, transaction) => Item.create(

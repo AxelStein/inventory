@@ -1,35 +1,38 @@
 import express from 'express';
+import service from "./comment.service.js";
 
 const controller = {
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    getList: (req, res) => {
-        res.sendStatus(200);
+    getList: async (req, res) => {
+        const { postId, page, perPage } = req.validatedQuery;
+        res.send(await service.getList(postId, page, perPage));
     },
 
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    create: (req, res) => {
-        res.sendStatus(200);
+    create: async (req, res) => {
+        res.send(await service.create(req.user.id, req.body));
     },
 
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    update: (req, res) => {
-        res.sendStatus(200);
+    update: async (req, res) => {
+        res.send(await service.update(req.params.id, req.body));
     },
 
     /**
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    delete: (req, res) => {
+    delete: async (req, res) => {
+        await service.delete(req.params.id);
         res.sendStatus(200);
     },
 }

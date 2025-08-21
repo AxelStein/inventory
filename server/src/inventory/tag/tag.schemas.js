@@ -2,7 +2,7 @@ import Joi from "joi";
 
 export const getInventoryTagsSchema = Joi.object({
     inventoryId: Joi.number().integer().required()
-});
+}).required();
 
 export const createTagSchema = Joi.object({
     inventoryId: Joi.number().integer().required(),
@@ -15,9 +15,9 @@ export const createTagSchema = Joi.object({
             'string.pattern.base': 'No whitespaces allowed in tag name',
             'string.empty': 'Tag name is required',
         }),
-});
+}).required();
 
 export const deleteTagSchema = Joi.object({
     id: Joi.number().integer().required(),
     inventoryId: Joi.number().integer().required(),
-});
+}).required();

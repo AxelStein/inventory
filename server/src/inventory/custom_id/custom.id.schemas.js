@@ -3,14 +3,14 @@ import CustomIdType from "./custom.id.type.js";
 
 export const getCustomIdsSchema = Joi.object({
     inventoryId: Joi.number().integer().required(),
-});
+}).required();
 
 export  const createCustomIdSchema = Joi.object({
     inventoryId: Joi.number().integer().required(),
     type: Joi.string().valid(...Object.values(CustomIdType)).required(),
     rule: Joi.string().trim().allow(''),
-});
+}).required();
 
 export const checkCustomIdParamsSchema = Joi.object({
     id: Joi.number().integer().required(),
-})
+}).required();

@@ -17,7 +17,7 @@ export const createInventorySchema = Joi.object({
     categoryId: Joi.number().integer().required(),
     isPublic: Joi.boolean().required(),
     customFields: customFieldsSchema.required()
-});
+}).required();
 
 export const updateInventorySchema = Joi.object({
     title: Joi.string().trim(),
@@ -26,18 +26,18 @@ export const updateInventorySchema = Joi.object({
     isPublic: Joi.boolean(),
     version: Joi.number().integer().required(),
     customFields: customFieldsSchema
-});
+}).required();
 
 export const uploadImageSchema = Joi.object({
     version: Joi.number().integer().required()
-});
+}).required();
 
 export const getInventoryListSchema = Joi.object({
     filter: Joi.string().valid(...Object.values(InventoryListFilters)),
     sortBy: Joi.string().valid('title', 'createdAt', 'updatedAt'),
     sortAsc: Joi.boolean().default(false),
-});
+}).required();
 
 export const checkInventoryParamsSchema = Joi.object({
     inventoryId: Joi.number().integer().required(),
-})
+}).required();

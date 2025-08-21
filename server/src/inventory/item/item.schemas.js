@@ -43,10 +43,10 @@ export const getItemListSchema = Joi.object({
     sortBy: Joi.string(),
     sortAsc: Joi.boolean().default(false),
     page: Joi.number().integer().min(1).default(1),
-    perPage: Joi.number().integer().min(1).max(50).default(10),
+    perPage: Joi.number().integer().min(10).max(50).default(10),
     q: Joi.string().trim().allow(''),
-});
+}).required();
 
 export const checkItemParamsSchema = Joi.object({
     id: Joi.number().integer().required(),
-});
+}).required();

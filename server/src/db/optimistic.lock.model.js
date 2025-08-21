@@ -1,7 +1,8 @@
 import { literal, Model } from "sequelize";
 import { ConflictError } from '../error/index.js';
+import {PagingModel} from "./paging.model.js";
 
-export class OptimisticLockModel extends Model {
+export class OptimisticLockModel extends PagingModel {
 
     static async optimisticLockUpdate(id, data) {
         const [count, rows] = await this.update({

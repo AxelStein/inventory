@@ -48,7 +48,7 @@ const checkResourceAccess = (action, resource, getInventoryEntity) => async (req
     if (inventoryId) {
         isOwn = true;
         inventory = await inventoryService.getByIdWithWriteAccess(inventoryId);
-    } else {
+    } else if (getInventoryEntity) {
         const entity = await getInventoryEntity(req);
         inventory = entity.inventory;
         isOwn = entity.isOwn;
