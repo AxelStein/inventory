@@ -5,7 +5,7 @@ import db from './src/db/index.js';
 import apiRouter from './src/router/api.router.js';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
-import { createPassportJwtStrategy } from './src/auth/auth.passport.js';
+import {createPassportGoogleStrategy, createPassportJwtStrategy} from './src/auth/auth.passport.js';
 import errorHandler from './src/middleware/error.handler.js';
 
 import User from './src/user/user.model.js';
@@ -20,6 +20,7 @@ import Tag from './src/inventory/tag/tag.model.js';
 import WriteAccess from './src/inventory/write_access/write.access.model.js';
 import ItemSequence from './src/inventory/custom_id/sequence/item.sequence.model.js';
 import {pusher} from "./src/events/pusher.js";
+import googleAuthRouter from "./src/router/google.auth.router.js";
 
 const app = express();
 app.use(express.json());
@@ -29,9 +30,11 @@ app.use(cors({
     origin: process.env.CLIENT_URL
 }));
 app.use('/api/v1', apiRouter);
+app.use('/auth/google', googleAuthRouter)
 app.use(errorHandler);
 
 passport.use(createPassportJwtStrategy());
+passport.use(createPassportGoogleStrategy());
 
 const port = process.env.PORT;
 const host = process.env.HOST;

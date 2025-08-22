@@ -38,16 +38,10 @@ const controller = {
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    googleSignIn: (req, res) => {
-        res.sendStatus(200);
-    },
-
-    /**
-     * @param {express.Request} req 
-     * @param {express.Response} res 
-     */
-    githubSignIn: (req, res) => {
-        res.sendStatus(200);
+    googleSignIn: async (req, res) => {
+        console.log(req.user);
+        setCookieToken(res, await authService.googleSignIn(req.user));
+        // todo res.redirect('/');
     },
 }
 

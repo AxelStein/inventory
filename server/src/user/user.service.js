@@ -12,7 +12,9 @@ const service = {
 
     getByEmail: (email) => repository.getByEmail(email),
 
-    create: (name, email, password) => repository.create(name, email, password)
+    create: (name, email, password) => repository.create(name, email, password),
+
+    getOrCreateWithGoogle: (googleId, name, email, verified) => repository.getOrCreateWithGoogle(googleId, name, email, verified),
 }
 
 export default service;

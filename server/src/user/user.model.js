@@ -19,12 +19,18 @@ User.init({
         unique: true,
         allowNull: false,
     },
-    password: {
+    googleId: {
         type: DataTypes.STRING,
+        unique: true,
+        allowNull: true,
+    },
+    verified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
     },
-    avatar: {
-        type: DataTypes.STRING,
+    password: {
+        type: DataTypes.STRING
     },
     role: {
         type: DataTypes.ENUM(...Object.values(UserRole)),

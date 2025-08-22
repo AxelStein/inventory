@@ -8,12 +8,20 @@ const repository = {
 
     getByEmail: (email, transaction = null) => User.findOne({
         attributes: { include: ['password'] },
-        where: { email },
+        where: { email, isBlocked: false },
         raw: true,
         transaction
     }),
 
-    create: (name, email, password) => User.create({ name, email, password }, { raw: true })
+    create: (name, email, password) => User.create({ name, email, password }, { raw: true }),
+
+    getOrCreateWithGoogle: async (googleId, name, email, verified) => await User.findOrCreate(
+        {
+            where: { googleId, isBlocked: false },
+            raw: true,
+            defaults: { googleId, name, email, verified }
+        }
+    )
 }
 
 export default repository;

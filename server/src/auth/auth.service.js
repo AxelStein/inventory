@@ -33,7 +33,7 @@ const service = {
 
     signIn: async (email, password) => {
         const user = await userService.getByEmail(email);
-        if (!user || !await bcrypt.compare(password, user.password) || user.isBlocked) {
+        if (!user || !await bcrypt.compare(password, user.password)) {
             throw new UnauthorizedError('Invalid credentials');
         }
         return createToken(user);
@@ -42,6 +42,10 @@ const service = {
     signUp: async (name, email, password) => {
         return createToken(await userService.create(name, email, await bcrypt.hash(password, 10)));
     },
+
+    googleSignIn: async (user) => {
+        return createToken(user);
+    }
 }
 
 export default service;

@@ -7,7 +7,5 @@ const router = express.Router();
 router.post('/sign-in', validateBody(signInSchema), controller.signIn);
 router.post('/sign-up', validateBody(signUpSchema), controller.signUp);
 router.post('/sign-out', controller.signOut);
-router.post('/google/sign-in', controller.googleSignIn);
-router.post('/github/sign-in', controller.githubSignIn);
 
 export default router;
