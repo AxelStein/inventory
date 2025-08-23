@@ -16,9 +16,9 @@ UserSettings.init({
         allowNull: false,
         unique: true
     },
-    nightMode: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
+    theme: {
+        type: DataTypes.ENUM(...appConfig.themes),
+        defaultValue: appConfig.themes[0],
         allowNull: false,
     },
     language: {
@@ -29,7 +29,17 @@ UserSettings.init({
 }, {
     sequelize: db,
     modelName: "UserSettings",
-    tableName: "user_settings"
+    tableName: "user_settings",
+    defaultScope: {
+        attributes: {
+            exclude: [
+                'id',
+                'userId',
+                'createdAt',
+                'updatedAt',
+            ]
+        }
+    }
 });
 
 User.hasOne(UserSettings, {

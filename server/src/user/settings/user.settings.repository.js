@@ -1,5 +1,4 @@
 import UserSettings from "./user.settings.model.js";
-import {NotFoundError} from "../../error/index.js";
 
 const repository = {
 
@@ -9,15 +8,14 @@ const repository = {
     ),
 
     save: async (userId, data) => {
-        const [count, rows] = await UserSettings.update(
+        await UserSettings.update(
             data,
-            { where: { userId }, returning: true }
-        );
-        if (count === 0) {
-            throw new NotFoundError('User settings not found');
-        }
-        return rows[0];
+            { where: { userId } }
+        )
+        return repository.getForUser(userId);
     },
+
+    getForUser: (userId) => UserSettings.findOne({ where: { userId } }),
 }
 
 export default repository;

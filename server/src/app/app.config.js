@@ -19,4 +19,8 @@ export const appConfig = {
             name: 'Русский',
         },
     ],
+    themes: [
+        'light',
+        'dark'
+    ]
 }
