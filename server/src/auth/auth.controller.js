@@ -22,7 +22,7 @@ const controller = {
      */
     signUp: async (req, res) => {
         const { name, email, password } = req.body;
-        setCookieToken(res, await authService.signUp(name, email, password));
+        res.send(await authService.signUp(name, email, password));
     },
 
     /**
@@ -39,20 +39,36 @@ const controller = {
      * @param {express.Response} res 
      */
     googleSignIn: async (req, res) => {
-        console.log(req.user);
         setCookieToken(res, await authService.googleSignIn(req.user));
     },
 
+    /**
+     * @param {express.Request} req
+     * @param {express.Response} res
+     */
     resetPassword: async (req, res) => {
         const { email } = req.body;
         await authService.resetPassword(email);
         res.sendStatus(200);
     },
 
+    /**
+     * @param {express.Request} req
+     * @param {express.Response} res
+     */
     restorePassword: async (req, res) => {
         const { token, password } = req.body;
         await authService.restorePassword(token, password);
         res.sendStatus(200);
+    },
+
+    /**
+     * @param {express.Request} req
+     * @param {express.Response} res
+     */
+    verifyEmail: async (req, res) => {
+        const { userId, code } = req.body;
+        setCookieToken(res, await authService.verifyEmail(userId, code));
     }
 }
 

@@ -2,9 +2,14 @@ import User from './user.model.js';
 
 const repository = {
 
-    getNotBlocked: (id) => User.findOne({
-        where: { id, isBlocked: false },
+    getVerified: (id) => User.findOne({
+        where: { id, isBlocked: false, verified: true },
         raw: true
+    }),
+
+    getNotBlocked: (id, transaction = null) => User.findOne({
+        where: { id, isBlocked: false },
+        transaction,
     }),
 
     updateLastSeenDate: (id) => User.update({ lastSeen: new Date() }, { where: { id } }),
@@ -21,15 +26,21 @@ const repository = {
         transaction
     }),
 
-    create: (name, email, password) => User.create({ name, email, password }, { raw: true }),
+    create: (name, email, password, transaction) => User.create(
+        { name, email, password },
+        { raw: true, transaction }
+    ),
 
-    getOrCreateWithGoogle: async (googleId, name, email, verified) => await User.findOrCreate(
-        {
-            where: { googleId, isBlocked: false },
-            raw: true,
-            defaults: { googleId, name, email, verified }
-        }
-    )
+    getOrCreateWithGoogle: async (googleId, name, email) => {
+        const [user] = await User.findOrCreate(
+            {
+                where: { googleId, isBlocked: false, verified: true },
+                raw: true,
+                defaults: { googleId, name, email, verified: true }
+            }
+        );
+        return user;
+    }
 }
 
 export default repository;

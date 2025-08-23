@@ -42,3 +42,8 @@ export const restorePasswordSchema = Joi.object({
         .required(),
     password: passwordSchema
 }).required();
+
+export const verifyEmailSchema = Joi.object({
+    code: Joi.string().required(),
+    userId: Joi.number().integer().required(),
+});

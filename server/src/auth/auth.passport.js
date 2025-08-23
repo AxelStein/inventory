@@ -22,7 +22,7 @@ export function createPassportJwtStrategy() {
         secretOrKey: process.env.JWT_SECRET,
         jwtFromRequest: cookieTokenExtractor,
     }, async (payload, done) => {
-        service.getNotBlocked(payload.id)
+        service.getVerified(payload.id)
             .then(user => done(null, user))
             .catch(err => done(err, null));
     });

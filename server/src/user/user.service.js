@@ -3,21 +3,23 @@ import User from "./user.model.js";
 
 const service = {
     
-    getNotBlocked: async (id) => {
-        const user = await repository.getNotBlocked(id);
+    getVerified: async (id) => {
+        const user = await repository.getVerified(id);
         if (user) {
             await repository.updateLastSeenDate(user.id);
         }
         return user;
     },
 
-    getByEmail: (email, transaction) => repository.getByEmail(email, transaction),
+    getNotBlocked: (id, transaction = null) => repository.getNotBlocked(id, transaction),
+
+    getByEmail: (email, transaction = null) => repository.getByEmail(email, transaction),
 
     updateUserPassword: (userId, password, transaction = null) => repository.updateUserPassword(userId, password, transaction),
 
-    create: (name, email, password) => repository.create(name, email, password),
+    create: (name, email, password, transaction = null) => repository.create(name, email, password, transaction),
 
-    getOrCreateWithGoogle: (googleId, name, email, verified) => repository.getOrCreateWithGoogle(googleId, name, email, verified),
+    getOrCreateWithGoogle: (googleId, name, email) => repository.getOrCreateWithGoogle(googleId, name, email),
 }
 
 export default service;

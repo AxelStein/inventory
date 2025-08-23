@@ -1,10 +1,14 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userService from '../user/user.service.js';
-import {ApiError, GoneError, UnauthorizedError} from '../error/index.js';
+import {GoneError, UnauthorizedError, ValidationError} from '../error/index.js';
 import passwordResetRepository from "./password_reset/password.reset.repository.js";
 import db from "../db/index.js";
 import emailService from "./email.service.js";
+import emailVerificationRepository from "./email_verification/email.verification.repository.js";
+import {generateRandomNumberForCustomId} from "../inventory/custom_id/custom.id.random.number.generator.js";
+import CustomIdType from "../inventory/custom_id/custom.id.type.js";
+import {Transaction} from "sequelize";
 
 const passwordResetExpireTime = 3600000;
 
@@ -34,6 +38,14 @@ const createToken = (user) => new Promise((resolve, reject) => {
     );
 });
 
+const createRequiresVerificationStatus = (user) => {
+    return {
+        userId: user.id,
+        message: 'Signup verification code has been sent. Check your email.',
+        status: 'verification_code_sent'
+    };
+}
+
 const service = {
 
     signIn: async (email, password) => {
@@ -41,16 +53,29 @@ const service = {
         if (!user || !await bcrypt.compare(password, user.password)) {
             throw new UnauthorizedError('Invalid credentials');
         }
+        if (!user.verified) {
+            return createRequiresVerificationStatus(user);
+        }
         return createToken(user);
     },
 
-    signUp: async (name, email, password) => createToken(
-        await userService.create(
+    signUp: async (name, email, password) => db.transaction(async (transaction) => {
+        const user = await userService.create(
             name,
             email,
-            await bcrypt.hash(password, 10)
-        )
-    ),
+            await bcrypt.hash(password, 10),
+            transaction
+        );
+
+        const verification = await emailVerificationRepository.create({
+            userId: user.id,
+            code: generateRandomNumberForCustomId(CustomIdType.RND_6_DIGIT)
+        }, transaction);
+
+        await emailService.sendVerificationEmail(user.email, verification.code);
+
+        return createRequiresVerificationStatus(user);
+    }),
 
     googleSignIn: async (user) => createToken(user),
 
@@ -85,6 +110,20 @@ const service = {
         await userService.updateUserPassword(data.userId, await bcrypt.hash(password, 10), transaction);
 
         await passwordResetRepository.delete(data.userId, transaction);
+    }),
+
+    verifyEmail: async (userId, code) => db.transaction(async (transaction) => {
+        const verification = await emailVerificationRepository.get(userId, code, transaction, Transaction.LOCK.UPDATE);
+        if (!verification) {
+            throw new ValidationError('Invalid code');
+        }
+        await verification.destroy({ transaction });
+
+        const user = await userService.getNotBlocked(userId, transaction);
+        user.verified = true;
+        await user.save({ transaction });
+
+        return createToken(user);
     })
 }
 
