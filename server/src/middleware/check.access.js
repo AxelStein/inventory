@@ -1,10 +1,9 @@
-import { control, RESOURCE_CUSTOM_ID, RESOURCE_INVENTORY, RESOURCE_ITEM, RESOURCE_POST, RESOURCE_POST_COMMENT, RESOURCE_TAG, RESOURCE_WRITE_ACCESS } from '../inventory/access/inventory.access.control.js';
+import { control, RESOURCE_CUSTOM_ID, RESOURCE_INVENTORY, RESOURCE_ITEM, RESOURCE_POST, RESOURCE_TAG, RESOURCE_WRITE_ACCESS } from '../inventory/access/inventory.access.control.js';
 import { ForbiddenError, NotFoundError } from "../error/index.js";
 import InventoryAccessRole from "../inventory/access/inventory.access.role.js";
 import postService from '../inventory/post/post.service.js';
 import UserRole from '../user/user.role.js';
 import inventoryService from '../inventory/inventory.service.js';
-import commentService from '../inventory/post/comment/comment.service.js';
 import itemService from '../inventory/item/item.service.js';
 import writeAccessService from '../inventory/write_access/write.access.service.js';
 import customIdService from '../inventory/custom_id/custom.id.service.js';
@@ -73,21 +72,6 @@ export const checkPostAccess = (action) => checkResourceAccess(action, RESOURCE_
         post.inventory,
         post.authorId === req.user.id,
     )
-})
-
-export const checkPostCommentAccess = (action) => checkResourceAccess(action, RESOURCE_POST_COMMENT, async (req) => {
-    const postId = findAttribute(req, 'postId');
-    if (postId) {
-        const post = await getPostById(postId);
-        return new InventoryEntity(post.inventory);
-    }
-
-    const comment = await commentService.getByIdWithInventory(req.params.id);
-    if (!comment) throw new NotFoundError('Comment not found');
-    return new InventoryEntity(
-        comment.post.inventory,
-        comment.authorId === req.user.id,
-    );
 })
 
 export const checkItemAccess = (action) => checkResourceAccess(action, RESOURCE_ITEM, async (req) => {

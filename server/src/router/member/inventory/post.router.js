@@ -1,6 +1,5 @@
 import express from 'express';
 import controller from '../../../inventory/post/post.controller.js';
-import commentRouter from './post.comment.router.js';
 import { checkPostAccess } from '../../../middleware/check.access.js';
 import AccessAction from '../../../inventory/access/access.action.js';
 import {validateBody, validateParams, validateQuery} from "../../../middleware/request.validator.js";
@@ -58,7 +57,5 @@ router.post(
     checkPostAccess(AccessAction.READ),
     controller.authPusher
 );
-
-router.use('/comment', commentRouter);
 
 export default router;

@@ -4,7 +4,6 @@ import AccessRole from './inventory.access.role.js';
 export const RESOURCE_ITEM = 'item';
 export const RESOURCE_INVENTORY = 'inventory';
 export const RESOURCE_POST = 'post';
-export const RESOURCE_POST_COMMENT = 'post-comment';
 export const RESOURCE_TAG = 'tag';
 export const RESOURCE_WRITE_ACCESS = 'write-access';
 export const RESOURCE_CUSTOM_ID = 'custom-id';
@@ -14,8 +13,7 @@ control.grant(AccessRole.VIEWER)
     .read(RESOURCE_INVENTORY)
     .read(RESOURCE_ITEM)
     .read(RESOURCE_TAG)
-    .read(RESOURCE_POST)
-    .read(RESOURCE_POST_COMMENT);
+    .read(RESOURCE_POST);
 
 control.grant(AccessRole.EDITOR)
     .extend(AccessRole.VIEWER)
@@ -28,11 +26,7 @@ control.grant(AccessRole.EDITOR)
     
     .createOwn(RESOURCE_POST)
     .updateOwn(RESOURCE_POST)
-    .deleteOwn(RESOURCE_POST)
-
-    .createOwn(RESOURCE_POST_COMMENT)
-    .updateOwn(RESOURCE_POST_COMMENT)
-    .deleteOwn(RESOURCE_POST_COMMENT);
+    .deleteOwn(RESOURCE_POST);
 
 control.grant(AccessRole.OWNER)
     .extend(AccessRole.EDITOR)
@@ -42,7 +36,6 @@ control.grant(AccessRole.OWNER)
     
     .delete(RESOURCE_ITEM)
     .delete(RESOURCE_POST)
-    .delete(RESOURCE_POST_COMMENT)
 
     .read(RESOURCE_WRITE_ACCESS)
     .create(RESOURCE_WRITE_ACCESS)
@@ -55,5 +48,4 @@ control.grant(AccessRole.OWNER)
 
 control.grant(AccessRole.ADMIN)
     .extend(AccessRole.OWNER)
-    .updateAny(RESOURCE_POST)
-    .updateAny(RESOURCE_POST_COMMENT);
+    .updateAny(RESOURCE_POST);
