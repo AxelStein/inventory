@@ -13,7 +13,9 @@ export const control = new AccessControl();
 control.grant(AccessRole.VIEWER)
     .read(RESOURCE_INVENTORY)
     .read(RESOURCE_ITEM)
-    .read(RESOURCE_TAG);
+    .read(RESOURCE_TAG)
+    .read(RESOURCE_POST)
+    .read(RESOURCE_POST_COMMENT);
 
 control.grant(AccessRole.EDITOR)
     .extend(AccessRole.VIEWER)
@@ -27,12 +29,10 @@ control.grant(AccessRole.EDITOR)
     .createOwn(RESOURCE_POST)
     .updateOwn(RESOURCE_POST)
     .deleteOwn(RESOURCE_POST)
-    .read(RESOURCE_POST)
 
     .createOwn(RESOURCE_POST_COMMENT)
     .updateOwn(RESOURCE_POST_COMMENT)
-    .deleteOwn(RESOURCE_POST_COMMENT)
-    .read(RESOURCE_POST_COMMENT);
+    .deleteOwn(RESOURCE_POST_COMMENT);
 
 control.grant(AccessRole.OWNER)
     .extend(AccessRole.EDITOR)

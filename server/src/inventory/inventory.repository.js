@@ -22,7 +22,7 @@ const repository = {
         lock
     })),
 
-    getList: async (userId, filter, sortBy, sortAsc) => {
+    getList: async (userId, filter, sortBy, sortAsc, page, perPage) => {
         const where = {};
         let include = [
             { association: 'owner' },
@@ -43,11 +43,13 @@ const repository = {
                 });
                 break;
         }
-        return mapInventoryList(await Inventory.findAll({
+        const data = await Inventory.getPage(page, perPage,{
             where,
             order,
             include
-        }));
+        });
+        data.items = mapInventoryList(data.items);
+        return data;
     },
 
     create: async (ownerId, data) => mapInventory(await Inventory.create({ ...data, ownerId }, { returning: true })),
