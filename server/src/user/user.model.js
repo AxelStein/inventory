@@ -1,8 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../db/index.js';
 import UserRole from './user.role.js';
+import {PagingModel} from "../db/paging.model.js";
 
-class User extends Model { }
+class User extends PagingModel { }
 
 User.init({
     id: {

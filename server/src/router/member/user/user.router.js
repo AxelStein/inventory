@@ -1,12 +1,13 @@
 import express from 'express';
 import controller from '../../../user/user.controller.js';
-import settingsRouter from "./user.settings.router.js";
+import settingsRouter from "./settings/user.settings.router.js";
+import userAccountRouter from "./account/user.account.router.js";
+import {validateQuery} from "../../../middleware/request.validator.js";
+import {searchUsersSchema} from "../../../user/user.schemas.js";
 
 const router = express.Router();
-router.get('/search', controller.searchUser);
-router.delete('/account', controller.deleteAccount);
-router.get('/account/own', controller.getOwnAccount);
-router.get('/account/:id', controller.getUserAccount);
+router.get('/search', validateQuery(searchUsersSchema), controller.search);
 router.use('/settings', settingsRouter);
+router.use('/account', userAccountRouter);
 
 export default router;
