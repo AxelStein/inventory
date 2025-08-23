@@ -7,7 +7,7 @@ const controller = {
      * @param {express.Response} res 
      */
     getList: async (req, res) => {
-        res.send(await service.getList(req.validatedQuery.inventoryId))
+        res.send(await service.getList(req.validatedQuery.inventoryId));
     },
 
     /**
@@ -31,8 +31,7 @@ const controller = {
      * @param {express.Response} res 
      */
     delete: async (req, res) => {
-        await service.delete(req.params.id);
-        res.sendStatus(200);
+        res.send(await service.delete(req.params.id));
     },
 
     /**

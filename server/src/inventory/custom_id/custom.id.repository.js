@@ -3,13 +3,20 @@ import db from '../../db/index.js';
 import {Transaction} from "sequelize";
 import {ConflictError, NotFoundError, ValidationError} from "../../error/index.js";
 
-const reorderIds = async (inventoryId, transaction) => {
+const reorderIds = async ({inventoryId, positions, transaction}) => {
     const ids = await repository.getList(inventoryId, transaction, Transaction.LOCK.UPDATE);
     for (let i = 0; i < ids.length; i++) {
-        ids[i].position = i;
+        const item = ids[i];
+        if (positions) {
+            const position = positions.indexOf(item.id);
+            if (position === -1) throw new ConflictError('Invalid positions');
+            item.position = position;
+        } else {
+            item.position = i;
+        }
         await ids[i].save({ transaction });
     }
-    return ids;
+    return ids.sort((a, b) => a.position - b.position);
 }
 
 const repository = {
@@ -38,11 +45,13 @@ const repository = {
     }),
 
     update: (id, data) => db.transaction(async (transaction) => {
-        const item = await CustomId.update(
+        const [, rows] = await CustomId.update(
             data,
-            { where: id, transaction, returning: true }
+            { where: { id }, transaction, returning: true }
         );
-        await reorderIds(item.inventoryId, transaction);
+        const item = rows[0];
+        await reorderIds({ inventoryId: item.inventoryId, transaction });
+        return item;
     }),
 
     delete: (id) => db.transaction(async (transaction) => {
@@ -55,23 +64,11 @@ const repository = {
 
         const inventoryId = customId.inventoryId;
         await customId.destroy({ transaction });
-        await reorderIds(inventoryId, transaction);
+        return await reorderIds({ inventoryId, transaction });
     }),
 
     reorder: (inventoryId, positions) => db.transaction(async (transaction) => {
-        const ids = await repository.getList(inventoryId, transaction, Transaction.LOCK.UPDATE);
-        if (ids.length !== positions.length) throw new ConflictError('Invalid positions');
-
-        for (let i = 0; i < ids.length; i++) {
-            const item = ids[i];
-
-            const position = positions.indexOf(item.id);
-            if (position === -1) throw new ConflictError('Invalid positions');
-
-            item.position = position;
-            await item.save({ transaction });
-        }
-        return ids.sort((a, b) => a.position - b.position);
+        return reorderIds({ inventoryId, positions, transaction });
     })
 }
 
