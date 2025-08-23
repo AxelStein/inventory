@@ -60,7 +60,7 @@ const service = {
 
     signIn: async (email, password) => {
         const user = await userRepository.getByEmail(email);
-        if (!user || !await bcrypt.compare(password, user.password)) {
+        if (!user || !user.password || !await bcrypt.compare(password, user.password)) {
             throw new UnauthorizedError('Invalid credentials');
         }
         if (!user.verified) {
