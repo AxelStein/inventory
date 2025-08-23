@@ -1,8 +1,17 @@
 import express from 'express';
-import googleAuthRouter from "./google.auth.router.js";
-import facebookAuthRouter from "./facebook.auth.router.js";
+import {AUTH_PROVIDER} from "../../auth/auth.provider.js";
+import passport from "passport";
+import authController from "../../auth/auth.controller.js";
 
 const router = express.Router();
-router.use('/google', googleAuthRouter);
-router.use('/facebook', facebookAuthRouter);
+
+Object.values(AUTH_PROVIDER).forEach(provider => {
+   router.get(`/${provider.id}`, passport.authenticate(provider.id, { scope: provider.scope }));
+   router.get(
+       `/${provider.id}/callback`,
+       passport.authenticate(provider.id, { session: false, failureRedirect: '/login' }),
+       authController.providerSignIn
+   );
+});
+
 export default router;

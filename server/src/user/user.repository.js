@@ -2,9 +2,11 @@ import User from './user.model.js';
 
 const repository = {
 
-    getVerified: (id) => User.findOne({
-        where: { id, isBlocked: false, verified: true },
-        raw: true
+    getVerified: (where, transaction = null, lock = null) => User.findOne({
+        where: { ...where, isBlocked: false, verified: true },
+        raw: true,
+        transaction,
+        lock
     }),
 
     getNotBlocked: (id, transaction = null) => User.findOne({
@@ -26,32 +28,8 @@ const repository = {
         transaction
     }),
 
-    create: (name, email, password, transaction) => User.create(
-        { name, email, password },
-        { raw: true, transaction }
-    ),
+    create: (data, transaction) => User.create(data, { raw: true, transaction }),
 
-    getOrCreateWithGoogle: async (googleId, name, email) => {
-        const [user] = await User.findOrCreate(
-            {
-                where: { googleId, isBlocked: false, verified: true },
-                raw: true,
-                defaults: { googleId, name, email, verified: true }
-            }
-        );
-        return user;
-    },
-
-    getOrCreateWithFacebook: async (facebookId, name, email) => {
-        const [user] = await User.findOrCreate(
-            {
-                where: { facebookId, isBlocked: false, verified: true },
-                raw: true,
-                defaults: { facebookId, name, email, verified: true }
-            }
-        );
-        return user;
-    }
 }
 
 export default repository;

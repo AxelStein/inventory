@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import userService from '../user/user.service.js';
+import {AUTH_PROVIDER} from "./auth.provider.js";
 import {GoneError, UnauthorizedError, ValidationError} from '../error/index.js';
 import passwordResetRepository from "./password_reset/password.reset.repository.js";
 import db from "../db/index.js";
@@ -9,6 +9,8 @@ import emailVerificationRepository from "./email_verification/email.verification
 import {generateRandomNumberForCustomId} from "../inventory/custom_id/custom.id.random.number.generator.js";
 import CustomIdType from "../inventory/custom_id/custom.id.type.js";
 import {Transaction} from "sequelize";
+import userSettingsService from "../user/settings/user.settings.service.js";
+import userRepository from "../user/user.repository.js";
 
 const passwordResetExpireTime = 3600000;
 
@@ -48,8 +50,16 @@ const createRequiresVerificationStatus = (user) => {
 
 const service = {
 
+    getVerified: async (id) => {
+        const user = await userRepository.getVerified({ id });
+        if (user) {
+            await userRepository.updateLastSeenDate(user.id);
+        }
+        return user;
+    },
+
     signIn: async (email, password) => {
-        const user = await userService.getByEmail(email);
+        const user = await userRepository.getByEmail(email);
         if (!user || !await bcrypt.compare(password, user.password)) {
             throw new UnauthorizedError('Invalid credentials');
         }
@@ -60,29 +70,39 @@ const service = {
     },
 
     signUp: async (name, email, password) => db.transaction(async (transaction) => {
-        const user = await userService.create(
+        const user = await userRepository.create({
             name,
             email,
-            await bcrypt.hash(password, 10),
-            transaction
-        );
+            password: await bcrypt.hash(password, 10),
+        }, transaction);
 
         const verification = await emailVerificationRepository.create({
             userId: user.id,
             code: generateRandomNumberForCustomId(CustomIdType.RND_6_DIGIT)
         }, transaction);
 
+        await userSettingsService.createDefault(user.id, transaction);
+
         await emailService.sendVerificationEmail(user.email, verification.code);
 
         return createRequiresVerificationStatus(user);
     }),
 
-    googleSignIn: async (user) => createToken(user),
+    getOrCreateWithProvider: (provider, id, name, email) => db.transaction(async (transaction) => {
+        const providerAttr = `${provider.id}Id`;
+        let user = await userRepository.getVerified({ [providerAttr]: id }, transaction, Transaction.LOCK.UPDATE);
+        if (user) {
+            return user;
+        }
+        user = await userRepository.create({ [providerAttr]: id, name, email, verified: true }, transaction);
+        await userSettingsService.createDefault(user.id, transaction);
+        return user;
+    }),
 
-    facebookSignIn: async (user) => createToken(user),
+    providerSignIn: async (user) => createToken(user),
 
     resetPassword: (email) => db.transaction(async (transaction) => {
-        const user = await userService.getByEmail(email, transaction);
+        const user = await userRepository.getByEmail(email, transaction);
         if (!user) {
             return;
         }
@@ -109,7 +129,7 @@ const service = {
             throw new GoneError('Password restore request is expired');
         }
 
-        await userService.updateUserPassword(data.userId, await bcrypt.hash(password, 10), transaction);
+        await userRepository.updateUserPassword(data.userId, await bcrypt.hash(password, 10), transaction);
 
         await passwordResetRepository.delete(data.userId, transaction);
     }),
@@ -121,7 +141,7 @@ const service = {
         }
         await verification.destroy({ transaction });
 
-        const user = await userService.getNotBlocked(userId, transaction);
+        const user = await userRepository.getNotBlocked(userId, transaction);
         user.verified = true;
         await user.save({ transaction });
 

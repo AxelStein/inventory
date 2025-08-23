@@ -14,14 +14,6 @@ const controller = {
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    saveSettings: (req, res) => {
-        res.sendStatus(200);
-    },
-
-    /**
-     * @param {express.Request} req 
-     * @param {express.Response} res 
-     */
     deleteAccount: (req, res) => {
         res.sendStatus(200);
     },

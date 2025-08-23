@@ -61,7 +61,9 @@ User.init({
                 exclude: [
                     'createdAt',
                     'updatedAt',
-                    'password'
+                    'password',
+                    'googleId',
+                    'facebookId',
                 ]
             }
         }

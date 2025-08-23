@@ -38,16 +38,8 @@ const controller = {
      * @param {express.Request} req 
      * @param {express.Response} res 
      */
-    googleSignIn: async (req, res) => {
-        setCookieToken(res, await authService.googleSignIn(req.user));
-    },
-
-    /**
-     * @param {express.Request} req
-     * @param {express.Response} res
-     */
-    facebookSignIn: async (req, res) => {
-        setCookieToken(res, await authService.facebookSignIn(req.user));
+    providerSignIn: async (req, res) => {
+        setCookieToken(res, await authService.providerSignIn(req.user));
     },
 
     /**
