@@ -2,9 +2,17 @@ import User from './user.model.js';
 
 const repository = {
 
-    getNotBlocked: (id) => User.findOne({ where: { id, isBlocked: false }, raw: true }),
+    getNotBlocked: (id) => User.findOne({
+        where: { id, isBlocked: false },
+        raw: true
+    }),
 
     updateLastSeenDate: (id) => User.update({ lastSeen: new Date() }, { where: { id } }),
+
+    updateUserPassword: (userId, password, transaction = null) => User.update(
+        { password },
+        { where: { id: userId }, transaction }
+    ),
 
     getByEmail: (email, transaction = null) => User.findOne({
         attributes: { include: ['password'] },

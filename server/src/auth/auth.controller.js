@@ -41,8 +41,19 @@ const controller = {
     googleSignIn: async (req, res) => {
         console.log(req.user);
         setCookieToken(res, await authService.googleSignIn(req.user));
-        // todo res.redirect('/');
     },
+
+    resetPassword: async (req, res) => {
+        const { email } = req.body;
+        await authService.resetPassword(email);
+        res.sendStatus(200);
+    },
+
+    restorePassword: async (req, res) => {
+        const { token, password } = req.body;
+        await authService.restorePassword(token, password);
+        res.sendStatus(200);
+    }
 }
 
 export default controller;

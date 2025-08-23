@@ -1,4 +1,5 @@
 import repository from "./user.repository.js";
+import User from "./user.model.js";
 
 const service = {
     
@@ -10,7 +11,9 @@ const service = {
         return user;
     },
 
-    getByEmail: (email) => repository.getByEmail(email),
+    getByEmail: (email, transaction) => repository.getByEmail(email, transaction),
+
+    updateUserPassword: (userId, password, transaction = null) => repository.updateUserPassword(userId, password, transaction),
 
     create: (name, email, password) => repository.create(name, email, password),
 

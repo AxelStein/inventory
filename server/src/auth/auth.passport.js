@@ -39,6 +39,8 @@ export function createPassportGoogleStrategy() {
             profile.displayName,
             profile.emails[0].value,
             profile.emails[0].verified,
-        ).then(user => done(null, user)).catch(err => done(err, null));
+        )
+            .then(user => done(null, user))
+            .catch(err => done(err, null));
     });
 }

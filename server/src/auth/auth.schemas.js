@@ -30,3 +30,15 @@ export const signUpSchema = Joi.object({
     email: emailSchema,
     password: passwordSchema,
 }).required();
+
+export const resetPasswordSchema = Joi.object({
+    email: emailSchema
+}).required();
+
+export const restorePasswordSchema = Joi.object({
+    token: Joi
+        .string()
+        .token()
+        .required(),
+    password: passwordSchema
+}).required();

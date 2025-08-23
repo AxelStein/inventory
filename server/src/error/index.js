@@ -41,3 +41,9 @@ export class ConflictError extends ApiError {
         super(message, 409);
     }
 }
+
+export class GoneError extends ApiError {
+    constructor(message = 'Gone') {
+        super(message, 410);
+    }
+}

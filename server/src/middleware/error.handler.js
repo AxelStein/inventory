@@ -44,6 +44,21 @@ const errorHandler = (err, req, res, _) => {
                 statusCode = 404;
                 message = 'User not found';
                 break;
+
+            case 'password_resets_userId_key':
+                statusCode = 400;
+                message = 'Password reset has been already requested';
+                break;
+
+            case 'password_resets_token_key':
+                statusCode = 400;
+                message = 'Password reset failed. Please try again';
+                break;
+
+            case 'email_verifications_userId_key':
+                statusCode = 400;
+                message = 'Email verification has been already requested';
+                break;
         }
     }
 
