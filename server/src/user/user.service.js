@@ -20,6 +20,8 @@ const service = {
     create: (name, email, password, transaction = null) => repository.create(name, email, password, transaction),
 
     getOrCreateWithGoogle: (googleId, name, email) => repository.getOrCreateWithGoogle(googleId, name, email),
+
+    getOrCreateWithFacebook: (facebookId, name, email) => repository.getOrCreateWithFacebook(facebookId, name, email),
 }
 
 export default service;

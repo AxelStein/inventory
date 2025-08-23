@@ -17,9 +17,13 @@ User.init({
     email: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false,
     },
     googleId: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: true,
+    },
+    facebookId: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: true,

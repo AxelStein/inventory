@@ -1,5 +1,6 @@
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as FacebookStrategy } from 'passport-facebook';
 import express from 'express';
 import service from '../user/user.service.js';
 
@@ -37,10 +38,22 @@ export function createPassportGoogleStrategy() {
         service.getOrCreateWithGoogle(
             profile.id,
             profile.displayName,
-            profile.emails[0].value,
-            profile.emails[0].verified,
-        )
-            .then(user => done(null, user))
-            .catch(err => done(err, null));
+            profile.emails?.[0]?.value
+        ).then(user => done(null, user)).catch(err => done(err, null));
+    });
+}
+
+export function createFacebookStrategy() {
+    return new FacebookStrategy({
+        clientID: process.env.FACEBOOK_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+        callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+        profileFields: ['id', 'displayName', 'email'],
+    }, async (accessToken, refreshToken, profile, done) => {
+        service.getOrCreateWithFacebook(
+            profile.id,
+            profile.displayName,
+            profile.emails?.[0]?.value
+        ).then(user => done(null, user)).catch(err => done(err, null));
     });
 }

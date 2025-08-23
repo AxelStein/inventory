@@ -46,6 +46,14 @@ const controller = {
      * @param {express.Request} req
      * @param {express.Response} res
      */
+    facebookSignIn: async (req, res) => {
+        setCookieToken(res, await authService.facebookSignIn(req.user));
+    },
+
+    /**
+     * @param {express.Request} req
+     * @param {express.Response} res
+     */
     resetPassword: async (req, res) => {
         const { email } = req.body;
         await authService.resetPassword(email);

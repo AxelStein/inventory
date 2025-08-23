@@ -40,6 +40,17 @@ const repository = {
             }
         );
         return user;
+    },
+
+    getOrCreateWithFacebook: async (facebookId, name, email) => {
+        const [user] = await User.findOrCreate(
+            {
+                where: { facebookId, isBlocked: false, verified: true },
+                raw: true,
+                defaults: { facebookId, name, email, verified: true }
+            }
+        );
+        return user;
     }
 }
 

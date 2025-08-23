@@ -79,6 +79,8 @@ const service = {
 
     googleSignIn: async (user) => createToken(user),
 
+    facebookSignIn: async (user) => createToken(user),
+
     resetPassword: (email) => db.transaction(async (transaction) => {
         const user = await userService.getByEmail(email, transaction);
         if (!user) {
