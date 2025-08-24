@@ -1,0 +1,90 @@
+{
+  "auth": {
+    "error": {
+      "invalidToken": "Неверный токен",
+      "invalidCredentials": "Неверные учётные данные",
+      "restorePasswordExpired": "Срок действия восстановления пароля истёк",
+      "userHasNoEmail": "У пользователя нет адреса электронной почты",
+      "invalidCode": "Неверный код",
+      "uniqueEmail": "Не удалось зарегистрироваться. Попробуйте другой адрес электронной почты или пароль",
+      "verificationCodeSent": "Код подтверждения регистрации уже был отправлен",
+      "passwordResetRequested": "Запрос на сброс пароля уже был отправлен",
+      "passwordResetFailed": "Не удалось сбросить пароль. Попробуйте ещё раз",
+      "invalidEmail": "Неверный адрес электронной почты",
+      "emailRequired": "Требуется адрес электронной почты",
+      "passwordTrim": "В пароле не допускаются пробелы",
+      "passwordRequired": "Требуется пароль"
+    },
+    "email": {
+      "passwordReset": {
+        "subject": "Сброс пароля",
+        "text": "Ссылка для восстановления пароля: %s",
+        "html": "<div>Нажмите <a href=\"%s\">здесь</a>, чтобы восстановить пароль</div>"
+      },
+      "emailVerification": {
+        "subject": "Подтверждение адреса электронной почты",
+        "text": "Ваш код подтверждения регистрации: %s",
+        "html": "Ваш код подтверждения регистрации: <strong>%s</strong>"
+      }
+    }
+  },
+  "general": {
+    "error": {
+      "server": "Произошла непредвиденная ошибка. Повторите попытку позже",
+      "uniqueConstraint": "%s '%s' уже занят."
+    }
+  },
+  "category": {
+    "error": {
+      "invalidId": "Неверный идентификатор категории"
+    }
+  },
+  "writeAccess": {
+    "error": {
+      "userNotFound": "Пользователь не найден"
+    }
+  },
+  "inventory": {
+    "error": {
+      "notFound": "Инвентарь не найден",
+      "customFieldMaxCount": "Более %s полей типа \"%s\""
+    }
+  },
+  "image": {
+    "error": {
+      "fileRequired": "Требуется файл",
+      "invalidMimeType": "Неверный тип файла. Поддерживаемые типы: %s"
+    }
+  },
+  "item": {
+    "error": {
+      "notFound": "Элемент не найден"
+    }
+  },
+  "customId": {
+    "error": {
+      "notFound": "Custom id не найден",
+      "fixedEmpty": "Фиксированный custom id должен иметь правило",
+      "sequenceNextEmpty": "Sequence custom id должен иметь nextSequence",
+      "invalidPositions": "Недопустимые позиции"
+    }
+  },
+  "post": {
+    "error": {
+      "notFound": "Пост не найден"
+    }
+  },
+  "user": {
+    "error": {
+      "notFound": "Пользователь не найден",
+      "invalidIds": "Недопустимые идентификаторы"
+    }
+  },
+  "tag": {
+    "error": {
+      "notFound": "Тег не найден",
+      "nameTrim": "Имя тега не должно содержать пробелов",
+      "nameRequired": "Имя тега обязательно"
+    }
+  }
+}

@@ -4,7 +4,7 @@ export const getInventoryTagsSchema = Joi.object({
     inventoryId: Joi.number().integer().required()
 }).required();
 
-export const createTagSchema = Joi.object({
+export const createTagSchema = (translate) => Joi.object({
     inventoryId: Joi.number().integer().required(),
     name: Joi.string()
         .trim()
@@ -12,8 +12,8 @@ export const createTagSchema = Joi.object({
         .lowercase()
         .required()
         .messages({
-            'string.pattern.base': 'No whitespaces allowed in tag name',
-            'string.empty': 'Tag name is required',
+            'string.pattern.base': translate('tag.error.nameTrim'),
+            'string.empty': translate('tag.error.nameRequired'),
         }),
 }).required();
 

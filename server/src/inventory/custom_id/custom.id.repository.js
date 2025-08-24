@@ -9,7 +9,7 @@ const reorderIds = async ({inventoryId, positions, transaction}) => {
         const item = ids[i];
         if (positions) {
             const position = positions.indexOf(item.id);
-            if (position === -1) throw new ConflictError('Invalid positions');
+            if (position === -1) throw new ConflictError(__('customId.error.invalidPositions'));
             item.position = position;
         } else {
             item.position = i;
@@ -60,7 +60,7 @@ const repository = {
             transaction,
             lock: Transaction.LOCK.UPDATE
         });
-        if (!customId) throw new NotFoundError('Custom id not found');
+        if (!customId) throw new NotFoundError(__('customId.error.notFound'));
 
         const inventoryId = customId.inventoryId;
         await customId.destroy({ transaction });

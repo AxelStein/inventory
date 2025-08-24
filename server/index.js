@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import {createPassportJwtStrategy} from './src/auth/auth.passport.js';
 import errorHandler from './src/middleware/error.handler.js';
+import translation from "./src/translation/translation.js";
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(cors({
     origin: process.env.CLIENT_URL,
     credentials: true,
 }));
+app.use(translation.init);
 app.use('/api/v1', apiRouter);
 app.use(errorHandler);
 

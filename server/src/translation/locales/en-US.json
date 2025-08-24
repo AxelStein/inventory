@@ -1,0 +1,90 @@
+{
+  "auth": {
+    "error": {
+      "invalidToken": "Invalid token",
+      "invalidCredentials": "Invalid credentials",
+      "restorePasswordExpired": "Restore password expired",
+      "userHasNoEmail": "User has no email",
+      "invalidCode": "Invalid code",
+      "uniqueEmail": "Signup failed. Please try a different email or password.",
+      "verificationCodeSent": "Signup verification code has already been sent",
+      "passwordResetRequested": "Password reset has already been requested",
+      "passwordResetFailed": "Password reset failed. Please try again",
+      "invalidEmail": "Invalid email",
+      "emailRequired": "Email is required",
+      "passwordTrim": "No whitespaces allowed in password",
+      "passwordRequired": "Password is required"
+    },
+    "email": {
+      "passwordReset": {
+        "subject": "Password reset",
+        "text": "Your restore password link: %s",
+        "html": "<div>Click <a href=\"%s\">here</a> to restore your password</div>"
+      },
+      "emailVerification": {
+        "subject": "Email verification",
+        "text": "Your signup confirmation code: %s",
+        "html": "Your signup confirmation code: <strong>%s</strong>"
+      }
+    }
+  },
+  "general": {
+    "error": {
+      "server": "An unexpected error occurred. Please try again later",
+      "uniqueConstraint": "The %s '%s' is already taken."
+    }
+  },
+  "category": {
+    "error": {
+      "invalidId": "Invalid category id"
+    }
+  },
+  "writeAccess": {
+    "error": {
+      "userNotFound": "User not found"
+    }
+  },
+  "inventory": {
+    "error": {
+      "notFound": "Inventory not found",
+      "customFieldMaxCount": "There are more than %s fields of type \"%s\""
+    }
+  },
+  "image": {
+    "error": {
+      "fileRequired": "File is required",
+      "invalidMimeType": "Invalid file type. Supported types: %s"
+    }
+  },
+  "item": {
+    "error": {
+      "notFound": "Item not found"
+    }
+  },
+  "customId": {
+    "error": {
+      "notFound": "Custom id not found",
+      "fixedEmpty": "Fixed custom id must have a rule",
+      "sequenceNextEmpty": "Sequence custom id must have a nextSequence",
+      "invalidPositions": "Invalid positions"
+    }
+  },
+  "post": {
+    "error": {
+      "notFound": "Post not found"
+    }
+  },
+  "user": {
+    "error": {
+      "notFound": "User not found",
+      "invalidIds": "Invalid ids"
+    }
+  },
+  "tag": {
+    "error": {
+      "notFound": "Tag not found",
+      "nameTrim": "Tag name must not contain whitespaces",
+      "nameRequired": "Tag name is required"
+    }
+  }
+}

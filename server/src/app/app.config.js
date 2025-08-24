@@ -10,12 +10,12 @@ export const appConfig = {
     },
     languages: [
         {
-            locale: 'en',
+            locale: 'en-US',
             name: 'English',
             default: true,
         },
         {
-            locale: 'ru',
+            locale: 'ru-RU',
             name: 'Русский',
         },
     ],

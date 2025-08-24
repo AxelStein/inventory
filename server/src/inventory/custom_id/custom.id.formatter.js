@@ -10,7 +10,7 @@ export const formatCustomId = (customId) => {
     switch (customId.type) {
         case CustomIdType.FIXED:
             if (rule.length === 0) {
-                throw new Error('Fixed custom id part must have a rule');
+                throw new Error(__('customId.error.fixedEmpty'));
             }
             return rule;
 
@@ -23,7 +23,7 @@ export const formatCustomId = (customId) => {
 
         case CustomIdType.SEQUENCE:
             if (!customId.nextSequence) {
-                throw new Error('Sequence custom id part must have a nextSequence');
+                throw new Error(__('customId.error.sequenceNextEmpty'));
             }
             const regex = /\{num}/gi;
             const padRegex = /\{num,(\d+)}/gi;

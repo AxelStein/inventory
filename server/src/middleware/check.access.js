@@ -17,7 +17,7 @@ class InventoryEntity {
 
 const getInventoryAccessRole = (user, inventory) => {
     if (!inventory) {
-        throw new NotFoundError('Inventory not found');
+        throw new NotFoundError(__('inventory.error.notFound'));
     }
     if (user.role === UserRole.ADMIN) {
         return InventoryAccessRole.ADMIN;
@@ -60,7 +60,7 @@ const checkResourceAccess = (action, resource, getInventoryEntity) => async (req
 
 const getPostById = async (id) => {
     const post = await postService.getByIdWithInventory(id);
-    if (!post) throw new NotFoundError('Post not found');
+    if (!post) throw new NotFoundError(__('post.error.notFound'));
     return post;
 }
 
@@ -76,7 +76,7 @@ export const checkPostAccess = (action) => checkResourceAccess(action, RESOURCE_
 
 export const checkItemAccess = (action) => checkResourceAccess(action, RESOURCE_ITEM, async (req) => {
     const item = await itemService.getByIdWithInventory(req.params.id);
-    if (!item) throw new NotFoundError('Item not found');
+    if (!item) throw new NotFoundError(__('item.error.notFound'));
     return new InventoryEntity(
         item.inventory,
         item.creatorId === req.user.id,
@@ -93,6 +93,6 @@ export const checkWriteAccess = (action) => checkResourceAccess(action, RESOURCE
 
 export const checkCustomIdAccess = (action) => checkResourceAccess(action, RESOURCE_CUSTOM_ID, async (req) => {
     const item = await customIdService.getByIdWithInventory(req.params.id);
-    if (!item) throw new NotFoundError('Custom id not found');
+    if (!item) throw new NotFoundError(__('customId.error.notFound'));
     return new InventoryEntity(item.inventory);
 })

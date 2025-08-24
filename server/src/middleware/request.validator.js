@@ -20,6 +20,9 @@ const validateSchemaFromRequest = (schema, prop) => (req, res, next) => {
  * @param {any} data
  */
 export const validateSchema = (schema, data) => {
+    if (typeof schema === 'function') {
+        schema = schema(__);
+    }
     const { error, value } = schema.validate(data, { abortEarly: false });
     if (error) {
         const details = {};

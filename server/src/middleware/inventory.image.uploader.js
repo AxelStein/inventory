@@ -20,7 +20,7 @@ const config = multer({
         if (appConfig.inventoryImage.mimeTypes.find(e => e === file.mimetype) != null) {
             callback(null, true);
         } else {
-            callback(new ValidationError(`Invalid file type. Supported types: ${appConfig.inventoryImage.mimeTypes.join(', ')}`), false);
+            callback(new ValidationError(__('image.error.invalidMimeType', appConfig.inventoryImage.mimeTypes.join(', '))), false);
         }
     }
 });

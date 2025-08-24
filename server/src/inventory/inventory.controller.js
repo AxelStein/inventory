@@ -1,4 +1,3 @@
-import express from 'express';
 import service from './inventory.service.js';
 
 const controller = {

@@ -1,4 +1,3 @@
-import express from 'express';
 import authService from './auth.service.js';
 
 const setCookieToken = (res, data) => {

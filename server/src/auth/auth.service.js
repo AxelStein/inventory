@@ -47,7 +47,7 @@ const createRequiresVerificationStatus = async (user, transaction) => {
         code: generateRandomNumberForCustomId(CustomIdType.RND_6_DIGIT)
     }, transaction);
     if (!user.email) {
-        throw new ValidationError('User has not an email');
+        throw new ValidationError(__('auth.error.userHasNoEmail'));
     }
     await emailService.sendVerificationEmail(user.email, verification.code);
     return {
@@ -70,7 +70,7 @@ const service = {
     signIn: async (email, password) => db.transaction(async (transaction) => {
         const user = await userRepository.getByEmail(email);
         if (!user || !user.password || !await bcrypt.compare(password, user.password)) {
-            throw new UnauthorizedError('Invalid credentials');
+            throw new UnauthorizedError(__('auth.error.invalidCredentials'));
         }
         if (!user.verified) {
             return createRequiresVerificationStatus(user, transaction);
@@ -97,12 +97,12 @@ const service = {
                 audience: process.env.GOOGLE_CLIENT_ID,
             });
         } catch (error) {
-            throw new ValidationError('Invalid token');
+            throw new ValidationError(__('auth.error.invalidToken'));
         }
 
         const googleId = ticket.getUserId();
         if (!googleId) {
-            throw new UnauthorizedError('Invalid credentials');
+            throw new UnauthorizedError(__('auth.error.invalidCredentials'));
         }
         const { email, name, email_verified } = ticket.getPayload();
 
@@ -147,7 +147,7 @@ const service = {
             if (data) {
                 await passwordResetRepository.delete(data.userId);
             }
-            throw new GoneError('Password restore request is expired');
+            throw new GoneError(__('auth.error.restorePasswordExpired'));
         }
 
         await userRepository.updateUserPassword(data.userId, await bcrypt.hash(password, 10), transaction);
@@ -158,7 +158,7 @@ const service = {
     verifyEmail: async (userId, code) => db.transaction(async (transaction) => {
         const verification = await emailVerificationRepository.get(userId, code, transaction, Transaction.LOCK.UPDATE);
         if (!verification) {
-            throw new ValidationError('Invalid code');
+            throw new ValidationError(__('auth.error.invalidCode'));
         }
         await verification.destroy({ transaction });
 

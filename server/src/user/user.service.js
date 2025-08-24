@@ -10,23 +10,23 @@ const service = {
 
     getById: async (id) => {
         const user = await repository.getNotBlocked(id);
-        if (!user) throw new NotFoundError('User not found');
+        if (!user) throw new NotFoundError(__('user.error.notFound'));
         return user;
     },
 
     blockByIds: async (ids, block) => db.transaction(async (transaction) => {
         const [count] = await repository.blockByIds(ids, block, transaction);
-        if (count !== ids.length) throw new ValidationError('Invalid ids');
+        if (count !== ids.length) throw new ValidationError(__('user.error.invalidIds'));
     }),
 
     deleteByIds: async (ids) => db.transaction(async (transaction) => {
         const count = await repository.deleteByIds(ids, transaction);
-        if (count !== ids.length) throw new ValidationError('Invalid ids');
+        if (count !== ids.length) throw new ValidationError(__('user.error.invalidIds'));
     }),
 
     changeRoleByIds: async (ids, role) => db.transaction(async (transaction) => {
         const [count] = await repository.changeRoleByIds(ids, role, transaction);
-        if (count !== ids.length) throw new ValidationError('Invalid ids');
+        if (count !== ids.length) throw new ValidationError(__('user.error.invalidIds'));
     })
 }
 

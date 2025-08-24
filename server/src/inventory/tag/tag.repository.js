@@ -29,7 +29,7 @@ const repository = {
         const inventory = await Inventory.findByPk(inventoryId);
         const tag = await Tag.findByPk(id);
         if (!tag) {
-            throw new NotFoundError('Tag not found');
+            throw new NotFoundError(__('tag.error.notFound'));
         }
         await inventory.removeTag(tag);
     }

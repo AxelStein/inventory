@@ -12,7 +12,7 @@ const errorHandler = (err, req, res, _) => {
     console.error(err);
 
     let statusCode = 500;
-    let message = 'An unexpected error occured. Please try again later';
+    let message = __('general.error.server');
     let details = undefined;
 
     if (err instanceof ApiError) {
@@ -25,11 +25,11 @@ const errorHandler = (err, req, res, _) => {
             const fieldName = Object.keys(err.fields)[0];
             const fieldValue = err.fields[fieldName];
             if (fieldName === "email") {
-                message = 'Signup failed. Please try a different email or password.';
+                message = __('auth.error.uniqueEmail');
             } else if (err.original.constraint === 'email_verifications_userId_key') {
-                message = 'Signup verification code has already been sent';
+                message = __('auth.error.verificationCodeSent');
             } else {
-                message = `The ${fieldName} '${fieldValue}' is already taken.`;
+                message = __('general.error.uniqueConstraint', fieldName, fieldValue);
             }
         }
     } else if (err instanceof MulterError) {
@@ -39,27 +39,27 @@ const errorHandler = (err, req, res, _) => {
         switch (err.original.constraint) {
             case 'inventories_categoryId_fkey':
                 statusCode = 400;
-                message = 'Invalid category id';
+                message = __('category.error.invalidId');
                 break;
 
             case 'inventory_write_access_userId_fkey':
                 statusCode = 404;
-                message = 'User not found';
+                message = __('writeAccess.error.userNotFound');
                 break;
 
             case 'password_resets_userId_key':
                 statusCode = 400;
-                message = 'Password reset has been already requested';
+                message = __('auth.error.passwordResetRequested');
                 break;
 
             case 'password_resets_token_key':
                 statusCode = 400;
-                message = 'Password reset failed. Please try again';
+                message = __('auth.error.passwordResetFailed');
                 break;
 
             case 'email_verifications_userId_key':
                 statusCode = 400;
-                message = 'Email verification has been already requested';
+                message = __('auth.error.verificationCodeSent');
                 break;
         }
     }

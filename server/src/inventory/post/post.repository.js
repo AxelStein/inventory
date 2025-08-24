@@ -53,7 +53,7 @@ const repository = {
             where: { id },
             returning: true,
         });
-        if (count === 0) throw new Error('Post not found');
+        if (count === 0) throw new Error(__('post.error.notFound'));
         return repository.getById(id);
     },
 

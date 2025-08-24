@@ -1,50 +1,50 @@
 import Joi from 'joi';
 
-const emailSchema = Joi.string()
+const createEmailSchema = (translate) => Joi.string()
     .email()
     .required()
     .messages({
-        'string.email': 'Invalid email',
-        'string.empty': 'Email is required'
+        'string.email': translate('auth.error.invalidEmail'),
+        'string.empty': translate('auth.error.emailRequired')
     });
 
-const passwordSchema = Joi.string()
+const createPasswordSchema = (translate) => Joi.string()
     .regex(/^\S*$/)
     .required()
     .messages({
-        'string.pattern.base': 'No whitespaces allowed in password',
-        'string.empty': 'Password is required'
+        'string.pattern.base': translate('auth.error.passwordTrim'),
+        'string.empty': translate('auth.error.passwordRequired')
     });
 
-export const signInSchema = Joi.object({
-    email: emailSchema,
-    password: passwordSchema,
+export const signInSchema = (translate) => Joi.object({
+    email: createEmailSchema(translate),
+    password: createPasswordSchema(translate),
 }).required();
 
 export const signInWithGoogleSchema = Joi.object({
     token: Joi.string().required(),
 }).required();
 
-export const signUpSchema = Joi.object({
+export const signUpSchema = (translate) => Joi.object({
     name: Joi.string()
         .trim()
         .min(1)
         .max(99)
         .required(),
-    email: emailSchema,
-    password: passwordSchema,
+    email: createEmailSchema(translate),
+    password: createPasswordSchema(translate),
 }).required();
 
-export const resetPasswordSchema = Joi.object({
-    email: emailSchema
+export const resetPasswordSchema = (translate) => Joi.object({
+    email: createEmailSchema(translate)
 }).required();
 
-export const restorePasswordSchema = Joi.object({
+export const restorePasswordSchema = (translate) => Joi.object({
     token: Joi
         .string()
         .token()
         .required(),
-    password: passwordSchema
+    password: createPasswordSchema(translate)
 }).required();
 
 export const verifyEmailSchema = Joi.object({

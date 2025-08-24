@@ -13,7 +13,7 @@ const validator = (req, res, next) => {
     fields.forEach(field => {
         let fieldCount = types[field.type] || 0;
         if (fieldCount === MAX_FIELDS_PER_TYPE) {
-            throw new ValidationError(`There are more than ${MAX_FIELDS_PER_TYPE} fields of type "${field.type}"`);
+            throw new ValidationError(__('inventory.error.customFieldMaxCount', MAX_FIELDS_PER_TYPE, field.type));
         }
         fieldCount++;
         types[field.type] = fieldCount;
