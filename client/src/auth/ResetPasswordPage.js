@@ -129,16 +129,12 @@ function ResetPasswordPage() {
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw' }}>
-      <Container>
-        <Row className='justify-content-center'>
-          <Col md={6}>
+        <Col md={6}>
             <Stack>
-              <h1 className='mb-5'>{token ? 'Restore password' : 'Reset password'}</h1>
-              {renderContent()}
+                <h1 className='mb-5'>{token ? 'Restore password' : 'Reset password'}</h1>
+                {renderContent()}
             </Stack>
-          </Col>
-        </Row>
-      </Container>
+        </Col>
 
       {AppToastContainer()}
     </div>

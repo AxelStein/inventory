@@ -52,8 +52,8 @@ const createRequiresVerificationStatus = async (user, transaction) => {
     await emailService.sendVerificationEmail(user.email, verification.code);
     return {
         userId: user.id,
-        message: 'Signup verification code has been sent. Check your email.',
-        status: 'verification_code_sent'
+        status: 'verification_code_sent',
+        email: user.email,
     };
 };
 

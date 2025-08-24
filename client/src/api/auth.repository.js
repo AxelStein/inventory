@@ -25,6 +25,8 @@ const repository = {
     restorePassword: (token, password) => {
         return apiClient.post('/guest/auth/restore-password', { token, password });
     },
+
+    verifyEmail: (userId, code) => apiClient.post('/guest/auth/verify-email', { userId, code }),
 }
 
 export default repository;

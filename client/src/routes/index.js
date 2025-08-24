@@ -4,6 +4,7 @@ import AuthPage from '../auth/AuthPage.js';
 import DashboardPage from '../dashboard/DashboardPage.js';
 import ResetPasswordPage from '../auth/ResetPasswordPage.js';
 import { GuestRoutes, ProtectedRoutes } from "./protected.js";
+import EmailVerificationPage from "../auth/EmailVerificationPage";
 
 const router = (
     <BrowserRouter>
@@ -13,6 +14,7 @@ const router = (
                 <Route path='/sign-up' element={<AuthPage isSignIn={false} />} />
                 <Route path='/sign-in' element={<AuthPage isSignIn={true} />} />
                 <Route path='/reset-password' element={<ResetPasswordPage/>}/>
+                <Route path='/verify-email' element={<EmailVerificationPage/>} />
             </Route>
             <Route element={<ProtectedRoutes />}>
                 <Route path='/' element={<DashboardPage />} />

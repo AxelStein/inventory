@@ -67,80 +67,76 @@ function AuthPage({isSignIn}) {
 
     return (
         <div className="d-flex justify-content-center align-items-center" style={{minHeight: '100vh', width: '100vw'}}>
-            <Container>
-                <Row className='justify-content-center'>
-                    <Col md={6}>
-                        <Stack>
-                            <h1 className='mb-5'>Inventory App</h1>
+            <Col md={6}>
+                <Stack>
+                    <h1 className='mb-5'>Inventory App</h1>
 
-                            <Form onSubmit={handleSubmit}>
-                                {!isSignIn && (
-                                    <Form.Group className='mb-3' controlId='formName'>
-                                        <Form.Label>Name</Form.Label>
-                                        <Form.Control
-                                            required type='name'
-                                            placeholder='Enter name'
-                                            isInvalid={nameError}
-                                            disabled={isSubmit}
-                                            onChange={onNameChange}
-                                            name='name'/>
-                                        <Form.Control.Feedback type='invalid'>{nameError}</Form.Control.Feedback>
-                                    </Form.Group>
-                                )}
+                    <Form onSubmit={handleSubmit}>
+                        {!isSignIn && (
+                            <Form.Group className='mb-3' controlId='formName'>
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                    required type='name'
+                                    placeholder='Enter name'
+                                    isInvalid={nameError}
+                                    disabled={isSubmit}
+                                    onChange={onNameChange}
+                                    name='name'/>
+                                <Form.Control.Feedback type='invalid'>{nameError}</Form.Control.Feedback>
+                            </Form.Group>
+                        )}
 
-                                <Form.Group className='mb-3' controlId='formEmail'>
-                                    <Form.Label>Email</Form.Label>
-                                    <Form.Control
-                                        required
-                                        type='email'
-                                        placeholder='Enter email'
-                                        disabled={isSubmit}
-                                        onChange={onEmailChange}
-                                        isInvalid={emailError}
-                                        name='email'/>
-                                    <Form.Control.Feedback type='invalid'>{emailError}</Form.Control.Feedback>
-                                </Form.Group>
+                        <Form.Group className='mb-3' controlId='formEmail'>
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control
+                                required
+                                type='email'
+                                placeholder='Enter email'
+                                disabled={isSubmit}
+                                onChange={onEmailChange}
+                                isInvalid={emailError}
+                                name='email'/>
+                            <Form.Control.Feedback type='invalid'>{emailError}</Form.Control.Feedback>
+                        </Form.Group>
 
-                                <Form.Group className='mb-3' controlId='formPassword'>
-                                    <Form.Label>Password</Form.Label>
-                                    <Form.Control
-                                        required
-                                        type='password'
-                                        placeholder='Enter password'
-                                        disabled={isSubmit}
-                                        onChange={onPasswordChange}
-                                        isInvalid={passwordError}
-                                        name='password'/>
-                                    <Form.Control.Feedback type='invalid'>{passwordError}</Form.Control.Feedback>
-                                </Form.Group>
+                        <Form.Group className='mb-3' controlId='formPassword'>
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control
+                                required
+                                type='password'
+                                placeholder='Enter password'
+                                disabled={isSubmit}
+                                onChange={onPasswordChange}
+                                isInvalid={passwordError}
+                                name='password'/>
+                            <Form.Control.Feedback type='invalid'>{passwordError}</Form.Control.Feedback>
+                        </Form.Group>
 
-                                <div className='d-grid mb-3'>
-                                    <Button variant='outline-primary' type='Submit'
-                                            disabled={isSubmit}>{isSubmit ? 'Submit...' : (isSignIn ? 'Sign in' : 'Sign up')}</Button>
+                        <div className='d-grid mb-3'>
+                            <Button variant='outline-primary' type='Submit'
+                                    disabled={isSubmit}>{isSubmit ? 'Submit...' : (isSignIn ? 'Sign in' : 'Sign up')}</Button>
+                        </div>
+
+                        <GoogleSignInButton/>
+
+                        {isSignIn && (
+                            <div className='text-center mt-3'>
+                                <a href='/reset-password'>Forgot password?</a>
+
+                                <div className='mt-5'>
+                                    Don't have an account? <a href='/sign-up'>Sign up</a>
                                 </div>
+                            </div>
+                        )}
 
-                                <GoogleSignInButton/>
-
-                                {isSignIn && (
-                                    <div className='text-center mt-3'>
-                                        <a href='/reset-password'>Forgot password?</a>
-
-                                        <div className='mt-5'>
-                                            Don't have an account? <a href='/sign-up'>Sign up</a>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {!isSignIn && (
-                                    <div className='text-center mt-5'>
-                                        Already have an account? <a href='/sign-in'>Sign in</a>
-                                    </div>
-                                )}
-                            </Form>
-                        </Stack>
-                    </Col>
-                </Row>
-            </Container>
+                        {!isSignIn && (
+                            <div className='text-center mt-5'>
+                                Already have an account? <a href='/sign-in'>Sign in</a>
+                            </div>
+                        )}
+                    </Form>
+                </Stack>
+            </Col>
 
             <AppToastContainer/>
         </div>
