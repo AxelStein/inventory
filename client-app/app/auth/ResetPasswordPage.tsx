@@ -1,10 +1,12 @@
 import {Alert, Button, Form} from "react-bootstrap";
 import PasswordForm from "~/auth/components/PasswordForm";
 import {useState} from "react";
-import {useSearchParams} from "react-router";
+import {Link, useSearchParams} from "react-router";
 import EmailForm from "~/auth/components/EmailForm";
 import AppToastContainer from "~/components/AppToastContainer";
 import { toast } from 'react-toastify';
+import {Trans, useTranslation} from "react-i18next";
+import SubmitButton from "~/auth/SubmitButton";
 
 export default function ResetPasswordPage() {
     const [passwordError, setPasswordError] = useState(null);
@@ -14,6 +16,7 @@ export default function ResetPasswordPage() {
     const [isRestored, setIsRestored] = useState(false);
     const [requestExpired, setRequestExpired] = useState(null);
     const [searchParams] = useSearchParams();
+    const { t } = useTranslation();
 
     const token = searchParams.get('token');
 
@@ -26,30 +29,29 @@ export default function ResetPasswordPage() {
     }
 
     if (isReset) {
-        return <div>Link to restore password has been sent to your email.</div>;
+        return <div>{t('auth.msgResetPasswordLinkSent')}</div>;
     }
     if (isRestored) {
-        return (<div>Your password has been restored. <a href='/auth/sign-in'>Sign in</a> with new credentials</div>);
+        return <div>
+            <Trans i18nKey='auth.msgPasswordRestored'>
+                Your password has been restored. <a href='/auth/sign-in'>Sign in</a> with new credentials.
+            </Trans>
+        </div>;
     }
     if (requestExpired) {
-        return <Alert variant='danger'>{requestExpired}. Please <a href="/auth/reset-password">try again</a></Alert>
+        return <Alert variant='danger'>
+            {requestExpired}. <Trans i18nKey="auth.msgPasswordResetExpired" >Please <a href='/auth/reset-password'>try again</a></Trans>
+        </Alert>
     }
     return <>
-        <h1 className='mb-5'>{token ? 'Restore password' : 'Reset password'}</h1>
+        <h1 className='mb-5'>{t(token ? 'auth.titleRestorePassword' : 'auth.titleResetPassword')}</h1>
 
         <Form>
             {token ?
                 <PasswordForm disabled={isSubmit} onChange={onPasswordChange} error={passwordError}/> :
                 <EmailForm disabled={isSubmit} onChange={onEmailChange} error={emailError}/>
             }
-
-            <Button
-                className='w-100 mb-3'
-                variant='outline-primary'
-                type='submit'
-                disabled={isSubmit}>
-                {isSubmit ? 'Submit...' : token ? 'Restore' : 'Reset'}
-            </Button>
+            <SubmitButton isSubmit={isSubmit} label={t(token ? 'auth.btnRestore' : 'auth.btnReset')}/>
         </Form>
 
         <AppToastContainer/>

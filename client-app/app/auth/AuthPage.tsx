@@ -7,12 +7,15 @@ import GoogleSignInButton from "~/auth/components/GoogleSignInButton";
 import AppToastContainer from "~/components/AppToastContainer";
 import { toast } from 'react-toastify';
 import authRepository from "../../api/auth.repository";
+import {useTranslation} from "react-i18next";
+import SubmitButton from "~/auth/SubmitButton";
 
 export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
     const [nameError, setNameError] = useState(null);
     const [emailError, setEmailError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
     const [isSubmit, setIsSubmit] = useState(false);
+    const { t } = useTranslation();
 
     const showErrorToast = (err: Error) => {
         toast.error(err.message);
@@ -62,13 +65,7 @@ export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
 
             <PasswordForm disabled={isSubmit} onChange={onPasswordChange} error={passwordError}/>
 
-            <Button
-                className='w-100 mb-3'
-                variant='outline-primary'
-                type='submit'
-                disabled={isSubmit}>
-                {isSubmit ? 'Submit...' : (isSignIn ? 'Sign in' : 'Sign up')}
-            </Button>
+            <SubmitButton isSubmit={isSubmit} label={t(isSignIn ? 'auth.btnSignIn' : 'auth.btnSignUp')}/>
 
         </Form>
 
@@ -76,17 +73,17 @@ export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
 
         {isSignIn && (
             <div className='text-center mt-3'>
-                <a href='/auth/reset-password'>Forgot password?</a>
+                <a href='/auth/reset-password'>{t('auth.linkForgotPassword')}</a>
 
                 <div className='mt-5'>
-                    Don't have an account? <a href='/auth/sign-up'>Sign up</a>
+                    {t('auth.labelDontHaveAccount')} <a href='/auth/sign-up'>{t('auth.btnSignUp')}</a>
                 </div>
             </div>
         )}
 
         {!isSignIn && (
             <div className='text-center mt-5'>
-                Already have an account? <a href='/auth/sign-in'>Sign in</a>
+                {t('auth.labelHaveAccount')} <a href='/auth/sign-in'>{t('auth.btnSignIn')}</a>
             </div>
         )}
 

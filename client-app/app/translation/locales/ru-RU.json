@@ -1,0 +1,26 @@
+{
+  "auth": {
+    "btnSignIn": "Войти",
+    "btnSignUp": "Зарегистрироваться",
+    "inputName": "Имя",
+    "inputEmail": "Электронная почта",
+    "inputPassword": "Пароль",
+    "linkForgotPassword": "Забыли пароль?",
+    "labelDontHaveAccount": "Нет учётной записи?",
+    "labelHaveAccount": "Уже есть учётная запись?",
+    "titleResetPassword": "Сбросить пароль",
+    "titleRestorePassword": "Восстановить пароль",
+    "btnReset": "Сбросить",
+    "btnRestore": "Восстановить",
+    "msgResetPasswordLinkSent": "Ссылка для восстановления пароля отправлена на вашу электронную почту.",
+    "msgPasswordRestored": "Ваш пароль восстановлен. <1>Войдите</1> с новыми учётными данными.",
+    "msgPasswordResetExpired": "Пожалуйста, <1>повторите попытку</1>.",
+    "emailVerification": {
+      "title": "Подтверждение адреса электронной почты",
+      "inputCode": "Код",
+      "description": "Код подтверждения отправлен на {{email}}",
+      "hint": "Проверьте свой почтовый ящик и введите проверочный код ниже, чтобы завершить регистрацию.",
+      "btnSubmit": "Отправить"
+    }
+  }
+}

@@ -2,23 +2,23 @@ import {Form} from "react-bootstrap";
 import React from "react";
 import {useTranslation} from "react-i18next";
 
-interface PasswordFormProps {
+interface VerificationCodeFormProps {
     disabled: boolean;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     error: string | null;
 }
 
-export default function PasswordForm({ disabled, onChange, error }: PasswordFormProps) {
+export default function VerificationCodeForm({ disabled, onChange, error }: VerificationCodeFormProps) {
     const { t } = useTranslation();
-    return <Form.Group className='mb-3' controlId='formPassword'>
+    return <Form.Group className='mb-3' controlId='formCode'>
         <Form.Control
             required
-            type='password'
-            placeholder={t('auth.inputPassword')}
+            type='text'
+            placeholder={t('auth.emailVerification.inputCode')}
             disabled={disabled}
             onChange={onChange}
             isInvalid={error != null}
-            name='password'/>
+            name='code'/>
         <Form.Control.Feedback type='invalid'>{error}</Form.Control.Feedback>
-    </Form.Group>
+    </Form.Group>;
 }

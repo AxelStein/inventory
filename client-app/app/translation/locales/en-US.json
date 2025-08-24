@@ -1,0 +1,26 @@
+{
+  "auth": {
+    "btnSignIn": "Sign in",
+    "btnSignUp": "Sign up",
+    "inputName": "Name",
+    "inputEmail": "Email",
+    "inputPassword": "Password",
+    "linkForgotPassword": "Forgot password?",
+    "labelDontHaveAccount": "Don't have an account?",
+    "labelHaveAccount": "Already have an account?",
+    "titleResetPassword": "Reset password",
+    "titleRestorePassword": "Restore password",
+    "btnReset": "Reset",
+    "btnRestore": "Restore",
+    "msgResetPasswordLinkSent": "Link to restore password has been sent to your email.",
+    "msgPasswordRestored": "Your password has been restored. <1>Sign in</1> with new credentials.",
+    "msgPasswordResetExpired": "Please <1>try again</1>.",
+    "emailVerification": {
+      "title": "Email verification",
+      "inputCode": "Code",
+      "description": "Verification code has been sent to {{email}}",
+      "hint": "Please check your inbox and enter the verification code below to complete the sign up.",
+      "btnSubmit": "Submit"
+    }
+  }
+}

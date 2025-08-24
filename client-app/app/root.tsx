@@ -8,6 +8,7 @@ import {
 import type { Route } from "./+types/root";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {GoogleOAuthProvider} from "@react-oauth/google";
+import translation from "~/translation";
 
 export function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -58,6 +59,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
 export default function App() {
     return <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <Outlet />
+        <Outlet/>
     </GoogleOAuthProvider>
 }
