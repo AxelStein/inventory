@@ -78,17 +78,19 @@ const service = {
         return createToken(user);
     }),
 
-    signUp: async (name, email, password) => db.transaction(async (transaction) => {
+    signUp: async (name, email, password, locale) => db.transaction(async (transaction) => {
         const user = await userRepository.create({
             name,
             email,
             password: await bcrypt.hash(password, 10),
         }, transaction);
-        await userSettingsService.createDefault(user.id, transaction);
+
+        await userSettingsService.createDefault(user.id, locale, transaction);
+
         return createRequiresVerificationStatus(user, transaction);
     }),
 
-    signInWithGoogle: (token) => db.transaction(async (transaction) => {
+    signInWithGoogle: (token, locale) => db.transaction(async (transaction) => {
         const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
         let ticket;
         try {
@@ -116,6 +118,9 @@ const service = {
             verified: email_verified,
             googleId,
         }, transaction);
+
+        await userSettingsService.createDefault(user.id, locale, transaction);
+
         if (!user.verified) {
             return createRequiresVerificationStatus(user, transaction);
         }

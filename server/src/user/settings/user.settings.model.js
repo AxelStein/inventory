@@ -21,7 +21,7 @@ UserSettings.init({
         defaultValue: appConfig.themes[0],
         allowNull: false,
     },
-    language: {
+    locale: {
         type: DataTypes.ENUM(...appConfig.languages.map(l => l.locale)),
         allowNull: false,
         defaultValue: appConfig.languages.find(l => l.default).locale,

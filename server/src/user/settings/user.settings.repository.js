@@ -2,8 +2,8 @@ import UserSettings from "./user.settings.model.js";
 
 const repository = {
 
-    createDefault: (userId, transaction = null) => UserSettings.create(
-        { userId },
+    createDefault: (userId, locale, transaction = null) => UserSettings.create(
+        { userId, locale },
         { transaction }
     ),
 

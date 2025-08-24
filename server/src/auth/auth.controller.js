@@ -16,7 +16,7 @@ const controller = {
 
     signUp: async (req, res) => {
         const { name, email, password } = req.body;
-        res.send(await authService.signUp(name, email, password));
+        res.send(await authService.signUp(name, email, password, req.locale));
     },
 
     signOut: (req, res) => {
@@ -26,7 +26,7 @@ const controller = {
 
     signInWithGoogle: async (req, res) => {
         const { token } = req.body;
-        setCookieToken(res, await authService.signInWithGoogle(token));
+        setCookieToken(res, await authService.signInWithGoogle(token, req.locale));
     },
 
     resetPassword: async (req, res) => {
