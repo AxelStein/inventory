@@ -6,7 +6,11 @@ const service = {
 
     getByIdWithWriteAccess: (id) => repository.getByIdWithWriteAccess(id),
 
-    getList: (userId, filter, sortBy, sortAsc, page, perPage) => repository.getList(userId, filter, sortBy, sortAsc, page, perPage),
+    getList: (params) => repository.getList(params),
+
+    getListByTag: (params) => repository.getListByTag(params),
+
+    search: (params) => repository.search(params),
 
     getById: (id) => repository.getById(id),
 

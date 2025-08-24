@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { CustomFieldType } from './inventory.custom.field.js';
 import InventoryListFilters from './inventory.list.filters.js';
+import InventoryListSortBy from "./inventory.list.sort.js";
 
 const customFieldsSchema = Joi.array().items(
     Joi.object({
@@ -32,12 +33,25 @@ export const uploadImageSchema = Joi.object({
     version: Joi.number().integer().required()
 }).required();
 
-export const getInventoryListSchema = Joi.object({
-    filter: Joi.string().valid(...Object.values(InventoryListFilters)),
-    sortBy: Joi.string().valid('title', 'createdAt', 'updatedAt'),
-    sortAsc: Joi.boolean().default(false),
+const inventoryListBaseSchema = {
+    sortBy: Joi.string().valid(...Object.values(InventoryListSortBy)),
+    sortAsc: Joi.boolean().default(true),
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(10).max(50).default(10),
+};
+
+export const searchInventorySchema = Joi.object({
+    q: Joi.string().trim().required(),
+    ...inventoryListBaseSchema,
+}).required();
+
+export const getInventoryListByTagSchema = Joi.object({
+    tagId: Joi.number().integer().required(),
+}).required();
+
+export const getInventoryListSchema = Joi.object({
+    filter: Joi.string().valid(...Object.values(InventoryListFilters)),
+    ...inventoryListBaseSchema,
 }).required();
 
 export const checkInventoryParamsSchema = Joi.object({

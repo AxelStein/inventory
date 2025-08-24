@@ -1,5 +1,6 @@
 import User from './user.model.js';
 import {Op, Sequelize} from "sequelize";
+import {createSortOrder} from "../db/sort.order.js";
 
 const repository = {
 
@@ -14,7 +15,7 @@ const repository = {
         transaction,
     }),
 
-    search: (q) => User.findAll({
+    search: (q) => User.findAll({ // todo add searchVector
         where: Sequelize.where(
             Sequelize.fn('to_tsquery', 'english', `${q}:*`),
             '@@',
@@ -23,7 +24,7 @@ const repository = {
     }),
 
     getList: (sortBy, sortAsc, page, perPage) => User.getPage(page, perPage, {
-        order: sortBy ? [[sortBy, sortAsc ? 'ASC' : 'DESC']] : undefined,
+        order: createSortOrder(sortBy, sortAsc),
     }),
 
     updateLastSeenDate: (id) => User.update({ lastSeen: new Date() }, { where: { id } }),

@@ -1,9 +1,9 @@
-import { DataTypes } from 'sequelize';
+import {DataTypes, Sequelize} from 'sequelize';
 import db from '../db/index.js';
 import User from '../user/user.model.js';
 import Category from './category/category.model.js';
 import Tag from './tag/tag.model.js';
-import { CustomFieldState, inflateInventoryCustomFields } from './inventory.custom.field.js';
+import {CustomFieldState, CustomFieldType, inflateInventoryCustomFields} from './inventory.custom.field.js';
 import { OptimisticLockModel } from '../db/optimistic.lock.model.js';
 
 class Inventory extends OptimisticLockModel { }
@@ -29,6 +29,9 @@ const columns = {
         defaultValue: false,
         allowNull: false,
     },
+    searchVector: {
+        type: DataTypes.TSVECTOR,
+    }
 };
 
 inflateInventoryCustomFields((prefix) => {
@@ -43,11 +46,30 @@ inflateInventoryCustomFields((prefix) => {
     };
 });
 
+const updateSearchVector = (item) => {
+    const values = [item.title, item.description];
+    item.searchVector = Sequelize.fn(
+        'to_tsvector',
+        'english',
+        values.join(' ')
+    )
+}
+
 Inventory.init(columns, {
     sequelize: db,
     modelName: "Inventory",
     tableName: "inventories",
-    version: true
+    version: true,
+    indexes: [
+        {
+            fields: ['searchVector'],
+            using: 'gin'
+        }
+    ],
+    hooks: {
+        beforeCreate: (item) => updateSearchVector(item),
+        beforeUpdate: (item) => updateSearchVector(item)
+    },
 });
 
 User.hasMany(Inventory, {

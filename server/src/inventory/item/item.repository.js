@@ -1,5 +1,6 @@
 import Item from './item.model.js';
 import {Sequelize, Op} from "sequelize";
+import {createSortOrder} from "../../db/sort.order.js";
 
 const repository = {
 
@@ -31,7 +32,7 @@ const repository = {
                 attributes: ['createdAt']
             }],
             where,
-            order: sortBy ? [[sortBy, sortAsc ? 'ASC' : 'DESC']] : undefined,
+            order: createSortOrder(sortBy, sortAsc),
         });
     },
 

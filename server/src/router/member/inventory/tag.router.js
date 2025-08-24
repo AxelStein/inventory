@@ -28,4 +28,6 @@ router.get(
     controller.getFromInventory
 );
 
+router.get('/list', controller.getList);
+
 export default router;

@@ -11,7 +11,8 @@ import AccessAction from '../../../inventory/access/access.action.js';
 import {validateBody, validateParams, validateQuery} from '../../../middleware/request.validator.js';
 import {
     checkInventoryParamsSchema,
-    createInventorySchema, getInventoryListSchema, updateInventorySchema, uploadImageSchema
+    createInventorySchema,
+    getInventoryListByTagSchema, getInventoryListSchema, searchInventorySchema, updateInventorySchema, uploadImageSchema
 } from '../../../inventory/inventory.schemas.js';
 import customFieldValidator from '../../../middleware/custom.field.validator.js';
 import inventoryImageUploader from '../../../middleware/inventory.image.uploader.js';
@@ -24,6 +25,19 @@ router.get(
     validateQuery(getInventoryListSchema),
     controller.getList
 );
+
+router.get(
+    '/search',
+    validateQuery(searchInventorySchema),
+    controller.search
+);
+
+router.get(
+    '/list-by-tag/:tagId',
+    validateParams(getInventoryListByTagSchema),
+    validateQuery(getInventoryListSchema),
+    controller.getListByTag
+)
 
 router.get(
     '/by-id/:inventoryId',

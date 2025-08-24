@@ -41,7 +41,6 @@ const updateSearchVector = (item) => {
             values.push(item[prefix]);
         }
     });
-    console.log(`updateSearchVector=${values.join(' ')}`);
     item.searchVector = Sequelize.fn(
         'to_tsvector',
         'english',

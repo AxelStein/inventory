@@ -2,43 +2,35 @@ import express from 'express';
 import service from './inventory.service.js';
 
 const controller = {
-    /**
-     * @param {express.Request} req 
-     * @param {express.Response} res 
-     */
+
     getList: async (req, res) => {
-        const { filter, sortBy, sortAsc, page, perPage } = req.validatedQuery || {};
-        res.send(await service.getList(req.user?.id, filter, sortBy, sortAsc, page, perPage));
+        const params = req.validatedQuery || {};
+        params.userId = req.user?.id;
+        res.send(await service.getList(params));
     },
 
-    /**
-     * @param {express.Request} req 
-     * @param {express.Response} res 
-     */
+    getListByTag: async (req, res) => {
+        const params = req.validatedQuery || {};
+        params.tagId = req.params.tagId;
+        res.send(await service.getListByTag(params));
+    },
+
+    search: async (req, res) => {
+        res.send(await service.search(req.validatedQuery));
+    },
+
     getById: async (req, res) => {
         res.send(await service.getById(req.params.inventoryId));
     },
 
-    /**
-     * @param {express.Request} req 
-     * @param {express.Response} res 
-     */
     create: async (req, res) => {
         res.send(await service.create(req.user.id, req.body));
     },
 
-    /**
-     * @param {express.Request} req 
-     * @param {express.Response} res 
-     */
     update: async (req, res) => {
         res.send(await service.update(req.params.inventoryId, req.body));
     },
 
-    /**
-     * @param {express.Request} req 
-     * @param {express.Response} res 
-     */
     uploadImage: async (req, res) => {
         res.send(
             await service.update(
@@ -51,10 +43,6 @@ const controller = {
         );
     },
 
-    /**
-     * @param {express.Request} req 
-     * @param {express.Response} res 
-     */
     delete: async (req, res) => {
         await service.delete(req.params.inventoryId);
         res.sendStatus(200);
