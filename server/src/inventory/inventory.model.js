@@ -3,7 +3,7 @@ import db from '../db/index.js';
 import User from '../user/user.model.js';
 import Category from './category/category.model.js';
 import Tag from './tag/tag.model.js';
-import {CustomFieldState, CustomFieldType, inflateInventoryCustomFields} from './inventory.custom.field.js';
+import {CustomFieldState, inflateInventoryCustomFields} from './inventory.custom.field.js';
 import { OptimisticLockModel } from '../db/optimistic.lock.model.js';
 
 class Inventory extends OptimisticLockModel { }

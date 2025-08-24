@@ -1,4 +1,4 @@
-import {DataTypes, Model, Sequelize} from 'sequelize';
+import {DataTypes, Sequelize} from 'sequelize';
 import db from '../db/index.js';
 import UserRole from './user.role.js';
 import {PagingModel} from "../db/paging.model.js";

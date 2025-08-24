@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import {AUTH_PROVIDER} from "./auth.provider.js";
 import {GoneError, UnauthorizedError, ValidationError} from '../error/index.js';
 import passwordResetRepository from "./password_reset/password.reset.repository.js";
 import db from "../db/index.js";
@@ -11,6 +10,7 @@ import CustomIdType from "../inventory/custom_id/custom.id.type.js";
 import {Transaction} from "sequelize";
 import userSettingsService from "../user/settings/user.settings.service.js";
 import userRepository from "../user/user.repository.js";
+import crypto from "crypto";
 
 const passwordResetExpireTime = 3600000;
 
@@ -40,13 +40,18 @@ const createToken = (user) => new Promise((resolve, reject) => {
     );
 });
 
-const createRequiresVerificationStatus = (user) => {
+const createRequiresVerificationStatus = async (user, transaction) => {
+    const verification = await emailVerificationRepository.create({
+        userId: user.id,
+        code: generateRandomNumberForCustomId(CustomIdType.RND_6_DIGIT)
+    }, transaction);
+    await emailService.sendVerificationEmail(user.email, verification.code);
     return {
         userId: user.id,
         message: 'Signup verification code has been sent. Check your email.',
         status: 'verification_code_sent'
     };
-}
+};
 
 const service = {
 
@@ -58,16 +63,16 @@ const service = {
         return user;
     },
 
-    signIn: async (email, password) => {
+    signIn: async (email, password) => db.transaction(async (transaction) => {
         const user = await userRepository.getByEmail(email);
         if (!user || !user.password || !await bcrypt.compare(password, user.password)) {
             throw new UnauthorizedError('Invalid credentials');
         }
         if (!user.verified) {
-            return createRequiresVerificationStatus(user);
+            return createRequiresVerificationStatus(user, transaction);
         }
         return createToken(user);
-    },
+    }),
 
     signUp: async (name, email, password) => db.transaction(async (transaction) => {
         const user = await userRepository.create({
@@ -75,17 +80,8 @@ const service = {
             email,
             password: await bcrypt.hash(password, 10),
         }, transaction);
-
-        const verification = await emailVerificationRepository.create({
-            userId: user.id,
-            code: generateRandomNumberForCustomId(CustomIdType.RND_6_DIGIT)
-        }, transaction);
-
         await userSettingsService.createDefault(user.id, transaction);
-
-        await emailService.sendVerificationEmail(user.email, verification.code);
-
-        return createRequiresVerificationStatus(user);
+        return createRequiresVerificationStatus(user, transaction);
     }),
 
     getOrCreateWithProvider: (provider, id, name, email) => db.transaction(async (transaction) => {

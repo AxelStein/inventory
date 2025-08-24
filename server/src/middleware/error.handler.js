@@ -26,6 +26,8 @@ const errorHandler = (err, req, res, _) => {
             const fieldValue = err.fields[fieldName];
             if (fieldName === "email") {
                 message = 'Signup failed. Please try a different email or password.';
+            } else if (err.original.constraint === 'email_verifications_userId_key') {
+                message = 'Signup verification code has already been sent';
             } else {
                 message = `The ${fieldName} '${fieldValue}' is already taken.`;
             }
