@@ -76,6 +76,7 @@ User.init({
                     'password',
                     'googleId',
                     'facebookId',
+                    'searchVector'
                 ]
             }
         },

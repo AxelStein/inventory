@@ -70,6 +70,13 @@ Inventory.init(columns, {
         beforeCreate: (item) => updateSearchVector(item),
         beforeUpdate: (item) => updateSearchVector(item)
     },
+    defaultScope: {
+        attributes: {
+            exclude: [
+                'searchVector'
+            ]
+        }
+    }
 });
 
 User.hasMany(Inventory, {

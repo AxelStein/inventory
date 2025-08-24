@@ -4,9 +4,9 @@ import db from "../db/index.js";
 
 const service = {
 
-    search: (q) => repository.search(q),
+    search: (params) => repository.search(params),
 
-    getList: (sortBy, sortAsc, page, perPage) => repository.getList(sortBy, sortAsc, page, perPage),
+    getList: (params) => repository.getList(params),
 
     getById: async (id) => {
         const user = await repository.getNotBlocked(id);

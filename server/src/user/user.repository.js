@@ -15,15 +15,16 @@ const repository = {
         transaction,
     }),
 
-    search: (q) => User.findAll({ // todo add searchVector
+    search: ({ q, sortBy, sortAsc, page, perPage }) => User.getPage(page, perPage, {
         where: Sequelize.where(
             Sequelize.fn('to_tsquery', 'english', `${q}:*`),
             '@@',
             Sequelize.col('searchVector'),
-        )
+        ),
+        order: createSortOrder(sortBy, sortAsc),
     }),
 
-    getList: (sortBy, sortAsc, page, perPage) => User.getPage(page, perPage, {
+    getList: ({ sortBy, sortAsc, page, perPage }) => User.getPage(page, perPage, {
         order: createSortOrder(sortBy, sortAsc),
     }),
 

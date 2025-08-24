@@ -10,11 +10,15 @@ const idsSchema = Joi.array()
     .min(1)
     .required();
 
-export const getUserListSchema = Joi.object({
+const userListBaseSchema = {
     sortBy: Joi.string().valid('lastSeen', 'name', 'email').default('name'),
     sortAsc: Joi.bool().default(true),
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(10).max(50).default(10),
+}
+
+export const getUserListSchema = Joi.object({
+    ...userListBaseSchema,
 });
 
 export const blockUsersByIdsSchema = Joi.object({
@@ -33,4 +37,5 @@ export const changeUserRoleByIdsSchema = Joi.object({
 
 export const searchUsersSchema = Joi.object({
     q: Joi.string().trim().required(),
+    ...userListBaseSchema
 }).required();
