@@ -11,6 +11,7 @@ import {Transaction} from "sequelize";
 import userSettingsService from "../user/settings/user.settings.service.js";
 import userRepository from "../user/user.repository.js";
 import crypto from "crypto";
+import {OAuth2Client} from 'google-auth-library';
 
 const passwordResetExpireTime = 3600000;
 
@@ -45,6 +46,9 @@ const createRequiresVerificationStatus = async (user, transaction) => {
         userId: user.id,
         code: generateRandomNumberForCustomId(CustomIdType.RND_6_DIGIT)
     }, transaction);
+    if (!user.email) {
+        throw new ValidationError('User has not an email');
+    }
     await emailService.sendVerificationEmail(user.email, verification.code);
     return {
         userId: user.id,
@@ -84,18 +88,39 @@ const service = {
         return createRequiresVerificationStatus(user, transaction);
     }),
 
-    getOrCreateWithProvider: (provider, id, name, email) => db.transaction(async (transaction) => {
-        const providerAttr = `${provider.id}Id`;
-        let user = await userRepository.getVerified({ [providerAttr]: id }, transaction, Transaction.LOCK.UPDATE);
-        if (user) {
-            return user;
+    signInWithGoogle: (token) => db.transaction(async (transaction) => {
+        const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+        let ticket;
+        try {
+            ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: process.env.GOOGLE_CLIENT_ID,
+            });
+        } catch (error) {
+            throw new ValidationError('Invalid token');
         }
-        user = await userRepository.create({ [providerAttr]: id, name, email, verified: true }, transaction);
-        await userSettingsService.createDefault(user.id, transaction);
-        return user;
-    }),
 
-    providerSignIn: async (user) => createToken(user),
+        const googleId = ticket.getUserId();
+        if (!googleId) {
+            throw new UnauthorizedError('Invalid credentials');
+        }
+        const { email, name, email_verified } = ticket.getPayload();
+
+        let user = await userRepository.getVerified({ googleId }, transaction, Transaction.LOCK.UPDATE);
+        if (user) {
+            return createToken(user);
+        }
+        user = await userRepository.create({
+            name,
+            email,
+            verified: email_verified,
+            googleId,
+        }, transaction);
+        if (!user.verified) {
+            return createRequiresVerificationStatus(user, transaction);
+        }
+        return createToken(user);
+    }),
 
     resetPassword: (email) => db.transaction(async (transaction) => {
         const user = await userRepository.getByEmail(email, transaction);

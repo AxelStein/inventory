@@ -9,7 +9,7 @@ import handleApiError from '../api/error.handler.js';
 import authRepository from '../api/auth.repository.js';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import toastContainer from '../components/toast.container.js';
+import AppToastContainer from '../components/AppToastContainer.js';
 import { useSearchParams } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
 
@@ -140,7 +140,7 @@ function ResetPasswordPage() {
         </Row>
       </Container>
 
-      {toastContainer()}
+      {AppToastContainer()}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { ToastContainer } from 'react-toastify';
 
-const toastContainer = () => {
+const AppToastContainer = () => {
     return (
         <ToastContainer
             position="top-center"
@@ -17,4 +17,4 @@ const toastContainer = () => {
     );
 }
 
-export default toastContainer;
+export default AppToastContainer;

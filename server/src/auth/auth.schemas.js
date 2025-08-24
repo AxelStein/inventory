@@ -21,6 +21,10 @@ export const signInSchema = Joi.object({
     password: passwordSchema,
 }).required();
 
+export const signInWithGoogleSchema = Joi.object({
+    token: Joi.string().required(),
+}).required();
+
 export const signUpSchema = Joi.object({
     name: Joi.string()
         .trim()

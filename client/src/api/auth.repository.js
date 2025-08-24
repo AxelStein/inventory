@@ -7,21 +7,23 @@ const saveUser = (res) => {
 
 const repository = {
 
-    signIn: (body) => apiClient.post('/auth/sign-in', body),
+    signIn: (body) => apiClient.post('/guest/auth/sign-in', body),
 
-    signUp: (body) => apiClient.post('/auth/sign-up', body),
+    signUp: (body) => apiClient.post('/guest/auth/sign-up', body),
 
     signOut: () => {
-        return apiClient.post('/auth/sign-out')
+        return apiClient.post('/guest/auth/sign-out')
             .then(() => localStorage.removeItem(LOCAL_USER));
     },
 
+    signInWithGoogle: (token) => apiClient.post('/guest/auth/google/sign-in', { token }),
+
     resetPassword: (email) => {
-        return apiClient.post('/auth/reset-password', { email });
+        return apiClient.post('/guest/auth/reset-password', { email });
     },
 
     restorePassword: (token, password) => {
-        return apiClient.post('/auth/restore-password', { token, password });
+        return apiClient.post('/guest/auth/restore-password', { token, password });
     },
 }
 
