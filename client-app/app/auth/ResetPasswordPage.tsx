@@ -1,12 +1,13 @@
-import {Alert, Button, Form} from "react-bootstrap";
+import {Alert, Form} from "react-bootstrap";
 import PasswordForm from "~/auth/components/PasswordForm";
-import {useCallback, useState} from "react";
-import {Link, useSearchParams} from "react-router";
+import {type FormEvent, useCallback, useState} from "react";
+import { useSearchParams} from "react-router";
 import EmailForm from "~/auth/components/EmailForm";
 import AppToastContainer from "~/components/AppToastContainer";
 import { toast } from 'react-toastify';
 import {Trans, useTranslation} from "react-i18next";
 import SubmitButton from "~/auth/components/SubmitButton";
+import authRepository from "../../api/auth/auth.repository";
 
 export default function ResetPasswordPage() {
     const [passwordError, setPasswordError] = useState(null);
@@ -16,7 +17,7 @@ export default function ResetPasswordPage() {
     const [isRestored, setIsRestored] = useState(false);
     const [requestExpired, setRequestExpired] = useState(null);
     const [searchParams] = useSearchParams();
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     const token = searchParams.get('token');
 
@@ -28,9 +29,46 @@ export default function ResetPasswordPage() {
         setEmailError(null);
     }, []);
 
-    const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
+    const handleError = useCallback((err: any) => {
+        const email = err.getDetail('email');
+        const password = err.getDetail('password');
+        if (email || password) {
+            setEmailError(email);
+            setPasswordError(password);
+            return;
+        } else if (err.status === 410) {
+            setRequestExpired(err.message);
+        } else {
+            toast.error(err.message);
+        }
+    }, []);
+
+    const resetPassword = useCallback((email: string) => {
+        setIsSubmit(true);
+
+        authRepository.resetPassword(email)
+            .then(() => setIsReset(true))
+            .catch(handleError)
+            .finally(() => setIsSubmit(false));
+    }, []);
+
+    const restorePassword = useCallback((token: string, password: string) => {
+        setIsSubmit(true);
+
+        authRepository.restorePassword(token, password)
+            .then(() => setIsRestored(true))
+            .catch(handleError)
+            .finally(() => setIsSubmit(false));
+    }, []);
+
+    const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(event.currentTarget);
+
+        const form = new FormData(event.currentTarget);
+        const email = form.get("email");
+        const password = form.get("password");
+
+        token ? restorePassword(token as string, password as string) : resetPassword(email as string);
     }, []);
 
     if (isReset) {

@@ -15,8 +15,8 @@ const service = {
             from: `"Inventory App" <${process.env.GMAIL_USER}>`,
             to: email,
             subject: __('auth.email.passwordReset.subject'),
-            text: __('auth.email.passwordReset.text', `${process.env.CLIENT_URL}/reset-password?token=${token}`),
-            html: __('auth.email.passwordReset.html', `${process.env.CLIENT_URL}/reset-password?token=${token}`)
+            text: __('auth.email.passwordReset.text', `${process.env.CLIENT_URL}/auth/reset-password?token=${token}`),
+            html: __('auth.email.passwordReset.html', `${process.env.CLIENT_URL}/auth/reset-password?token=${token}`)
         };
         return transporter.sendMail(mailOptions);
     },

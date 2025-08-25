@@ -10,6 +10,7 @@ import {useTranslation} from "react-i18next";
 import SubmitButton from "~/auth/components/SubmitButton";
 import authRepository from "../../api/auth/auth.repository";
 import {useAuthSignIn} from "~/auth/components/useAuthSignIn";
+import {Link} from "react-router";
 
 export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
     const [nameError, setNameError] = useState<string | null>(null);
@@ -85,17 +86,17 @@ export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
 
         {isSignIn && (
             <div className='text-center mt-3'>
-                <a href='/auth/reset-password'>{t('auth.linkForgotPassword')}</a>
+                <Link to='/auth/reset-password'>{t('auth.linkForgotPassword')}</Link>
 
                 <div className='mt-5'>
-                    {t('auth.labelDontHaveAccount')} <a href='/auth/sign-up'>{t('auth.btnSignUp')}</a>
+                    {t('auth.labelDontHaveAccount')} <Link to='/auth/sign-up' replace={true}>{t('auth.btnSignUp')}</Link>
                 </div>
             </div>
         )}
 
         {!isSignIn && (
             <div className='text-center mt-5'>
-                {t('auth.labelHaveAccount')} <a href='/auth/sign-in'>{t('auth.btnSignIn')}</a>
+                {t('auth.labelHaveAccount')} <Link to='/auth/sign-in' replace={true}>{t('auth.btnSignIn')}</Link>
             </div>
         )}
 
