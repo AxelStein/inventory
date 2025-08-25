@@ -63,6 +63,8 @@ export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
     const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        setIsSubmit(true);
+
         const form = new FormData(event.currentTarget);
         const body = {
             name: isSignIn ? undefined : form.get("name"),
@@ -73,6 +75,7 @@ export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
         (isSignIn ? authRepository.signIn(body) : authRepository.signUp(body))
             .then(handleSignIn)
             .catch(handleError)
+            .finally(() => setIsSubmit(false));
     }, []);
 
     return <>
