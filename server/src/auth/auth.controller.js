@@ -2,7 +2,13 @@ import authService from './auth.service.js';
 
 const setCookieToken = (res, data) => {
     if (data.token) {
-        res.cookie('token', data.token, { httpOnly: true, secure: false, sameSite: 'lax' });
+        const options = {};
+        if (process.env.NODE_ENV === 'production') {
+            options.secure = true;
+            options.sameSite = 'lax';
+            options.httpOnly = true;
+        }
+        res.cookie('token', data.token, options);
     }
     res.send(data);
 }

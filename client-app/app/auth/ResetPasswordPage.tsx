@@ -1,6 +1,6 @@
 import {Alert, Button, Form} from "react-bootstrap";
 import PasswordForm from "~/auth/components/PasswordForm";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {Link, useSearchParams} from "react-router";
 import EmailForm from "~/auth/components/EmailForm";
 import AppToastContainer from "~/components/AppToastContainer";
@@ -20,13 +20,18 @@ export default function ResetPasswordPage() {
 
     const token = searchParams.get('token');
 
-    const onPasswordChange = () => {
+    const onPasswordChange = useCallback(() => {
         setPasswordError(null);
-    }
+    }, []);
 
-    const onEmailChange = () => {
+    const onEmailChange = useCallback(() => {
         setEmailError(null);
-    }
+    }, []);
+
+    const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        console.log(event.currentTarget);
+    }, []);
 
     if (isReset) {
         return <div>{t('auth.msgResetPasswordLinkSent')}</div>;
@@ -40,13 +45,13 @@ export default function ResetPasswordPage() {
     }
     if (requestExpired) {
         return <Alert variant='danger'>
-            {requestExpired}. <Trans i18nKey="auth.msgPasswordResetExpired" >Please <a href='/auth/reset-password'>try again</a></Trans>
+            {requestExpired}. <Trans i18nKey="auth.msgPasswordResetExpired">Please <a href='/auth/reset-password'>try again</a></Trans>
         </Alert>
     }
     return <>
         <h1 className='mb-5'>{t(token ? 'auth.titleRestorePassword' : 'auth.titleResetPassword')}</h1>
 
-        <Form>
+        <Form onSubmit={handleSubmit}>
             {token ?
                 <PasswordForm disabled={isSubmit} onChange={onPasswordChange} error={passwordError}/> :
                 <EmailForm disabled={isSubmit} onChange={onEmailChange} error={emailError}/>

@@ -3,7 +3,7 @@ import SubmitButton from "~/auth/SubmitButton";
 import {useSearchParams} from "react-router";
 import {Form} from "react-bootstrap";
 import VerificationCodeForm from "~/auth/components/VerificationCodeForm";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
 export default function EmailVerificationPage() {
     const [searchParams] = useSearchParams();
@@ -16,13 +16,15 @@ export default function EmailVerificationPage() {
     }
     const email = searchParams.get('email');
 
-    const handleCodeChange = () => {}
+    const handleCodeChange = useCallback(() => {}, []);
+
+    const handleSubmit = useCallback(() => {}, []);
 
     return <>
         <h1>{t('auth.emailVerification.title')}</h1>
         <p>{t('auth.emailVerification.description', { email })}</p>
         <p className='mb-4 text-secondary'>{t('auth.emailVerification.hint')}</p>
-        <Form>
+        <Form onSubmit={handleSubmit}>
             <VerificationCodeForm disabled={false} onChange={handleCodeChange} error={codeError}/>
             <SubmitButton isSubmit={false} label={t('auth.emailVerification.btnSubmit')}/>
         </Form>
