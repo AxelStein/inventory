@@ -7,35 +7,31 @@ import GoogleSignInButton from "~/auth/components/GoogleSignInButton";
 import AppToastContainer from "~/components/AppToastContainer";
 import { toast } from 'react-toastify';
 import {useTranslation} from "react-i18next";
-import SubmitButton from "~/auth/SubmitButton";
-import {useNavigate} from "react-router";
+import SubmitButton from "~/auth/components/SubmitButton";
 import authRepository from "../../api/auth/auth.repository";
-import type {SignInResponse} from "../../api/auth/auth.response";
-import ApiError from "../../api/api.error";
+import {useAuthSignIn} from "~/auth/components/useAuthSignIn";
 
 export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
     const [nameError, setNameError] = useState<string | null>(null);
     const [emailError, setEmailError] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [isSubmit, setIsSubmit] = useState(false);
-    const { t } = useTranslation();
-    const navigate = useNavigate();
+    const {t} = useTranslation();
+    const {handleSignIn} = useAuthSignIn();
 
     const showErrorToast = useCallback((err: Error) => {
         toast.error(err.message);
     }, []);
 
-    const handleError = useCallback((err: Error) => {
-        if (err instanceof ApiError) {
-            const name = err.getDetail('name');
-            const email = err.getDetail('email');
-            const password = err.getDetail('password');
-            if (name || email || password) {
-                setNameError(name);
-                setEmailError(email);
-                setPasswordError(password);
-                return;
-            }
+    const handleError = useCallback((err: any) => {
+        const name = err.getDetail('name');
+        const email = err.getDetail('email');
+        const password = err.getDetail('password');
+        if (name || email || password) {
+            setNameError(name);
+            setEmailError(email);
+            setPasswordError(password);
+            return;
         }
         showErrorToast(err);
     }, []);
@@ -50,14 +46,6 @@ export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
 
     const onPasswordChange = useCallback(() => {
         setPasswordError(null);
-    }, []);
-
-    const handleSignIn = useCallback((res: SignInResponse) => {
-        if (res.status === 'verification_code_sent') {
-            navigate(`/auth/verify-email?userId=${res?.userId}&email=${res?.email}`);
-        } else {
-            navigate('/', {replace: true});
-        }
     }, []);
 
     const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {

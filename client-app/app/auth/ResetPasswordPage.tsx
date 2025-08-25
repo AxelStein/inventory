@@ -6,7 +6,7 @@ import EmailForm from "~/auth/components/EmailForm";
 import AppToastContainer from "~/components/AppToastContainer";
 import { toast } from 'react-toastify';
 import {Trans, useTranslation} from "react-i18next";
-import SubmitButton from "~/auth/SubmitButton";
+import SubmitButton from "~/auth/components/SubmitButton";
 
 export default function ResetPasswordPage() {
     const [passwordError, setPasswordError] = useState(null);

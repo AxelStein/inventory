@@ -163,7 +163,8 @@ const service = {
     verifyEmail: async (userId, code) => db.transaction(async (transaction) => {
         const verification = await emailVerificationRepository.get(userId, code, transaction, Transaction.LOCK.UPDATE);
         if (!verification) {
-            throw new ValidationError(__('auth.error.invalidCode'));
+            const message = __('auth.error.invalidCode');
+            throw new ValidationError(message, { code: message });
         }
         await verification.destroy({ transaction });
 

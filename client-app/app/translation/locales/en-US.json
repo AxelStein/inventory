@@ -20,7 +20,11 @@
       "inputCode": "Code",
       "description": "Verification code has been sent to {{email}}",
       "hint": "Please check your inbox and enter the verification code below to complete the sign up.",
-      "btnSubmit": "Submit"
+      "btnSubmit": "Submit",
+      "error": {
+        "userNotFound": "User not found",
+        "codeEmpty": "Code is empty"
+      }
     }
   }
 }
