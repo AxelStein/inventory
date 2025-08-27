@@ -25,6 +25,7 @@ export const validateSchema = (schema, data) => {
     }
     const { error, value } = schema.validate(data, { abortEarly: false });
     if (error) {
+        console.error(error);
         const details = {};
         error.details.forEach((el) => {
             const path = el.path[0];

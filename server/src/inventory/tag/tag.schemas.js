@@ -10,10 +10,12 @@ export const createTagSchema = (translate) => Joi.object({
         .trim()
         .pattern(/^\S*$/)
         .lowercase()
+        .min(4)
         .required()
         .messages({
             'string.pattern.base': translate('tag.error.nameTrim'),
             'string.empty': translate('tag.error.nameRequired'),
+            'string.min': translate('tag.error.minLength')
         }),
 }).required();
 

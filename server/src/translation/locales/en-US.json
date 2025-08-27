@@ -84,7 +84,8 @@
     "error": {
       "notFound": "Tag not found",
       "nameTrim": "Tag name must not contain whitespaces",
-      "nameRequired": "Tag name is required"
+      "nameRequired": "Tag name is required",
+      "minLength": "Tag name must be at least 4 characters long"
     }
   }
 }

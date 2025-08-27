@@ -8,7 +8,9 @@ import {
 import type { Route } from "./+types/root";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {GoogleOAuthProvider} from "@react-oauth/google";
-import translation from "~/translation";
+import {Provider} from "react-redux";
+import {store} from "../api/store";
+import './app.css';
 
 export function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -58,7 +60,9 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 }
 
 export default function App() {
-    return <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <Outlet/>
-    </GoogleOAuthProvider>
+    return <Provider store={store}>
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+            <Outlet/>
+        </GoogleOAuthProvider>
+    </Provider>;
 }

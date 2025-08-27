@@ -17,7 +17,7 @@ export const createInventorySchema = Joi.object({
     description: Joi.string().trim().allow(''),
     categoryId: Joi.number().integer().required(),
     isPublic: Joi.boolean().required(),
-    customFields: customFieldsSchema.required()
+    customFields: customFieldsSchema
 }).required();
 
 export const updateInventorySchema = Joi.object({
@@ -37,7 +37,7 @@ const inventoryListBaseSchema = {
     sortBy: Joi.string().valid(...Object.values(InventoryListSortBy)),
     sortAsc: Joi.boolean().default(true),
     page: Joi.number().integer().min(1).default(1),
-    perPage: Joi.number().integer().min(10).max(50).default(10),
+    perPage: Joi.number().integer().min(5).max(50).default(10),
 };
 
 export const searchInventorySchema = Joi.object({

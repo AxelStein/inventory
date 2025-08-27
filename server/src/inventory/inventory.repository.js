@@ -1,13 +1,13 @@
 import Inventory from './inventory.model.js';
 import InventoryListFilter from './inventory.list.filters.js';
-import {mapInventory, mapInventoryList} from './inventory.mapper.js';
-import {Op, Sequelize} from "sequelize";
-import {createSortOrder} from "../db/sort.order.js";
+import { mapInventory, mapInventoryList } from './inventory.mapper.js';
+import { Op, Sequelize } from "sequelize";
+import { createSortOrder } from "../db/sort.order.js";
 
 const createListInclude = () => {
     return [
-        {association: 'owner'},
-        {association: 'category'},
+        { association: 'owner' },
+        { association: 'category' },
     ];
 };
 
@@ -34,18 +34,20 @@ const getInventoryList = async (page, perPage, options) => {
 const repository = {
 
     getByIdWithWriteAccess: (id) => Inventory.findOne({
-        where: {id},
+        where: { id },
         include: [
-            {association: 'writeAccess'},
-            {association: 'owner'},
+            { association: 'writeAccess' },
+            { association: 'owner' },
         ]
     }),
 
     getById: async (id, transaction, lock) => mapInventory(await Inventory.findOne({
-        where: {id},
+        where: { id },
         include: [
-            {association: 'owner'},
-            {association: 'category'},
+            { association: 'owner' },
+            { association: 'category' },
+            { association: 'tags', through: { attributes: [] } }
+
         ],
         attributes: {
             include: [createItemCountAttribute()]
@@ -54,16 +56,16 @@ const repository = {
         lock
     })),
 
-    search: async ({q, page, perPage, sortBy, sortAsc}) => {
+    search: async ({ q, page, perPage, sortBy, sortAsc }) => {
         return getInventoryList(page, perPage, {
             where: Sequelize.literal(`to_tsquery('english', :query) @@ "Inventory"."searchVector"`),
             include: createListInclude(),
             order: createSortOrder(sortBy, sortAsc),
-            replacements: {query: `${q}:*`},
+            replacements: { query: `${q}:*` },
         });
     },
 
-    getListByTag: async ({tagId, page, perPage, sortBy, sortAsc}) => {
+    getListByTag: async ({ tagId, page, perPage, sortBy, sortAsc }) => {
         return getInventoryList(page, perPage, {
             where: {
                 id: {
@@ -76,11 +78,11 @@ const repository = {
             },
             order: createSortOrder(sortBy, sortAsc),
             include: createListInclude(),
-            replacements: {tagId},
+            replacements: { tagId },
         });
     },
 
-    getList: async ({userId, filter, page, perPage, sortBy, sortAsc}) => {
+    getList: async ({ userId, filter, page, perPage, sortBy, sortAsc }) => {
         const where = {};
         const include = createListInclude();
 
@@ -93,7 +95,7 @@ const repository = {
                 case InventoryListFilter.WRITE_ACCESS:
                     include.push({
                         association: 'writeAccess',
-                        where: {userId},
+                        where: { userId },
                         required: true
                     });
                     break;
@@ -108,7 +110,7 @@ const repository = {
     },
 
     create: async (ownerId, data) => {
-        const inventory = await Inventory.create({...data, ownerId}, {returning: true});
+        const inventory = await Inventory.create({ ...data, ownerId }, { returning: true });
         return repository.getById(inventory.id);
     },
 
@@ -117,7 +119,7 @@ const repository = {
         return repository.getById(id);
     },
 
-    delete: (id) => Inventory.destroy({where: {id}}),
+    delete: (id) => Inventory.destroy({ where: { id } }),
 }
 
 export default repository;

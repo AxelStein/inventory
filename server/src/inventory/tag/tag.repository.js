@@ -1,6 +1,6 @@
 import Tag from "./tag.model.js";
 import Inventory from "../inventory.model.js";
-import {NotFoundError} from "../../error/index.js";
+import { NotFoundError } from "../../error/index.js";
 
 const repository = {
 

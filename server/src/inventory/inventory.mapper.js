@@ -19,7 +19,8 @@ export const mapInventory = (inventory) => {
         writeAccess: inventory.writeAccess,
         version: inventory.version,
         itemCount: inventory.dataValues.itemCount,
-        fields: []
+        fields: [],
+        tags: inventory.tags,
     };
 
     inflateInventoryCustomFields((prefix, field) => {
