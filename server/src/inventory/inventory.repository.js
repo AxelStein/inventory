@@ -11,7 +11,21 @@ const createListInclude = () => {
     ];
 };
 
+const createItemCountAttribute = () => {
+    return [
+        Sequelize.literal(`(
+            SELECT CAST(COUNT(*) AS INTEGER) 
+            FROM inventory_items AS "item"
+            WHERE "item"."inventoryId" = "Inventory"."id"
+        )`),
+        'itemCount'
+    ];
+}
+
 const getInventoryList = async (page, perPage, options) => {
+    options.attributes = {
+        include: [createItemCountAttribute()]
+    };
     const data = await Inventory.getPage(page, perPage, options);
     data.items = mapInventoryList(data.items);
     return data;
@@ -33,6 +47,9 @@ const repository = {
             {association: 'owner'},
             {association: 'category'},
         ],
+        attributes: {
+            include: [createItemCountAttribute()]
+        },
         transaction,
         lock
     })),
@@ -90,9 +107,15 @@ const repository = {
         });
     },
 
-    create: async (ownerId, data) => mapInventory(await Inventory.create({...data, ownerId}, {returning: true})),
+    create: async (ownerId, data) => {
+        const inventory = await Inventory.create({...data, ownerId}, {returning: true});
+        return repository.getById(inventory.id);
+    },
 
-    update: async (id, data) => mapInventory(await Inventory.optimisticLockUpdate(id, data)),
+    update: async (id, data) => {
+        await Inventory.optimisticLockUpdate(id, data)
+        return repository.getById(id);
+    },
 
     delete: (id) => Inventory.destroy({where: {id}}),
 }

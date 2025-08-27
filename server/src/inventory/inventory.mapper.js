@@ -18,6 +18,7 @@ export const mapInventory = (inventory) => {
         updatedAt: inventory.updatedAt,
         writeAccess: inventory.writeAccess,
         version: inventory.version,
+        itemCount: inventory.dataValues.itemCount,
         fields: []
     };
 
