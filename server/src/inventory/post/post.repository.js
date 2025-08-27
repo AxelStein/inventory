@@ -1,19 +1,6 @@
 import Post from './post.model.js';
-import {Sequelize} from "sequelize";
 
 const postOptions = {
-    attributes: {
-        include: [
-            [
-                Sequelize.literal(`(
-                    SELECT CAST(COUNT(*) AS INTEGER) 
-                    FROM inventory_post_comments AS "comment" 
-                    WHERE "comment"."postId" = "InventoryPost"."id"                    
-                )`),
-                'commentCount'
-            ]
-        ]
-    },
     include: [{ association: 'author' }],
 };
 
