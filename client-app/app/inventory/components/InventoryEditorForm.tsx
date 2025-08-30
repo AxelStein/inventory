@@ -3,13 +3,13 @@ import { useRef, useCallback, useState } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Button, Form } from "react-bootstrap";
 import { useGetTagsQuery } from "api/tag/tag.api";
-import type { Inventory } from "api/types";
 import { useCreateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
 import { useForm } from 'react-hook-form';
 import { MdDelete } from "react-icons/md";
 import type { Option } from "react-bootstrap-typeahead/types/types";
 import { ConfirmationDialog, useConfirmationDialog } from "~/components/ConfirmationDialog";
 import { filesize } from "filesize";
+import type { Inventory } from "api/inventory/inventory.types";
 
 interface CreateInventoryFormProps {
     inventory?: Inventory,
@@ -57,9 +57,13 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
         }
     });
 
-    const { register: registerImageForm, handleSubmit: handleImageSubmit, formState: imageFormState } = useForm<InventoryImageForm>();
+    const {
+        register: registerImageForm,
+        handleSubmit: handleImageSubmit,
+        formState: imageFormState
+    } = useForm<InventoryImageForm>();
+
     const imageFormError = imageFormState.errors?.file?.message;
-    console.log(imageFormError);
 
     const createInventoryCallback = useCallback((form: InventoryForm) => {
         createInventory(form).unwrap()
@@ -139,9 +143,7 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
                 <Form.Group className='mb-3'>
                     <Form.Label htmlFor="imageFile">Image</Form.Label>
                     {
-                        isUploadingImage ? (
-                            <div className="spinner" />
-                        ) : imageUrl ? (
+                        imageUrl ? (
                             <InventoryEditorImage imageUrl={imageUrl} onDeleteClick={onDeleteImageClick} />
                         ) : (<>
                             <Form.Control
@@ -161,21 +163,21 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
                                         fileType: (value) => {
                                             if (value.length == 0) return true;
                                             const file = value[0];
-                                            console.log('fileType', file.type, ALLOWED_MIME_TYPES.includes(file.type));
                                             return ALLOWED_MIME_TYPES.includes(file.type) || `Invalid file type. Allowed types are ${ALLOWED_MIME_TYPES}`;
                                         }
                                     }
                                 })} />
                             <Form.Control.Feedback type="invalid" className="mb-3">{imageFormError}</Form.Control.Feedback>
-                            <Button
-                                className="btn btn-primary"
-                                type='submit'
-                                disabled={isUploadingImage}>
-                                Upload
-                            </Button>
                         </>)
                     }
                 </Form.Group>
+
+                <Button
+                    className="btn btn-primary"
+                    type='submit'
+                    disabled={isUploadingImage}>
+                    Upload
+                </Button>
             </Form>
         }
 

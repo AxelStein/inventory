@@ -13,7 +13,8 @@
       "invalidEmail": "Неверный адрес электронной почты",
       "emailRequired": "Требуется адрес электронной почты",
       "passwordTrim": "В пароле не допускаются пробелы",
-      "passwordRequired": "Требуется пароль"
+      "passwordRequired": "Требуется пароль",
+      "nameRequired": "Требуется имя"
     },
     "email": {
       "passwordReset": {

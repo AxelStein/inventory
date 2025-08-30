@@ -1,7 +1,8 @@
 import {type CredentialResponse, GoogleLogin} from "@react-oauth/google";
-import authRepository from "../../../api/auth/auth.repository";
+import { useSignInWithGoogleMutation } from "api/auth/auth.api";
+import type { SignInResponse } from "api/auth/auth.types";
 import {useCallback} from "react";
-import type {SignInResponse} from "../../../api/auth/auth.response";
+import { useTranslation } from "react-i18next";
 
 interface GoogleSignInButtonProps {
     handleSignIn: (res: SignInResponse) => void;
@@ -9,19 +10,22 @@ interface GoogleSignInButtonProps {
 }
 
 export default function GoogleSignInButton({ handleSignIn, handleError } : GoogleSignInButtonProps) {
+    const [signInWithGoogle] = useSignInWithGoogleMutation();
+    const {t} = useTranslation();
 
     const handleSuccess = useCallback((credentialResponse: CredentialResponse) => {
         if (!credentialResponse.credential) {
-            handleError(new Error('No credential'));
+            handleError(new Error(t('auth.error.googleSignIn.noCredentials')));
             return;
         }
-        authRepository.signInWithGoogle(credentialResponse.credential)
+        signInWithGoogle(credentialResponse.credential)
+            .unwrap()
             .then(handleSignIn)
             .catch(handleError);
     }, []);
 
     const handleGoogleLoginError = useCallback(() => {
-        handleError(new Error('Google login error'));
+        handleError(new Error(t('auth.error.googleSignIn.signInError')));
     }, []);
 
     return <GoogleLogin onSuccess={handleSuccess} onError={handleGoogleLoginError}/>;

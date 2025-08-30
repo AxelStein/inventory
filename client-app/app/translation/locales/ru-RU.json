@@ -25,6 +25,12 @@
         "userNotFound": "Пользователь не найден",
         "codeEmpty": "Код пуст"
       }
+    },
+    "error": {
+      "googleSignIn": {
+        "noCredentials": "Учётные данные не найдены",
+        "signInError": "Ошибка входа"
+      }
     }
   }
 }

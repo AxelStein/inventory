@@ -1,74 +1,81 @@
-import {Alert, Form} from "react-bootstrap";
-import PasswordForm from "~/auth/components/PasswordForm";
-import {type FormEvent, useCallback, useState} from "react";
-import { useSearchParams} from "react-router";
-import EmailForm from "~/auth/components/EmailForm";
-import AppToastContainer from "~/components/AppToastContainer";
+import { Alert, Form } from "react-bootstrap";
+import { useCallback, useState } from "react";
+import { useSearchParams } from "react-router";
 import { toast } from 'react-toastify';
-import {Trans, useTranslation} from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import SubmitButton from "~/auth/components/SubmitButton";
-import authRepository from "../../api/auth/auth.repository";
+import { useResetPasswordMutation, useRestorePasswordMutation } from "api/auth/auth.api";
+import AppToastContainer from "~/components/AppToastContainer";
+import { useForm } from "react-hook-form";
+
+interface ResetPasswordForm {
+    email: string;
+    password: string;
+}
 
 export default function ResetPasswordPage() {
-    const [passwordError, setPasswordError] = useState(null);
-    const [emailError, setEmailError] = useState(null);
-    const [isSubmit, setIsSubmit] = useState(false);
     const [isReset, setIsReset] = useState(false);
     const [isRestored, setIsRestored] = useState(false);
     const [requestExpired, setRequestExpired] = useState(null);
     const [searchParams] = useSearchParams();
-    const {t} = useTranslation();
-
+    const { t } = useTranslation();
+    const [resetPassword, { isLoading: resetPasswordLoading }] = useResetPasswordMutation();
+    const [restorePassword, { isLoading: restorePasswordLoading }] = useRestorePasswordMutation();
+    const isSubmit = resetPasswordLoading || restorePasswordLoading;
     const token = searchParams.get('token');
+    const {
+        register: registerForm,
+        handleSubmit: handleFormSubmit,
+        setError: setFormError,
+        formState
+    } = useForm<ResetPasswordForm>();
 
-    const onPasswordChange = useCallback(() => {
-        setPasswordError(null);
-    }, []);
-
-    const onEmailChange = useCallback(() => {
-        setEmailError(null);
-    }, []);
+    const formErrors = formState.errors;
+    const emailError = formErrors.email?.message;
+    const passwordError = formErrors.password?.message;
 
     const handleError = useCallback((err: any) => {
-        const email = err.getDetail('email');
-        const password = err.getDetail('password');
-        if (email || password) {
-            setEmailError(email);
-            setPasswordError(password);
+        if (err.status == 410) {
+            setRequestExpired(err.data.message);
             return;
-        } else if (err.status === 410) {
-            setRequestExpired(err.message);
-        } else {
-            toast.error(err.message);
+        }
+
+        const details = err.data.details;
+        if (!details) {
+            toast.error(err.data.message);
+            return;
+        }
+
+        const emailError = details?.email;
+        const passwordError = details?.password;
+        if (emailError) {
+            setFormError('email', { message: emailError });
+        }
+        if (passwordError) {
+            setFormError('password', { message: passwordError })
         }
     }, []);
 
-    const resetPassword = useCallback((email: string) => {
-        setIsSubmit(true);
-
-        authRepository.resetPassword(email)
+    const handleResetPassword = useCallback((email: string) => {
+        resetPassword(email)
+            .unwrap()
             .then(() => setIsReset(true))
-            .catch(handleError)
-            .finally(() => setIsSubmit(false));
+            .catch(handleError);
     }, []);
 
-    const restorePassword = useCallback((token: string, password: string) => {
-        setIsSubmit(true);
-
-        authRepository.restorePassword(token, password)
+    const handleRestorePassword = useCallback((token: string, password: string) => {
+        restorePassword({ token, password })
+            .unwrap()
             .then(() => setIsRestored(true))
-            .catch(handleError)
-            .finally(() => setIsSubmit(false));
+            .catch(handleError);
     }, []);
 
-    const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const form = new FormData(event.currentTarget);
-        const email = form.get("email");
-        const password = form.get("password");
-
-        token ? restorePassword(token as string, password as string) : resetPassword(email as string);
+    const handleSubmit = useCallback((form: ResetPasswordForm) => {
+        if (token) {
+            handleRestorePassword(token, form.password);
+        } else {
+            handleResetPassword(form.email);
+        }
     }, []);
 
     if (isReset) {
@@ -89,14 +96,36 @@ export default function ResetPasswordPage() {
     return <>
         <h1 className='mb-5'>{t(token ? 'auth.titleRestorePassword' : 'auth.titleResetPassword')}</h1>
 
-        <Form onSubmit={handleSubmit}>
-            {token ?
-                <PasswordForm disabled={isSubmit} onChange={onPasswordChange} error={passwordError}/> :
-                <EmailForm disabled={isSubmit} onChange={onEmailChange} error={emailError}/>
-            }
-            <SubmitButton isSubmit={isSubmit} label={t(token ? 'auth.btnRestore' : 'auth.btnReset')}/>
+        <Form onSubmit={handleFormSubmit(handleSubmit)}>
+            {token ? (
+                <Form.Group className='mb-3' controlId='formPassword'>
+                    <Form.Control
+                        required
+                        type='password'
+                        placeholder={t('auth.inputPassword')}
+                        disabled={isSubmit}
+                        isInvalid={passwordError != null}
+                        {...registerForm('password', { required: true })} />
+                    <Form.Control.Feedback type='invalid'>{passwordError}</Form.Control.Feedback>
+                </Form.Group>
+            ) : (
+                <Form.Group className='mb-3' controlId='formEmail'>
+                    <Form.Control
+                        required
+                        type='email'
+                        placeholder={t('auth.inputEmail')}
+                        disabled={isSubmit}
+                        isInvalid={emailError != null}
+                        {...registerForm('email', { required: true })} />
+                    <Form.Control.Feedback type='invalid'>{emailError}</Form.Control.Feedback>
+                </Form.Group>
+            )}
+
+            <SubmitButton
+                isSubmit={isSubmit}
+                label={t(token ? 'auth.btnRestore' : 'auth.btnReset')} />
         </Form>
 
-        <AppToastContainer/>
+        <AppToastContainer />
     </>;
 }

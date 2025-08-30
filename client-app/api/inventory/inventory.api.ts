@@ -1,14 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Inventory, PagingList, UploadImageProps } from "../types";
-
-const apiUrl = import.meta.env.VITE_API_URL;
+import { createApi } from "@reduxjs/toolkit/query/react";
+import type { UploadImageBody } from "api/auth/auth.types";
+import { createBaseQuery } from "api/base.query";
+import type { PagingList } from "api/types";
+import type { Inventory } from "./inventory.types";
 
 export const inventoryApi = createApi({
     reducerPath: "inventoryApi",
-    baseQuery: fetchBaseQuery({
-        baseUrl: `${apiUrl}/member/inventory`,
-        credentials: 'include',
-    }),
+    baseQuery: createBaseQuery('v1/member/inventory'),
     endpoints: (builder) => ({
         getInventories: builder.query<PagingList<Inventory>, object>({
             query: (params) => ({
@@ -36,7 +34,7 @@ export const inventoryApi = createApi({
                 body: body,
             })
         }),
-        uploadImage: builder.mutation<Inventory, UploadImageProps>({
+        uploadImage: builder.mutation<Inventory, UploadImageBody>({
             query: ({ inventoryId, formData, version }) => ({
                 url: `/${inventoryId}/upload-image`,
                 method: 'post',

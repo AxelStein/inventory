@@ -7,25 +7,26 @@ import {
 } from "react-router";
 import type { Route } from "./+types/root";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {GoogleOAuthProvider} from "@react-oauth/google";
-import {Provider} from "react-redux";
-import {store} from "../api/store";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Provider } from "react-redux";
+import { store } from "../api/store";
 import './app.css';
+import 'app/translation/index';
 
 export function Layout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
-        <head>
-            <meta charSet="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <Meta />
-            <Links />
-        </head>
-        <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-        </body>
+            <head>
+                <meta charSet="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <Meta />
+                <Links />
+            </head>
+            <body>
+                {children}
+                <ScrollRestoration />
+                <Scripts />
+            </body>
         </html>
     );
 }
@@ -52,17 +53,21 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             <p>{details}</p>
             {stack && (
                 <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
+                    <code>{stack}</code>
+                </pre>
             )}
         </main>
     );
 }
 
+export function HydrateFallback() {
+    return <div className="spinner" />;
+}
+
 export default function App() {
     return <Provider store={store}>
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-            <Outlet/>
+            <Outlet />
         </GoogleOAuthProvider>
     </Provider>;
 }

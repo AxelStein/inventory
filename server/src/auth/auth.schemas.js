@@ -30,7 +30,10 @@ export const signUpSchema = (translate) => Joi.object({
         .trim()
         .min(1)
         .max(99)
-        .required(),
+        .required()
+        .messages({
+            'string.empty': translate('auth.error.nameRequired')
+        }),
     email: createEmailSchema(translate),
     password: createPasswordSchema(translate),
 }).required();

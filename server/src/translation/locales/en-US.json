@@ -13,7 +13,8 @@
       "invalidEmail": "Invalid email",
       "emailRequired": "Email is required",
       "passwordTrim": "No whitespaces allowed in password",
-      "passwordRequired": "Password is required"
+      "passwordRequired": "Password is required",
+      "nameRequired": "Name is required"
     },
     "email": {
       "passwordReset": {

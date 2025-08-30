@@ -1,88 +1,111 @@
-import {Form} from 'react-bootstrap';
-import {type FormEvent, useCallback, useState} from "react";
-import PasswordForm from "~/auth/components/PasswordForm";
-import EmailForm from "~/auth/components/EmailForm";
-import NameForm from "~/auth/components/NameForm";
+import { Form } from 'react-bootstrap';
+import { useCallback } from "react";
 import GoogleSignInButton from "~/auth/components/GoogleSignInButton";
-import AppToastContainer from "~/components/AppToastContainer";
 import { toast } from 'react-toastify';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import SubmitButton from "~/auth/components/SubmitButton";
-import authRepository from "../../api/auth/auth.repository";
-import {useAuthSignIn} from "~/auth/components/useAuthSignIn";
-import {Link} from "react-router";
+import { useAuthSignIn } from "~/auth/components/useAuthSignIn";
+import { Link } from "react-router";
+import { useSignInMutation, useSignUpMutation } from 'api/auth/auth.api';
+import AppToastContainer from '~/components/AppToastContainer';
+import { useForm } from 'react-hook-form';
 
-export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
-    const [nameError, setNameError] = useState<string | null>(null);
-    const [emailError, setEmailError] = useState<string | null>(null);
-    const [passwordError, setPasswordError] = useState<string | null>(null);
-    const [isSubmit, setIsSubmit] = useState(false);
-    const {t} = useTranslation();
-    const {handleSignIn} = useAuthSignIn();
+interface AuthForm {
+    name: string;
+    email: string;
+    password: string;
+}
 
-    const showErrorToast = useCallback((err: Error) => {
-        toast.error(err.message);
-    }, []);
+export default function AuthPage({ isSignIn }: { isSignIn: boolean }) {
+    const { t } = useTranslation();
+    const { handleSignIn } = useAuthSignIn();
+    const [signIn, { isLoading: signInLoading }] = useSignInMutation();
+    const [signUp, { isLoading: signUpLoading }] = useSignUpMutation();
+    const isSubmit = signInLoading || signUpLoading;
+    const {
+        register: registerAuthForm,
+        handleSubmit: handleAuthSubmit,
+        setError: setAuthFormError,
+        formState: authFormState,
+    } = useForm<AuthForm>();
+
+    const authFormErrors = authFormState.errors;
+    const nameError = authFormErrors.name?.message;
+    const emailError = authFormErrors.email?.message;
+    const passwordError = authFormErrors.password?.message;
 
     const handleError = useCallback((err: any) => {
-        const name = err.getDetail('name');
-        const email = err.getDetail('email');
-        const password = err.getDetail('password');
-        if (name || email || password) {
-            setNameError(name);
-            setEmailError(email);
-            setPasswordError(password);
+        const details = err.data.details;
+        if (!details) {
+            toast.error(err.data.message);
             return;
         }
-        showErrorToast(err);
+
+        const nameError = details?.name;
+        const emailError = details?.email;
+        const passwordError = details?.password;
+        if (nameError) {
+            setAuthFormError('name', { message: nameError });
+        }
+        if (emailError) {
+            setAuthFormError("email", { message: emailError });
+        }
+        if (passwordError) {
+            setAuthFormError("password", { message: passwordError });
+        }
     }, []);
 
-    const onNameChange = useCallback(() => {
-        setNameError(null);
-    }, []);
-
-    const onEmailChange = useCallback(() => {
-        setEmailError(null);
-    }, []);
-
-    const onPasswordChange = useCallback(() => {
-        setPasswordError(null);
-    }, []);
-
-    const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        setIsSubmit(true);
-
-        const form = new FormData(event.currentTarget);
-        const body = {
-            name: isSignIn ? undefined : form.get("name"),
-            email: form.get("email"),
-            password: form.get("password")
-        };
-
-        (isSignIn ? authRepository.signIn(body) : authRepository.signUp(body))
+    const handleSubmit = useCallback((form: AuthForm) => {
+        (isSignIn ? signIn(form) : signUp(form))
+            .unwrap()
             .then(handleSignIn)
-            .catch(handleError)
-            .finally(() => setIsSubmit(false));
+            .catch(handleError);
     }, []);
 
     return <>
         <h1 className='mb-5'>Inventory App</h1>
 
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleAuthSubmit(handleSubmit)}>
 
-            {!isSignIn && <NameForm error={nameError} onChange={onNameChange} disabled={isSubmit}/>}
+            {!isSignIn && (
+                <Form.Group className='mb-3' controlId='formName'>
+                    <Form.Control
+                        required type='name'
+                        placeholder={t('auth.inputName')}
+                        isInvalid={nameError != null}
+                        disabled={isSubmit}
+                        {...registerAuthForm('name', { required: true })} />
+                    <Form.Control.Feedback type='invalid'>{nameError}</Form.Control.Feedback>
+                </Form.Group>
+            )}
 
-            <EmailForm disabled={isSubmit} onChange={onEmailChange} error={emailError}/>
+            <Form.Group className='mb-3' controlId='formEmail'>
+                <Form.Control
+                    required
+                    type='email'
+                    placeholder={t('auth.inputEmail')}
+                    disabled={isSubmit}
+                    isInvalid={emailError != null}
+                    {...registerAuthForm('email', { required: true })} />
+                <Form.Control.Feedback type='invalid'>{emailError}</Form.Control.Feedback>
+            </Form.Group>
 
-            <PasswordForm disabled={isSubmit} onChange={onPasswordChange} error={passwordError}/>
+            <Form.Group className='mb-3' controlId='formPassword'>
+                <Form.Control
+                    required
+                    type='password'
+                    placeholder={t('auth.inputPassword')}
+                    disabled={isSubmit}
+                    isInvalid={passwordError != null}
+                    {...registerAuthForm('password', { required: true })} />
+                <Form.Control.Feedback type='invalid'>{passwordError}</Form.Control.Feedback>
+            </Form.Group>
 
-            <SubmitButton isSubmit={isSubmit} label={t(isSignIn ? 'auth.btnSignIn' : 'auth.btnSignUp')}/>
+            <SubmitButton isSubmit={isSubmit} label={t(isSignIn ? 'auth.btnSignIn' : 'auth.btnSignUp')} />
 
         </Form>
 
-        <GoogleSignInButton handleSignIn={handleSignIn} handleError={handleError}/>
+        <GoogleSignInButton handleSignIn={handleSignIn} handleError={handleError} />
 
         {isSignIn && (
             <div className='text-center mt-3'>
@@ -100,6 +123,6 @@ export default function AuthPage({isSignIn}: { isSignIn: boolean }) {
             </div>
         )}
 
-        <AppToastContainer/>
+        <AppToastContainer />
     </>;
 }

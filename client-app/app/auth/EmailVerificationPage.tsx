@@ -1,62 +1,72 @@
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import SubmitButton from "~/auth/components/SubmitButton";
-import {useSearchParams} from "react-router";
-import {Form} from "react-bootstrap";
-import VerificationCodeForm from "~/auth/components/VerificationCodeForm";
-import {type FormEvent, useCallback, useState} from "react";
-import authRepository from "../../api/auth/auth.repository";
-import {useAuthSignIn} from "~/auth/components/useAuthSignIn";
+import { useSearchParams } from "react-router";
+import { Form } from "react-bootstrap";
+import { useCallback } from "react";
+import { useAuthSignIn } from "~/auth/components/useAuthSignIn";
 import { toast } from 'react-toastify';
-import AppToastContainer from "~/components/AppToastContainer";
+import { useVerifyEmailMutation } from "api/auth/auth.api";
+import { useForm } from "react-hook-form";
+
+interface VerificationCodeForm {
+    code: string;
+}
 
 export default function EmailVerificationPage() {
+    const { t } = useTranslation();
     const [searchParams] = useSearchParams();
-    const [codeError, setCodeError] = useState<string | null>(null);
-    const [isSubmit, setIsSubmit] = useState(false);
-    const {t} = useTranslation();
-    const {handleSignIn} = useAuthSignIn();
 
-    const userId = searchParams.get('userId');
-    if (!userId) {
-        return <div>{t('auth.emailVerification.error.userNotFound')}</div>;
-    }
+    const userId = Number(searchParams.get('userId'));
     const email = searchParams.get('email');
 
-    const handleCodeChange = useCallback(() => {
-        setCodeError(null);
+    if (Number.isNaN(userId) || userId == 0) {
+        return <div>{t('auth.emailVerification.error.userNotFound')}</div>;
+    }
+
+    const { handleSignIn } = useAuthSignIn();
+    const [verifyEmail, { isLoading: verifyEmailLoading }] = useVerifyEmailMutation();
+
+    const {
+        register: registerForm,
+        handleSubmit: handleFormSubmit,
+        setError: setFormError,
+        formState
+    } = useForm<VerificationCodeForm>();
+
+    const handleError = useCallback((err: any) => {
+        const codeError = err.data.details?.code;
+        if (codeError) {
+            setFormError('code', { message: codeError });
+        } else {
+            toast.error(err.data.message);
+        }
     }, []);
 
-    const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const form = new FormData(event.currentTarget);
-        const code = form.get('code');
-        if (!code) {
-            setCodeError(t('auth.emailVerification.error.codeEmpty'));
-        } else {
-            setIsSubmit(true);
-            authRepository.verifyEmail(Number(userId), code as string)
-                .then(handleSignIn)
-                .catch(err => {
-                    const code = err.getDetail('code');
-                    if (code) {
-                        setCodeError(code);
-                    } else {
-                        toast.error(err.message);
-                    }
-                })
-                .finally(() => setIsSubmit(false));
-        }
+    const handleSubmit = useCallback((form: VerificationCodeForm) => {
+        verifyEmail({ userId, code: form.code })
+            .unwrap()
+            .then(handleSignIn)
+            .catch(handleError);
     }, []);
 
     return <>
         <h1>{t('auth.emailVerification.title')}</h1>
         <p>{t('auth.emailVerification.description', { email })}</p>
         <p className='mb-4 text-secondary'>{t('auth.emailVerification.hint')}</p>
-        <Form onSubmit={handleSubmit}>
-            <VerificationCodeForm disabled={isSubmit} onChange={handleCodeChange} error={codeError}/>
-            <SubmitButton isSubmit={isSubmit} label={t('auth.emailVerification.btnSubmit')}/>
+        <Form onSubmit={handleFormSubmit(handleSubmit)}>
+            <Form.Group className='mb-3' controlId='formCode'>
+                <Form.Control
+                    required
+                    type='text'
+                    placeholder={t('auth.emailVerification.inputCode')}
+                    disabled={verifyEmailLoading}
+                    isInvalid={formState.errors.code?.message != null}
+                    {...registerForm('code', { required: true })} />
+                <Form.Control.Feedback type='invalid'>{formState.errors.code?.message}</Form.Control.Feedback>
+            </Form.Group>
+            <SubmitButton
+                isSubmit={verifyEmailLoading}
+                label={t('auth.emailVerification.btnSubmit')} />
         </Form>
-        <AppToastContainer/>
     </>;
 }
