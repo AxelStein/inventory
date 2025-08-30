@@ -11,7 +11,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Provider } from "react-redux";
 import { store } from "../api/store";
 import './app.css';
-import 'app/translation/index';
+import '~/translation/init.translate';
 
 export function Layout({ children }: { children: React.ReactNode }) {
     return (

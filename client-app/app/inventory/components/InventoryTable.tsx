@@ -1,12 +1,13 @@
-import {Col, Form, Table} from "react-bootstrap";
-import {formatRelative} from "date-fns";
-import type {ReactNode} from "react";
-import {Link} from "react-router";
-import type {Inventory} from "../../../api/types";
+import { Col, Form, Table } from "react-bootstrap";
+import { formatRelative } from "date-fns";
+import type { ReactNode } from "react";
+import { Link } from "react-router";
+import type { Inventory } from "api/inventory/inventory.types";
+import { useTranslation } from "react-i18next";
+import { ru, enUS } from 'date-fns/locale';
 
 interface InventoryTableProps {
     title?: string;
-    columns?: InventoryTableColumn[];
     inventories?: Inventory[];
 }
 
@@ -22,34 +23,34 @@ export enum InventoryTableColumn {
     UPDATED_AT
 }
 
-function createColumn(column: InventoryTableColumn) {
+function createColumn(t: (s: string) => string, column: InventoryTableColumn) {
     switch (column) {
         case InventoryTableColumn.CHECKBOX:
-            return <th key={column}><Form.Check/></th>;
+            return <th key={column}><Form.Check /></th>;
 
         case InventoryTableColumn.TITLE:
-            return <th key={column}>Title</th>;
+            return <th key={column}>{t('inventory.tableColumns.title')}</th>;
 
         case InventoryTableColumn.IMAGE:
-            return <th key={column}>Image</th>;
+            return <th key={column}>{t('inventory.tableColumns.image')}</th>;
 
         case InventoryTableColumn.DESCRIPTION:
-            return <th key={column}>Description</th>;
+            return <th key={column}>{t('inventory.tableColumns.description')}</th>;
 
         case InventoryTableColumn.CATEGORY:
-            return <th key={column}>Category</th>;
+            return <th key={column}>{t('inventory.tableColumns.category')}</th>;
 
         case InventoryTableColumn.AUTHOR:
-            return <th key={column}>Author</th>;
+            return <th key={column}>{t('inventory.tableColumns.author')}</th>;
 
         case InventoryTableColumn.ITEM_COUNT:
-            return <th key={column}>Item count</th>;
+            return <th key={column}>{t('inventory.tableColumns.itemCount')}</th>;
 
         case InventoryTableColumn.CREATED_AT:
-            return <th key={column}>Created at</th>;
+            return <th key={column}>{t('inventory.tableColumns.createdAt')}</th>;
 
         case InventoryTableColumn.UPDATED_AT:
-            return <th key={column}>Updated at</th>;
+            return <th key={column}>{t('inventory.tableColumns.updatedAt')}</th>;
     }
 }
 
@@ -58,14 +59,14 @@ function createRow(columns: InventoryTableColumn[], inventory: Inventory): React
         columns.map((column) => {
             switch (column) {
                 case InventoryTableColumn.CHECKBOX:
-                    return <td key={column}><Form.Check/></td>;
+                    return <td key={column}><Form.Check /></td>;
 
                 case InventoryTableColumn.TITLE:
                     return <td key={column}>{inventory.title}</td>;
 
                 case InventoryTableColumn.IMAGE:
                     if (inventory.imageLink) {
-                        return <td key={column}><img src={inventory.imageLink} alt='Inventory image' width={100} height={100}/></td>;
+                        return <td key={column}><img src={inventory.imageLink} alt='Inventory image' width={100} height={100} /></td>;
                     }
                     return <td key={column}></td>;
 
@@ -76,35 +77,46 @@ function createRow(columns: InventoryTableColumn[], inventory: Inventory): React
                     return <td key={column}>{inventory.category?.name}</td>
 
                 case InventoryTableColumn.AUTHOR:
-                    return <td key={column}><Link to={{pathname: `/user/${inventory.owner?.id}`}}> {inventory.owner?.name}</Link></td>
+                    return <td key={column}><Link to={{ pathname: `/user/${inventory.owner?.id}` }}> {inventory.owner?.name}</Link></td>
 
                 case InventoryTableColumn.ITEM_COUNT:
                     return <td key={column}>{inventory.itemCount}</td>
 
                 case InventoryTableColumn.CREATED_AT:
-                    return <td key={column}>{formatRelative(inventory.createdAt, new Date())}</td>
+                    return <td key={column}>{formatRelative(inventory.createdAt, new Date(), { locale: ru })}</td>
 
                 case InventoryTableColumn.UPDATED_AT:
-                    return <td key={column}>{formatRelative(inventory.updatedAt, new Date())}</td>
+                    return <td key={column}>{formatRelative(inventory.updatedAt, new Date(), { locale: ru })}</td>
             }
         })
     }</tr>
 
 }
 
-export function InventoryTable({title, columns, inventories}: InventoryTableProps) {
+const columns = [
+    InventoryTableColumn.IMAGE,
+    InventoryTableColumn.TITLE,
+    InventoryTableColumn.DESCRIPTION,
+    InventoryTableColumn.AUTHOR,
+    InventoryTableColumn.CATEGORY,
+    InventoryTableColumn.ITEM_COUNT,
+    InventoryTableColumn.CREATED_AT
+];
+
+export function InventoryTable({ title, inventories }: InventoryTableProps) {
+    const { t } = useTranslation();
     return <Col>
         {title && <h4>{title}</h4>}
 
         <Table hover responsive>
             <thead>
-            <tr>
-                {columns && columns.map(createColumn)}
-            </tr>
+                <tr>
+                    {columns && columns.map(col => createColumn(t, col))}
+                </tr>
             </thead>
             <tbody>
 
-            {columns && inventories && inventories.map((inventory) => createRow(columns, inventory))}
+                {columns && inventories && inventories.map((inventory) => createRow(columns, inventory))}
 
             </tbody>
         </Table>

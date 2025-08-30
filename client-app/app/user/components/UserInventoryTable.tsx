@@ -1,28 +1,18 @@
 import { Col } from "react-bootstrap";
 import UserInventoryToolbar from "~/user/components/UserInventoryToolbar";
 import { InventoryTable, InventoryTableColumn } from "~/inventory/components/InventoryTable";
+import { useTranslation } from "react-i18next";
 
 interface DashboardInventoryTableProps {
     isOwn: boolean;
 }
 
 export default function UserInventoryTable({ isOwn }: DashboardInventoryTableProps) {
-    const columns = [
-        InventoryTableColumn.CHECKBOX,
-        InventoryTableColumn.IMAGE,
-        InventoryTableColumn.TITLE,
-        InventoryTableColumn.DESCRIPTION,
-    ];
-    if (!isOwn) {
-        columns.push(InventoryTableColumn.AUTHOR);
-    }
+    const {t} = useTranslation();
     return <Col>
         {isOwn && <UserInventoryToolbar />}
 
-        <InventoryTable
-            title={isOwn ? 'My inventories' : 'Inventories with write access'}
-            columns={columns}
-        />
+        <InventoryTable title={t(isOwn ? 'dashboard.title.ownInventories' : 'dashboard.title.writeAccessInventories')} />
 
         <span>Load more</span>
     </Col>

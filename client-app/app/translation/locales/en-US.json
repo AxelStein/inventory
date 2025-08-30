@@ -32,5 +32,38 @@
         "signInError": "Sign in error"
       }
     }
+  },
+  "inventory": {
+    "createModal": {
+      "title": "Create inventory",
+      "btnSubmit": "Create"
+    },
+    "editorForm": {
+      "placeholderName": "Name",
+      "placeholderDescription": "Description",
+      "labelPublic": "Public",
+      "labelImage": "Image",
+      "labelTags": "Tags",
+      "btnUploadImage": "Upload"
+    },
+    "tableColumns": {
+      "title": "Title",
+      "image": "Image",
+      "description": "Description",
+      "category": "Category",
+      "author": "Author",
+      "itemCount": "Item count",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at"
+    }
+  },
+  "dashboard": {
+    "title": {
+      "latestInventories": "Latest inventories",
+      "popularInventories": "Top-5 inventories",
+      "tags": "Tags",
+      "ownInventories": "Own inventories",
+      "writeAccessInventories": "Inventories with write access"
+    }
   }
 }

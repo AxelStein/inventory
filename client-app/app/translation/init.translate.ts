@@ -5,7 +5,7 @@ import translationEN from './locales/en-US.json';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 i18next
-    .use(LanguageDetector)
+    // .use(LanguageDetector)
     .use(initReactI18next)
     .init({
         resources: {
@@ -16,6 +16,7 @@ i18next
                 translation: translationRU,
             },
         },
+        lng: 'ru-RU',
         debug: true,
         fallbackLng: 'en-US',
         interpolation: {

@@ -1,8 +1,8 @@
 import {Button} from "react-bootstrap";
 import {MdAdd, MdDeleteOutline} from "react-icons/md";
 import {useState} from "react";
-import CreateInventoryModal from "~/user/components/CreateInventoryModal";
-import type {Inventory} from "../../../api/types";
+import CreateInventoryModal from "~/inventory/components/CreateInventoryModal";
+import type { Inventory } from "api/inventory/inventory.types";
 
 export default function UserInventoryToolbar() {
     const [createModalVisible, setCreateModalVisible] = useState(false);

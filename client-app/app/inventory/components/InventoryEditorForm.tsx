@@ -10,14 +10,19 @@ import type { Option } from "react-bootstrap-typeahead/types/types";
 import { ConfirmationDialog, useConfirmationDialog } from "~/components/ConfirmationDialog";
 import { filesize } from "filesize";
 import type { Inventory } from "api/inventory/inventory.types";
+import { useGetAppConfigQuery } from "api/app/app.api";
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { useTranslation } from "react-i18next";
 
 interface CreateInventoryFormProps {
     inventory?: Inventory,
+    onChanged?: (inventory: Inventory) => void,
+    onForceRefresh?: () => void,
 }
 
 interface InventoryForm {
     title: string,
-    description: string,
+    description?: string,
     isPublic: boolean,
     categoryId: number,
 }
@@ -26,8 +31,8 @@ interface InventoryImageForm {
     file: File[],
 }
 
-export default function InventoryEditorForm({ inventory }: CreateInventoryFormProps) {
-    const ref = useRef<any>(null);
+export default function InventoryEditorForm({ inventory, onForceRefresh, onChanged }: CreateInventoryFormProps) {
+    const typeaheadRef = useRef<any>(null);
 
     const [uploadImage, { isLoading: isUploadingImage }] = useUploadImageMutation();
     const [createInventory, { isLoading: isCreatingInventory }] = useCreateInventoryMutation();
@@ -35,7 +40,11 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
 
     const { data: categories } = useGetCategoriesQuery();
     const { data: tags } = useGetTagsQuery(undefined, { skip: !inventory });
-    const [imageUrl, setImageUrl] = useState<string | undefined>(inventory?.imageLink);
+    const [imageUrl, setImageUrl] = useState<string | undefined | null>(inventory?.imageLink);
+
+    const { data: appConfig } = useGetAppConfigQuery();
+
+    const { t } = useTranslation();
 
     const {
         confirmationDialogMessage,
@@ -51,7 +60,7 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
     const { register: registerInventoryForm, handleSubmit: handleInventorySubmit } = useForm<InventoryForm>({
         defaultValues: {
             title: inventory?.title,
-            description: inventory?.description,
+            description: inventory?.description || undefined,
             isPublic: inventory?.isPublic,
             categoryId: inventory?.category?.id,
         }
@@ -67,7 +76,7 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
 
     const createInventoryCallback = useCallback((form: InventoryForm) => {
         createInventory(form).unwrap()
-            .then((newInventory: Inventory) => console.log(newInventory))
+            .then((newInventory: Inventory) => onChanged?.(newInventory))
             .catch(error => console.log(error));
     }, []);
 
@@ -86,9 +95,15 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
         }).unwrap()
             .then(newInventory => {
                 inventory = newInventory;
-                setImageUrl(newInventory.imageLink)
+                setImageUrl(newInventory.imageLink);
+                onChanged?.(newInventory);
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                if (err.status === 409) {
+                    onForceRefresh?.();
+                }
+                console.log(err);
+            });
     }, []);
 
     const onDeleteImageClick = useCallback(() => {
@@ -97,14 +112,11 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
         });
     }, []);
 
-    const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
-    const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
-    return <div>
+    return <>
         <Form onSubmit={handleInventorySubmit(createInventoryCallback)}>
             <Form.Control
                 type="text"
-                placeholder="Name"
+                placeholder={t('inventory.editorForm.placeholderName')}
                 className='mb-3'
                 disabled={isUpdatingInventory}
                 {...registerInventoryForm('title', { required: !inventory })} />
@@ -118,14 +130,14 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
 
             <Form.Control
                 as='textarea'
-                placeholder="Description"
+                placeholder={t('inventory.editorForm.placeholderDescription')}
                 className='mb-3'
                 rows={6}
                 disabled={isUpdatingInventory}
                 {...registerInventoryForm('description')} />
 
             <Form.Switch
-                label="Public"
+                label={t('inventory.editorForm.labelPublic')}
                 className='mb-3'
                 disabled={isUpdatingInventory}
                 {...registerInventoryForm('isPublic')} />
@@ -134,14 +146,14 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
                 className="btn btn-primary"
                 type='submit'
                 disabled={isUpdatingInventory}>
-                Save
+                {t('inventory.createModal.btnSubmit')}
             </Button>}
         </Form>
 
         {inventory &&
             <Form onSubmit={handleImageSubmit(uploadImageCallback)}>
                 <Form.Group className='mb-3'>
-                    <Form.Label htmlFor="imageFile">Image</Form.Label>
+                    <Form.Label htmlFor="imageFile">{t('inventory.editorForm.labelImage')}</Form.Label>
                     {
                         imageUrl ? (
                             <InventoryEditorImage imageUrl={imageUrl} onDeleteClick={onDeleteImageClick} />
@@ -158,12 +170,14 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
                                         fileSize: (value) => {
                                             if (value.length == 0) return true;
                                             const file = value[0];
-                                            return file.size > 0 && file.size <= MAX_FILE_SIZE || `File size must be less than ${filesize(MAX_FILE_SIZE)}`;
+                                            const maxFileSize = appConfig?.inventoryImage.maxFileSize ?? 0;
+                                            return file.size > 0 && file.size <= maxFileSize || `File size must be less than ${filesize(maxFileSize)}`;
                                         },
                                         fileType: (value) => {
                                             if (value.length == 0) return true;
                                             const file = value[0];
-                                            return ALLOWED_MIME_TYPES.includes(file.type) || `Invalid file type. Allowed types are ${ALLOWED_MIME_TYPES}`;
+                                            const allowedMimeTypes = appConfig?.inventoryImage.mimeTypes;
+                                            return allowedMimeTypes?.includes(file.type) || `Invalid file type. Allowed types are "${allowedMimeTypes?.join(', ')}"`;
                                         }
                                     }
                                 })} />
@@ -172,28 +186,30 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
                     }
                 </Form.Group>
 
-                <Button
-                    className="btn btn-primary"
-                    type='submit'
-                    disabled={isUploadingImage}>
-                    Upload
-                </Button>
+                {!imageUrl && (
+                    <Button
+                        className="btn btn-primary mb-3"
+                        type='submit'
+                        disabled={isUploadingImage}>
+                        {t('inventory.editorForm.btnUploadImage')}
+                    </Button>
+                )}
             </Form>
         }
 
 
         {tags &&
             <div>
-                <p className="label">Tags</p>
+                <p className="label">{t('inventory.editorForm.labelTags')}</p>
                 <Typeahead
                     id="tags"
                     multiple
                     options={tags}
                     labelKey='name'
                     allowNew
-                    defaultSelected={inventory?.tags}
+                    defaultSelected={inventory?.tags || undefined}
                     onChange={onTagsChange}
-                    ref={ref}
+                    ref={typeaheadRef}
                     className='mb-3' />
             </div>
         }
@@ -202,7 +218,7 @@ export default function InventoryEditorForm({ inventory }: CreateInventoryFormPr
             message={confirmationDialogMessage}
             onConfirm={onDialogConfirm}
             onCancel={onDialogCancel} />
-    </div>;
+    </>;
 }
 
 interface IntervalEditorImageProps {

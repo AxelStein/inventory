@@ -32,5 +32,38 @@
         "signInError": "Ошибка входа"
       }
     }
+  },
+  "inventory": {
+    "createModal": {
+      "title": "Создать инвентарь",
+      "btnSubmit": "Создать"
+    },
+    "editorForm": {
+      "placeholderName": "Название",
+      "placeholderDescription": "Описание",
+      "labelPublic": "Публичный",
+      "labelImage": "Изображение",
+      "labelTags": "Теги",
+      "btnUploadImage": "Загрузить"
+    },
+    "tableColumns": {
+      "title": "Название",
+      "image": "Изображение",
+      "description": "Описание",
+      "category": "Категория",
+      "author": "Автор",
+      "itemCount": "Количество элементов",
+      "createdAt": "Создан",
+      "updatedAt": "Обновлен"
+    }
+  },
+  "dashboard": {
+    "title": {
+      "latestInventories": "Последние инвентари",
+      "popularInventories": "Топ-5 инвентарей",
+      "tags": "Теги",
+      "ownInventories": "Собственные инвентари",
+      "writeAccessInventories": "Инвентари с доступом записи"
+    }
   }
 }

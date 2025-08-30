@@ -8,7 +8,7 @@ export const categoryApi = createApi({
     endpoints: (builder) => ({
         getCategories: builder.query<InventoryCategory[], void>({
             query: () => ({ url: '/list' })
-        })
+        }),
     }),
 });
 
