@@ -6,7 +6,7 @@ import InventoryListSortBy from "./inventory.list.sort.js";
 const customFieldsSchema = Joi.array().items(
     Joi.object({
         title: Joi.string().trim().required(),
-        description: Joi.string().trim().allow(''),
+        description: Joi.string().trim().allow('').allow(null),
         type: Joi.string().valid(...Object.values(CustomFieldType)).required(),
         isVisible: Joi.boolean().required(),
     }).required()

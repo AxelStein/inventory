@@ -110,7 +110,7 @@ const repository = {
     },
 
     create: async (ownerId, data) => {
-        const inventory = await Inventory.create({ ...data, ownerId }, { returning: true });
+        const inventory = await Inventory.create({ ...data, ownerId });
         return repository.getById(inventory.id);
     },
 

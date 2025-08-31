@@ -1,10 +1,10 @@
 import { useGetCategoriesQuery } from "api/category/category.api";
-import { useRef, useCallback, useState, useEffect, useContext } from "react";
+import { useRef, useCallback, useContext } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Button, Form } from "react-bootstrap";
 import { useGetTagsQuery } from "api/tag/tag.api";
 import { useCreateInventoryMutation, useDeleteImageMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { MdDelete } from "react-icons/md";
 import type { Option } from "react-bootstrap-typeahead/types/types";
 import { filesize } from "filesize";
@@ -15,13 +15,6 @@ import { useTranslation } from "react-i18next";
 import { useAlertDialog } from "~/components/AlertDialogContext";
 import debounce from 'lodash.debounce';
 import { InventoryContext } from "../InventoryPage";
-
-/*
-interface InventoryEditorFormProps {
-    onChanged?: (inventory: Inventory) => void;
-    onForceRefresh?: () => void;
-}
-*/
 
 interface InventoryForm {
     title: string;
@@ -215,13 +208,13 @@ export default function InventoryEditorForm() {
                                         fileSize: (value) => {
                                             if (value.length == 0) return true;
                                             const file = value[0];
-                                            const maxFileSize = appConfig?.inventoryImage.maxFileSize ?? 0;
+                                            const maxFileSize = appConfig?.inventory.imageConstraints.maxFileSize ?? 0;
                                             return file.size > 0 && file.size <= maxFileSize || `File size must be less than ${filesize(maxFileSize)}`;
                                         },
                                         fileType: (value) => {
                                             if (value.length == 0) return true;
                                             const file = value[0];
-                                            const allowedMimeTypes = appConfig?.inventoryImage.mimeTypes;
+                                            const allowedMimeTypes = appConfig?.inventory.imageConstraints.mimeTypes;
                                             return allowedMimeTypes?.includes(file.type) || `Invalid file type. Allowed types are "${allowedMimeTypes?.join(', ')}"`;
                                         }
                                     }

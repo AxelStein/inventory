@@ -26,8 +26,6 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
 
     useEffect(() => setInventory(data), [data]);
 
-    console.log('InventoryPage', inventory);
-
     if (isLoading || !inventory) {
         return <div className="spinner" />;
     }

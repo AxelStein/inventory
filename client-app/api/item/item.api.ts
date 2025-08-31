@@ -13,8 +13,15 @@ export const itemApi = createApi({
                 params
             }),
             keepUnusedDataFor: 0
-        })
+        }),
+        createItem: builder.mutation<InventoryItem, any>({
+            query: (props) => ({
+                url: '/create',
+                method: 'post',
+                body: props
+            })
+        }),
     })
 });
 
-export const { useGetItemsQuery } = itemApi;
+export const { useGetItemsQuery, useCreateItemMutation } = itemApi;

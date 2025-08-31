@@ -1,6 +1,6 @@
 import Item from './item.model.js';
-import {Sequelize, Op} from "sequelize";
-import {createSortOrder} from "../../db/sort.order.js";
+import { Sequelize, Op } from "sequelize";
+import { createSortOrder } from "../../db/sort.order.js";
 
 const repository = {
 
@@ -13,6 +13,8 @@ const repository = {
             }]
         }
     }),
+
+    getById: (id, transaction) => Item.findOne({ where: { id }, transaction }),
 
     getList: async (inventoryId, sortBy, sortAsc, page, perPage, q) => {
         const where = { inventoryId };
@@ -36,12 +38,18 @@ const repository = {
         });
     },
 
-    create: async (creatorId, data, transaction) => Item.create(
-        { ...data, creatorId },
-        { returning: true, transaction }
-    ),
+    create: async (creatorId, data, transaction) => {
+        const item = await Item.create(
+            { ...data, creatorId },
+            { transaction }
+        );
+        return repository.getById(item.id, transaction);
+    },
 
-    update: async (id, data) => Item.optimisticLockUpdate(id, data),
+    update: async (id, data, transaction) => {
+        await Item.optimisticLockUpdate(id, data, transaction);
+        return repository.getById(id, transaction);
+    },
 
     delete: (id) => Item.destroy({ where: { id } })
 }

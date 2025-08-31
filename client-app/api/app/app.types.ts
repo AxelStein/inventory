@@ -1,5 +1,5 @@
 export interface AppConfig {
-    inventoryImage: InventoryImageConstraints;
+    inventory: InventoryConfig;
     themes: string[];
     languages: AppLanguage[];
 }
@@ -8,6 +8,10 @@ export interface AppLanguage {
     locale: string;
     name: string;
     default: boolean;
+}
+
+export interface InventoryConfig {
+    imageConstraints: InventoryImageConstraints;
 }
 
 export interface InventoryImageConstraints {

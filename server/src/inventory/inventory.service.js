@@ -10,7 +10,7 @@ const service = {
 
     search: (params) => repository.search(params),
 
-    getById: (id) => repository.getById(id),
+    getById: (id, transaction, lock) => repository.getById(id, transaction, lock),
 
     create: (ownerId, data) => repository.create(ownerId, data),
 

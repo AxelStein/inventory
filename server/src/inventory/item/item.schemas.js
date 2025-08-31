@@ -2,6 +2,8 @@ import Joi from 'joi';
 import { CustomFieldType, inflateInventoryCustomFields } from '../inventory.custom.field.js';
 
 const createItemSchemaData = {
+    inventoryId: Joi.number().integer().required(),
+    inventoryVersion: Joi.number().integer().required(),
     customId: Joi.string(),
 };
 
@@ -29,7 +31,6 @@ inflateInventoryCustomFields((prefix, field) => {
 });
 
 export const createItemSchema = Joi.object({
-    inventoryId: Joi.number().integer().required(),
     ...createItemSchemaData,
 }).required()
 

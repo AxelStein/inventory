@@ -23,6 +23,6 @@ export default function UserInventoryToolbar() {
         <CreateInventoryModal
             show={createModalVisible}
             onHide={hideCreateModal}
-            onCreated={onInventoryCreated}/>
+            onChanged={onInventoryCreated}/>
     </div>;
 }

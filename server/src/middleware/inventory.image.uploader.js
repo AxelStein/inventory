@@ -15,12 +15,12 @@ const config = multer({
         metadata: (req, file, cb) => cb(null, { originalname: file.originalname }),
         key: (req, file, cb) => cb(null, `${crypto.randomUUID()}.${mime.extension(file.mimetype)}`)
     }),
-    limits: { fileSize: appConfig.inventoryImage.maxFileSize },
+    limits: { fileSize: appConfig.inventory.imageConstraints.maxFileSize },
     fileFilter: (req, file, callback) => {
         if (appConfig.inventoryImage.mimeTypes.find(e => e === file.mimetype) != null) {
             callback(null, true);
         } else {
-            callback(new ValidationError(__('image.error.invalidMimeType', appConfig.inventoryImage.mimeTypes.join(', '))), false);
+            callback(new ValidationError(__('image.error.invalidMimeType', appConfig.inventory.imageConstraints.mimeTypes.join(', '))), false);
         }
     }
 });
