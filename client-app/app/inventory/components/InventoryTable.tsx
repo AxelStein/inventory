@@ -1,7 +1,7 @@
 import { Col, Form, Table } from "react-bootstrap";
 import { formatRelative } from "date-fns";
 import type { ReactNode } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import type { Inventory } from "api/inventory/inventory.types";
 import { useTranslation } from "react-i18next";
 import { ru, enUS } from 'date-fns/locale';
@@ -54,8 +54,8 @@ function createColumn(t: (s: string) => string, column: InventoryTableColumn) {
     }
 }
 
-function createRow(columns: InventoryTableColumn[], inventory: Inventory): ReactNode {
-    return <tr key={inventory.id.toString()}>{
+function createRow(columns: InventoryTableColumn[], inventory: Inventory, onClick: () => void): ReactNode {
+    return <tr key={inventory.id.toString()} onClick={onClick}>{
         columns.map((column) => {
             switch (column) {
                 case InventoryTableColumn.CHECKBOX:
@@ -105,6 +105,12 @@ const columns = [
 
 export function InventoryTable({ title, inventories }: InventoryTableProps) {
     const { t } = useTranslation();
+    const navigate = useNavigate();
+    if (!inventories) {
+        return <Col>
+        <p>{t('inventory.noData')}</p>
+        </Col>;
+    }
     return <Col>
         {title && <h4>{title}</h4>}
 
@@ -116,7 +122,7 @@ export function InventoryTable({ title, inventories }: InventoryTableProps) {
             </thead>
             <tbody>
 
-                {columns && inventories && inventories.map((inventory) => createRow(columns, inventory))}
+                {inventories.map((inventory) => createRow(columns, inventory, () => navigate(`/inventory/${inventory.id}`)))}
 
             </tbody>
         </Table>

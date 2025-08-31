@@ -47,14 +47,16 @@ User.hasOne(UserSettings, {
         name: 'userId',
         allowNull: false,
     },
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
+    as: 'settings'
 });
 
 UserSettings.belongsTo(User, {
     foreignKey: {
         name: 'userId',
         allowNull: false,
-    }
+    },
+    as: 'user'
 });
 
 export default UserSettings;

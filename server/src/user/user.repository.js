@@ -1,11 +1,12 @@
 import User from './user.model.js';
-import {Op, Sequelize} from "sequelize";
-import {createSortOrder} from "../db/sort.order.js";
+import { Op, Sequelize } from "sequelize";
+import { createSortOrder } from "../db/sort.order.js";
 
 const repository = {
 
     getVerified: (where, transaction = null, lock = null) => User.findOne({
         where: { ...where, isBlocked: false, verified: true },
+        include: [{ association: 'settings' }],
         transaction,
         lock
     }),
@@ -38,6 +39,7 @@ const repository = {
     getByEmail: (email, transaction = null) => User.findOne({
         attributes: { include: ['password'] },
         where: { email, isBlocked: false },
+        include: [{ association: 'settings' }],
         transaction
     }),
 

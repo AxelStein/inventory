@@ -6,6 +6,7 @@ import { tagApi } from "./tag/tag.api";
 import { authApi } from "./auth/auth.api";
 import { appApi } from "./app/app.api";
 import { itemApi } from "./item/item.api";
+import { localeApi } from "./app/locale.api";
 
 export const store = configureStore({
     reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
         [authApi.reducerPath]: authApi.reducer,
         [appApi.reducerPath]: appApi.reducer,
         [itemApi.reducerPath]: itemApi.reducer,
+        [localeApi.reducerPath]: localeApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
         inventoryApi.middleware,
@@ -22,7 +24,8 @@ export const store = configureStore({
         tagApi.middleware,
         authApi.middleware,
         appApi.middleware,
-        itemApi.middleware
+        itemApi.middleware,
+        localeApi.middleware
     ),
 });
 

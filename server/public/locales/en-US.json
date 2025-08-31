@@ -55,7 +55,8 @@
       "itemCount": "Item count",
       "createdAt": "Created at",
       "updatedAt": "Updated at"
-    }
+    },
+    "noData": "No inventories"
   },
   "dashboard": {
     "title": {

@@ -55,7 +55,8 @@
       "itemCount": "Количество элементов",
       "createdAt": "Создан",
       "updatedAt": "Обновлен"
-    }
+    },
+    "noData": "Нет инвентарей"
   },
   "dashboard": {
     "title": {

@@ -34,6 +34,7 @@ const createToken = (user) => new Promise((resolve, reject) => {
                         isBlocked: user.isBlocked,
                         lastSeen: user.lastSeen,
                     },
+                    settings: user.settings,
                     token
                 });
             }
@@ -119,7 +120,7 @@ const service = {
             googleId,
         }, transaction);
 
-        await userSettingsService.createDefault(user.id, locale, transaction);
+        user.settings = await userSettingsService.createDefault(user.id, locale, transaction);
 
         if (!user.verified) {
             return createRequiresVerificationStatus(user, transaction);

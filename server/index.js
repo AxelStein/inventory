@@ -8,9 +8,20 @@ import passport from 'passport';
 import {createPassportJwtStrategy} from './src/auth/auth.passport.js';
 import errorHandler from './src/middleware/error.handler.js';
 import translation from "./src/translation/translation.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 app.use(express.json());
+app.use('/locales', express.static(path.join(__dirname, 'public', 'locales'), {
+  setHeaders: (res) => {
+    res.set('Access-Control-Allow-Origin', process.env.CLIENT_URL);
+  }
+}));
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(cors({

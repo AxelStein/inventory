@@ -18,6 +18,8 @@
     "filesize": "^11.0.2",
     "i18next": "^25.4.2",
     "i18next-browser-languagedetector": "^8.2.0",
+    "i18next-chained-backend": "^4.6.2",
+    "i18next-http-backend": "^3.0.2",
     "isbot": "^5.1.27",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",

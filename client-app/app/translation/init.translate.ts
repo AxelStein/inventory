@@ -1,26 +1,29 @@
 import i18next from "i18next";
-import {initReactI18next} from "react-i18next";
-import translationRU from './locales/ru-RU.json';
-import translationEN from './locales/en-US.json';
+import { initReactI18next } from "react-i18next";
+import I18NextHttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import ChainedBackend from 'i18next-chained-backend';
+
+const publicUrl = import.meta.env.VITE_PUBLIC_URL;
 
 i18next
-    // .use(LanguageDetector)
+    .use(ChainedBackend)
+    .use(LanguageDetector)
     .use(initReactI18next)
     .init({
-        resources: {
-            'en-US': {
-                translation: translationEN,
-            },
-            'ru-RU': {
-                translation: translationRU,
-            },
-        },
-        lng: 'ru-RU',
         debug: true,
         fallbackLng: 'en-US',
         interpolation: {
             escapeValue: false
+        },
+        backend: {
+            backends: [
+                I18NextHttpBackend
+            ],
+            backendOptions: [{
+                loadPath: `${publicUrl}/locales/{{lng}}.json`,
+                crossDomain: true,
+            }],
         }
     });
 
