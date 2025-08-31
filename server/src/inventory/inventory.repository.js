@@ -120,6 +120,11 @@ const repository = {
     },
 
     delete: (id) => Inventory.destroy({ where: { id } }),
+
+    deleteImage: async (id, version) => {
+        await Inventory.optimisticLockUpdate(id, { imageLink: null, version });
+        return repository.getById(id);
+    }
 }
 
 export default repository;

@@ -1,13 +1,15 @@
 import type { Inventory, InventoryField } from "api/inventory/inventory.types";
 import { useGetItemsQuery } from "api/item/item.api";
 import type { InventoryItem } from "api/item/item.types";
+import { useContext } from "react";
 import { Table } from "react-bootstrap";
+import { InventoryContext } from "../InventoryPage";
 
-interface ItemPageProps {
-    inventory: Inventory;
-}
-
-export default function ItemPage({ inventory }: ItemPageProps) {
+export default function ItemPage() {
+    const { inventory } = useContext(InventoryContext);
+    if (!inventory) {
+        return null;
+    }
     const { data, isLoading } = useGetItemsQuery({ inventoryId: inventory.id });
     if (!data || isLoading) {
         return <div className="spinner" />;

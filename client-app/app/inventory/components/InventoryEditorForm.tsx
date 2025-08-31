@@ -1,10 +1,10 @@
 import { useGetCategoriesQuery } from "api/category/category.api";
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState, useEffect, useContext } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Button, Form } from "react-bootstrap";
 import { useGetTagsQuery } from "api/tag/tag.api";
-import { useCreateInventoryMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
-import { useForm } from 'react-hook-form';
+import { useCreateInventoryMutation, useDeleteImageMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
+import { useForm, useWatch } from 'react-hook-form';
 import { MdDelete } from "react-icons/md";
 import type { Option } from "react-bootstrap-typeahead/types/types";
 import { filesize } from "filesize";
@@ -13,47 +13,57 @@ import { useGetAppConfigQuery } from "api/app/app.api";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useTranslation } from "react-i18next";
 import { useAlertDialog } from "~/components/AlertDialogContext";
+import debounce from 'lodash.debounce';
+import { InventoryContext } from "../InventoryPage";
 
-interface CreateInventoryFormProps {
-    inventory?: Inventory,
-    onChanged?: (inventory: Inventory) => void,
-    onForceRefresh?: () => void,
+/*
+interface InventoryEditorFormProps {
+    onChanged?: (inventory: Inventory) => void;
+    onForceRefresh?: () => void;
 }
+*/
 
 interface InventoryForm {
-    title: string,
-    description?: string,
-    isPublic: boolean,
-    categoryId: number,
+    title: string;
+    description?: string;
+    isPublic: boolean;
+    categoryId: number;
+    version?: number;
 }
 
 interface InventoryImageForm {
     file: File[],
 }
 
-export default function InventoryEditorForm({ inventory, onForceRefresh, onChanged }: CreateInventoryFormProps) {
+export default function InventoryEditorForm() {
     const typeaheadRef = useRef<any>(null);
+    const { inventory, setInventory } = useContext(InventoryContext);
 
     const [uploadImage, { isLoading: isUploadingImage }] = useUploadImageMutation();
+    const [deleteImage, { isLoading: isDeletingImage }] = useDeleteImageMutation();
     const [createInventory, { isLoading: isCreatingInventory }] = useCreateInventoryMutation();
     const [updateInventory, { isLoading: isUpdatingInventory }] = useUpdateInventoryMutation();
     const isSubmit = isCreatingInventory || isUpdatingInventory;
 
     const { data: categories } = useGetCategoriesQuery();
     const { data: tags } = useGetTagsQuery(undefined, { skip: !inventory });
-    const [imageUrl, setImageUrl] = useState<string | undefined | null>(inventory?.imageLink);
+    // const [imageUrl, setImageUrl] = useState<string | undefined | null>(inventory?.imageLink);
 
     const { data: appConfig } = useGetAppConfigQuery();
-
     const { t } = useTranslation();
-
-    const { showModal: showModal } = useAlertDialog();
+    const { showAlertDialog } = useAlertDialog();
 
     const onTagsChange = useCallback((selected: Option[]) => {
         console.log(selected);
     }, []);
 
-    const { register: registerInventoryForm, handleSubmit: handleInventorySubmit, watch: inventoryFormWatch } = useForm<InventoryForm>({
+    const {
+        register: registerInventoryForm,
+        handleSubmit: handleInventorySubmit,
+        control: inventoryFormControl,
+        formState: inventoryFormState,
+        watch: inventoryFormWatch,
+    } = useForm<InventoryForm>({
         defaultValues: {
             title: inventory?.title,
             description: inventory?.description || undefined,
@@ -62,17 +72,56 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
         }
     });
 
+    const onInventorySaved = useCallback((newInventory: Inventory) => {
+        console.log('setInventory', setInventory, newInventory);
+        setInventory?.(newInventory);
+        // inventoryRef.current = newInventory;
+        // setImageUrl(newInventory.imageLink);
+        // onChanged?.(newInventory);
+    }, []);
+
+    const onInventorySaveError = useCallback((err: any) => {
+        if (err.status === 409) {
+            // todo onForceRefresh?.();
+        }
+        console.log(err);
+    }, []);
+
+    const debounceSave = useCallback(debounce(() => {
+        if (!inventory) return;
+
+        const body = inventoryFormWatch();
+        body.version = inventory.version;
+
+        updateInventory({
+            id: inventory.id,
+            body
+        }).unwrap()
+            .then(onInventorySaved)
+            .catch(onInventorySaveError);
+    }, 3000), [inventory]);
+
+    const handleInventoryFormChange = () => {
+        if (inventory) {
+            debounceSave();
+        }
+    };
+
     const {
         register: registerImageForm,
         handleSubmit: handleImageSubmit,
-        formState: imageFormState
+        formState: imageFormState,
     } = useForm<InventoryImageForm>();
 
     const imageFormError = imageFormState.errors?.file?.message;
 
     const createInventoryCallback = useCallback((form: InventoryForm) => {
         createInventory(form).unwrap()
-            .then((newInventory: Inventory) => onChanged?.(newInventory))
+            .then((newInventory: Inventory) => {
+
+                // todo
+                console.log(newInventory);
+            })
             .catch(error => console.log(error));
     }, []);
 
@@ -89,29 +138,27 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
             version: inventory.version,
             formData,
         }).unwrap()
-            .then(newInventory => {
-                inventory = newInventory;
-                setImageUrl(newInventory.imageLink);
-                onChanged?.(newInventory);
-            })
-            .catch(err => {
-                if (err.status === 409) {
-                    onForceRefresh?.();
-                }
-                console.log(err);
-            });
-    }, []);
+            .then(onInventorySaved)
+            .catch(onInventorySaveError);
+    }, [inventory]);
 
 
     const onDeleteImageClick = useCallback(() => {
-        showModal({
+        showAlertDialog({
             message: t('inventory.editorForm.confirmDeleteImage'),
-            onConfirm: () => setImageUrl(undefined)
+            onConfirm: () => {
+                deleteImage({
+                    inventoryId: inventory!.id,
+                    version: inventory!.version,
+                }).unwrap()
+                    .then(onInventorySaved)
+                    .catch(onInventorySaveError);
+            }
         });
-    }, []);
+    }, [inventory]);
 
     return <>
-        <Form onSubmit={handleInventorySubmit(createInventoryCallback)}>
+        <Form onSubmit={handleInventorySubmit(createInventoryCallback)} onChange={handleInventoryFormChange}>
             <Form.Control
                 type="text"
                 placeholder={t('inventory.editorForm.placeholderName')}
@@ -153,8 +200,8 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
                 <Form.Group className='mb-3'>
                     <Form.Label htmlFor="imageFile">{t('inventory.editorForm.labelImage')}</Form.Label>
                     {
-                        imageUrl ? (
-                            <InventoryEditorImage imageUrl={imageUrl} onDeleteClick={onDeleteImageClick} />
+                        inventory.imageLink ? (
+                            <InventoryEditorImage imageUrl={inventory.imageLink} onDeleteClick={onDeleteImageClick} />
                         ) : (<>
                             <Form.Control
                                 type='file'
@@ -184,7 +231,7 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
                     }
                 </Form.Group>
 
-                {!imageUrl && (
+                {!inventory.imageLink && (
                     <Button
                         className="btn btn-primary mb-3"
                         type='submit'
@@ -194,7 +241,6 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
                 )}
             </Form>
         }
-
 
         {tags &&
             <div>

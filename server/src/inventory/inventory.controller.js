@@ -46,6 +46,10 @@ const controller = {
         await service.delete(req.params.inventoryId);
         res.sendStatus(200);
     },
+
+    deleteImage: async (req, res) => {
+        res.send(await service.deleteImage(req.params.inventoryId, req.validatedQuery?.version));
+    }
 }
 
 export default controller;

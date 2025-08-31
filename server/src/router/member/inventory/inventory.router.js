@@ -12,6 +12,7 @@ import {validateBody, validateParams, validateQuery} from '../../../middleware/r
 import {
     checkInventoryParamsSchema,
     createInventorySchema,
+    deleteImageSchema,
     getInventoryListByTagSchema, getInventoryListSchema, searchInventorySchema, updateInventorySchema, uploadImageSchema
 } from '../../../inventory/inventory.schemas.js';
 import customFieldValidator from '../../../middleware/custom.field.validator.js';
@@ -74,9 +75,17 @@ router.post(
 router.delete(
     '/:inventoryId',
     validateParams(checkInventoryParamsSchema),
-    checkInventoryAccess(AccessAction.DELETE), 
+    checkInventoryAccess(AccessAction.DELETE),
     controller.delete
 );
+
+router.delete(
+    '/:inventoryId/delete-image',
+    validateParams(checkInventoryParamsSchema),
+    validateQuery(deleteImageSchema),
+    checkInventoryAccess(AccessAction.UPDATE),
+    controller.deleteImage
+)
 
 router.use('/item', itemRouter);
 router.use('/tag', tagRouter);

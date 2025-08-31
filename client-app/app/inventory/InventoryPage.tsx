@@ -1,46 +1,60 @@
 import { useGetInventoryByIdQuery } from "api/inventory/inventory.api";
-import { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import InventoryEditorForm from "./components/InventoryEditorForm";
 import { Col, Container, Tab, Tabs } from "react-bootstrap";
 import ItemPage from "~/inventory/item/ItemPage";
+import { type Inventory } from "api/inventory/inventory.types";
+
+export const InventoryContext = React.createContext<InventoryContextData>({});
+
+interface InventoryContextData {
+    inventory?: Inventory;
+    setInventory?: (inventory: Inventory) => void;
+}
 
 interface InventoryPageProps {
     inventoryId: number;
 }
 
 export default function InventoryPage({ inventoryId }: InventoryPageProps) {
-    const { data: inventory, refetch: refetchInventory, isLoading } = useGetInventoryByIdQuery(inventoryId);
+    const { data, refetch, isLoading } = useGetInventoryByIdQuery(inventoryId);
+    const [inventory, setInventory] = useState<Inventory | undefined>();
+
     const onForceRefresh = useCallback(() => {
-        refetchInventory();
+        refetch();
     }, []);
-    if (isLoading) {
+
+    useEffect(() => setInventory(data), [data]);
+
+    console.log('InventoryPage', inventory);
+
+    if (isLoading || !inventory) {
         return <div className="spinner" />;
     }
-
-    return <Col>
-        <h2>{inventory?.title}</h2>
-        <Tabs className="mb-3" fill>
-            <Tab eventKey="items" title="Items">
-                {inventory && <ItemPage inventory={inventory}/>}
-            </Tab>
-            <Tab eventKey='chat' title="Chat">
-                Chat
-            </Tab>
-            <Tab eventKey="settings" title="Settings">
-                <Container className="d-flex justify-content-center">
-                    <Col md={6}>
-                        <InventoryEditorForm
-                            inventory={inventory}
-                            onForceRefresh={onForceRefresh} />
-                    </Col>
-                </Container>
-            </Tab>
-            <Tab eventKey="customId" title="Custom ID">
-                Custom ID
-            </Tab>
-            <Tab eventKey="fields" title="Fields">
-                Fields
-            </Tab>
-        </Tabs>
-    </Col>
+    return <InventoryContext.Provider value={{ inventory, setInventory }}>
+        <Col>
+            <h2>{inventory?.title}</h2>
+            <Tabs className="mb-3" fill>
+                <Tab eventKey="items" title="Items">
+                    {inventory && <ItemPage />}
+                </Tab>
+                <Tab eventKey='chat' title="Chat">
+                    Chat
+                </Tab>
+                <Tab eventKey="settings" title="Settings">
+                    <Container className="d-flex justify-content-center">
+                        <Col md={6}>
+                            <InventoryEditorForm />
+                        </Col>
+                    </Container>
+                </Tab>
+                <Tab eventKey="customId" title="Custom ID">
+                    Custom ID
+                </Tab>
+                <Tab eventKey="fields" title="Fields">
+                    Fields
+                </Tab>
+            </Tabs>
+        </Col>
+    </InventoryContext.Provider>;
 }

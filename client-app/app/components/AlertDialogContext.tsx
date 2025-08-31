@@ -8,8 +8,8 @@ type AlertDialogOptions = {
 };
 
 type AlertDialogContextType = {
-    showModal: (options: AlertDialogOptions) => void;
-    hideModal: () => void;
+    showAlertDialog: (options: AlertDialogOptions) => void;
+    hideAlertDialog: () => void;
 };
 
 const AlertDialogContext = createContext<AlertDialogContextType | undefined>(undefined);
@@ -21,7 +21,7 @@ export function AlertDialogProvider({ children }: { children: ReactNode }) {
     const hideAlertDialog = () => setOptions(null);
 
     return (
-        <AlertDialogContext.Provider value={{ showModal: showAlertDialog, hideModal: hideAlertDialog }}>
+        <AlertDialogContext.Provider value={{ showAlertDialog, hideAlertDialog }}>
             {children}
             {options && (
                 <AlertDialog

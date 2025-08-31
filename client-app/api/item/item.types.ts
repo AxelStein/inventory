@@ -1,4 +1,4 @@
-import type { PagingListParams } from "api/types";
+import type { PagingListProps } from "api/types";
 import type { User } from "api/user/user.types";
 
 export interface InventoryItem {
@@ -32,6 +32,6 @@ export interface InventoryItemLike {
     user: User;
 }
 
-export interface GetInventoryItemsParams extends PagingListParams {
+export interface GetInventoryItemsProps extends PagingListProps {
     inventoryId: number;
 }

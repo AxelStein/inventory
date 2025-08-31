@@ -75,7 +75,12 @@ function createRow(
 
                     case InventoryTableColumn.IMAGE:
                         if (inventory.imageLink) {
-                            return <td key={column}><img src={inventory.imageLink} alt='Inventory image' width={100} height={100} /></td>;
+                            return <td key={column}>
+                                <img
+                                    className='inventory-image-preview'
+                                    src={inventory.imageLink}
+                                    alt='Inventory image' />
+                            </td>;
                         }
                         return <td key={column}></td>;
 
@@ -87,14 +92,14 @@ function createRow(
 
                     case InventoryTableColumn.AUTHOR:
                         return <td key={column}>
-                            <Button
-                                variant="link"
+                            <span
+                                className="author-link"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onAuthorClick();
                                 }}>
                                 {inventory.owner?.name}
-                            </Button>
+                            </span>
                         </td>
 
                     case InventoryTableColumn.ITEM_COUNT:
@@ -126,23 +131,25 @@ export function InventoryTable({ title, inventories }: InventoryTableProps) {
     return <Col>
         {title && <h4>{title}</h4>}
 
-        <Table hover responsive>
-            <thead>
-                <tr>
-                    {columns && columns.map(col => createColumn(t, col))}
-                </tr>
-            </thead>
-            <tbody>
-                {inventories && inventories.map((inventory) => createRow(
-                    columns,
-                    inventory,
-                    () => navigate(`/inventory/${inventory.id}`),
-                    () => navigate(`/user/${inventory.owner?.id}`)
-                ))}
+        {(!inventories || inventories.length === 0) ? (
+            <p className="mt-3">{t('inventory.noData')}</p>
+        ) : (
+            <Table hover responsive>
+                <thead>
+                    <tr>
+                        {columns && columns.map(col => createColumn(t, col))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {inventories && inventories.map((inventory) => createRow(
+                        columns,
+                        inventory,
+                        () => navigate(`/inventory/${inventory.id}`),
+                        () => navigate(`/user/${inventory.owner?.id}`)
+                    ))}
 
-                {(!inventories || inventories.length === 0) && <p className="mt-3">{t('inventory.noData')}</p>}
-
-            </tbody>
-        </Table>
+                </tbody>
+            </Table>
+        )}
     </Col>;
 }

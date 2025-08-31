@@ -4,7 +4,7 @@ export interface PagingList<T> {
     hasMore: boolean,
 }
 
-export interface PagingListParams {
+export interface PagingListProps {
     sortBy?: string;
     sortAsc?: boolean;
     page?: number;

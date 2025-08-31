@@ -1,6 +1,4 @@
 import repository from "./inventory.repository.js";
-import {pusher} from "../events/pusher.js";
-import {ForbiddenError} from "../error/index.js";
 
 const service = {
 
@@ -19,6 +17,8 @@ const service = {
     update: (id, data) => repository.update(id, data),
 
     delete: (id) => repository.delete(id),
+
+    deleteImage: (id, version) => repository.deleteImage(id, version)
 }
 
 export default service;

@@ -1,6 +1,6 @@
 import type { InventoryCategory } from "api/category/category.types";
 import type { InventoryTag } from "api/tag/tag.types";
-import type { PagingListParams } from "api/types";
+import type { PagingListProps } from "api/types";
 import type { User } from "api/user/user.types";
 
 export interface Inventory {
@@ -19,7 +19,7 @@ export interface Inventory {
     fields?: InventoryField[] | null;
 }
 
-export interface GetInventoriesParams extends PagingListParams {
+export interface GetInventoriesProps extends PagingListProps {
     filter?: string;
 }
 
@@ -29,4 +29,9 @@ export interface InventoryField {
     description?: string | null;
     state: string;
     type: string;
+}
+
+export interface UpdateInventoryProps {
+    id: number;
+    body: any;
 }

@@ -8,10 +8,15 @@ export interface SignInResponse {
     email: string | undefined;
 }
 
-export interface UploadImageBody {
+export interface UploadImageProps {
     inventoryId: number;
     version: number;
     formData: FormData;
+}
+
+export interface DeleteImageProps {
+    inventoryId: number;
+    version: number;
 }
 
 export interface RestorePasswordBody {

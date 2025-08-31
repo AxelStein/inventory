@@ -17,7 +17,7 @@ export default function CreateInventoryModal({ show, onHide, onChanged }: Create
             <Modal.Title>{t('inventory.createModal.title')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <InventoryEditorForm onChanged={onChanged} />
+            <InventoryEditorForm/>
         </Modal.Body>
         <Modal.Footer>
         </Modal.Footer>

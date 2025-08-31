@@ -33,6 +33,10 @@ export const uploadImageSchema = Joi.object({
     version: Joi.number().integer().required()
 }).required();
 
+export const deleteImageSchema = Joi.object({
+    version: Joi.number().integer().required()
+}).required();
+
 const inventoryListBaseSchema = {
     sortBy: Joi.string().valid(...Object.values(InventoryListSortBy)),
     sortAsc: Joi.boolean().default(true),
