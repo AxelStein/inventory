@@ -44,7 +44,8 @@
       "labelPublic": "Публичный",
       "labelImage": "Изображение",
       "labelTags": "Теги",
-      "btnUploadImage": "Загрузить"
+      "btnUploadImage": "Загрузить",
+      "confirmDeleteImage": "Вы уверены, что хотите удалить изображение?"
     },
     "tableColumns": {
       "title": "Название",
@@ -66,5 +67,8 @@
       "ownInventories": "Собственные инвентари",
       "writeAccessInventories": "Инвентари с доступом записи"
     }
+  },
+  "actions": {
+    "cancel": "Отмена"
   }
 }

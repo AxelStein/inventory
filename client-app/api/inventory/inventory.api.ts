@@ -46,4 +46,10 @@ export const inventoryApi = createApi({
     }),
 });
 
-export const { useGetInventoriesQuery, useGetInventoryByIdQuery, useCreateInventoryMutation, useUploadImageMutation } = inventoryApi;
+export const {
+    useGetInventoriesQuery,
+    useGetInventoryByIdQuery,
+    useCreateInventoryMutation,
+    useUpdateInventoryMutation,
+    useUploadImageMutation
+} = inventoryApi;

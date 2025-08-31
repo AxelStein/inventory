@@ -3,16 +3,16 @@ import { useRef, useCallback, useState } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Button, Form } from "react-bootstrap";
 import { useGetTagsQuery } from "api/tag/tag.api";
-import { useCreateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
+import { useCreateInventoryMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
 import { useForm } from 'react-hook-form';
 import { MdDelete } from "react-icons/md";
 import type { Option } from "react-bootstrap-typeahead/types/types";
-import { ConfirmationDialog, useConfirmationDialog } from "~/components/ConfirmationDialog";
 import { filesize } from "filesize";
 import type { Inventory } from "api/inventory/inventory.types";
 import { useGetAppConfigQuery } from "api/app/app.api";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useTranslation } from "react-i18next";
+import { useAlertDialog } from "~/components/AlertDialogContext";
 
 interface CreateInventoryFormProps {
     inventory?: Inventory,
@@ -36,7 +36,8 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
 
     const [uploadImage, { isLoading: isUploadingImage }] = useUploadImageMutation();
     const [createInventory, { isLoading: isCreatingInventory }] = useCreateInventoryMutation();
-    const isUpdatingInventory = isCreatingInventory;
+    const [updateInventory, { isLoading: isUpdatingInventory }] = useUpdateInventoryMutation();
+    const isSubmit = isCreatingInventory || isUpdatingInventory;
 
     const { data: categories } = useGetCategoriesQuery();
     const { data: tags } = useGetTagsQuery(undefined, { skip: !inventory });
@@ -46,18 +47,13 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
 
     const { t } = useTranslation();
 
-    const {
-        confirmationDialogMessage,
-        showConfirmationDialog,
-        onDialogConfirm,
-        onDialogCancel
-    } = useConfirmationDialog();
+    const { showModal: showModal } = useAlertDialog();
 
     const onTagsChange = useCallback((selected: Option[]) => {
         console.log(selected);
     }, []);
 
-    const { register: registerInventoryForm, handleSubmit: handleInventorySubmit } = useForm<InventoryForm>({
+    const { register: registerInventoryForm, handleSubmit: handleInventorySubmit, watch: inventoryFormWatch } = useForm<InventoryForm>({
         defaultValues: {
             title: inventory?.title,
             description: inventory?.description || undefined,
@@ -106,9 +102,11 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
             });
     }, []);
 
+
     const onDeleteImageClick = useCallback(() => {
-        showConfirmationDialog('Are you sure you want to delete the image?', () => {
-            setImageUrl(undefined);
+        showModal({
+            message: t('inventory.editorForm.confirmDeleteImage'),
+            onConfirm: () => setImageUrl(undefined)
         });
     }, []);
 
@@ -118,12 +116,12 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
                 type="text"
                 placeholder={t('inventory.editorForm.placeholderName')}
                 className='mb-3'
-                disabled={isUpdatingInventory}
+                disabled={isSubmit}
                 {...registerInventoryForm('title', { required: !inventory })} />
 
             <Form.Select
                 className='mb-3'
-                disabled={isUpdatingInventory}
+                disabled={isSubmit}
                 {...registerInventoryForm('categoryId', { required: !inventory })}>
                 {categories?.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}
             </Form.Select>
@@ -133,19 +131,19 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
                 placeholder={t('inventory.editorForm.placeholderDescription')}
                 className='mb-3'
                 rows={6}
-                disabled={isUpdatingInventory}
+                disabled={isSubmit}
                 {...registerInventoryForm('description')} />
 
             <Form.Switch
                 label={t('inventory.editorForm.labelPublic')}
                 className='mb-3'
-                disabled={isUpdatingInventory}
+                disabled={isSubmit}
                 {...registerInventoryForm('isPublic')} />
 
             {!inventory && <Button
                 className="btn btn-primary"
                 type='submit'
-                disabled={isUpdatingInventory}>
+                disabled={isSubmit}>
                 {t('inventory.createModal.btnSubmit')}
             </Button>}
         </Form>
@@ -213,11 +211,6 @@ export default function InventoryEditorForm({ inventory, onForceRefresh, onChang
                     className='mb-3' />
             </div>
         }
-
-        <ConfirmationDialog
-            message={confirmationDialogMessage}
-            onConfirm={onDialogConfirm}
-            onCancel={onDialogCancel} />
     </>;
 }
 

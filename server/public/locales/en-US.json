@@ -44,7 +44,8 @@
       "labelPublic": "Public",
       "labelImage": "Image",
       "labelTags": "Tags",
-      "btnUploadImage": "Upload"
+      "btnUploadImage": "Upload",
+      "confirmDeleteImage": "Are you sure you want to delete the image?"
     },
     "tableColumns": {
       "title": "Title",
@@ -66,5 +67,8 @@
       "ownInventories": "Own inventories",
       "writeAccessInventories": "Inventories with write access"
     }
+  },
+  "actions": {
+    "cancel": "Cancel"
   }
 }

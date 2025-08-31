@@ -1,4 +1,4 @@
-import { Col, Form, Table } from "react-bootstrap";
+import { Button, Col, Form, Table } from "react-bootstrap";
 import { formatRelative } from "date-fns";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
@@ -54,43 +54,60 @@ function createColumn(t: (s: string) => string, column: InventoryTableColumn) {
     }
 }
 
-function createRow(columns: InventoryTableColumn[], inventory: Inventory, onClick: () => void): ReactNode {
-    return <tr key={inventory.id.toString()} onClick={onClick}>{
-        columns.map((column) => {
-            switch (column) {
-                case InventoryTableColumn.CHECKBOX:
-                    return <td key={column}><Form.Check /></td>;
+function createRow(
+    columns: InventoryTableColumn[],
+    inventory: Inventory,
+    onClick: () => void,
+    onAuthorClick: () => void,
+): ReactNode {
+    return <tr
+        key={inventory.id.toString()}
+        onClick={onClick}
+        role="button"
+        tabIndex={0}>{
+            columns.map((column) => {
+                switch (column) {
+                    case InventoryTableColumn.CHECKBOX:
+                        return <td key={column}><Form.Check /></td>;
 
-                case InventoryTableColumn.TITLE:
-                    return <td key={column}>{inventory.title}</td>;
+                    case InventoryTableColumn.TITLE:
+                        return <td key={column}>{inventory.title}</td>;
 
-                case InventoryTableColumn.IMAGE:
-                    if (inventory.imageLink) {
-                        return <td key={column}><img src={inventory.imageLink} alt='Inventory image' width={100} height={100} /></td>;
-                    }
-                    return <td key={column}></td>;
+                    case InventoryTableColumn.IMAGE:
+                        if (inventory.imageLink) {
+                            return <td key={column}><img src={inventory.imageLink} alt='Inventory image' width={100} height={100} /></td>;
+                        }
+                        return <td key={column}></td>;
 
-                case InventoryTableColumn.DESCRIPTION:
-                    return <td key={column}>{inventory.description}</td>;
+                    case InventoryTableColumn.DESCRIPTION:
+                        return <td key={column}>{inventory.description}</td>;
 
-                case InventoryTableColumn.CATEGORY:
-                    return <td key={column}>{inventory.category?.name}</td>
+                    case InventoryTableColumn.CATEGORY:
+                        return <td key={column}>{inventory.category?.name}</td>
 
-                case InventoryTableColumn.AUTHOR:
-                    return <td key={column}><Link to={{ pathname: `/user/${inventory.owner?.id}` }}> {inventory.owner?.name}</Link></td>
+                    case InventoryTableColumn.AUTHOR:
+                        return <td key={column}>
+                            <Button
+                                variant="link"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAuthorClick();
+                                }}>
+                                {inventory.owner?.name}
+                            </Button>
+                        </td>
 
-                case InventoryTableColumn.ITEM_COUNT:
-                    return <td key={column}>{inventory.itemCount}</td>
+                    case InventoryTableColumn.ITEM_COUNT:
+                        return <td key={column}>{inventory.itemCount}</td>
 
-                case InventoryTableColumn.CREATED_AT:
-                    return <td key={column}>{formatRelative(inventory.createdAt, new Date(), { locale: ru })}</td>
+                    case InventoryTableColumn.CREATED_AT:
+                        return <td key={column}>{formatRelative(inventory.createdAt, new Date(), { locale: ru })}</td>
 
-                case InventoryTableColumn.UPDATED_AT:
-                    return <td key={column}>{formatRelative(inventory.updatedAt, new Date(), { locale: ru })}</td>
-            }
-        })
-    }</tr>
-
+                    case InventoryTableColumn.UPDATED_AT:
+                        return <td key={column}>{formatRelative(inventory.updatedAt, new Date(), { locale: ru })}</td>
+                }
+            })
+        }</tr>
 }
 
 const columns = [
@@ -106,11 +123,6 @@ const columns = [
 export function InventoryTable({ title, inventories }: InventoryTableProps) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    if (!inventories) {
-        return <Col>
-        <p>{t('inventory.noData')}</p>
-        </Col>;
-    }
     return <Col>
         {title && <h4>{title}</h4>}
 
@@ -121,8 +133,14 @@ export function InventoryTable({ title, inventories }: InventoryTableProps) {
                 </tr>
             </thead>
             <tbody>
+                {inventories && inventories.map((inventory) => createRow(
+                    columns,
+                    inventory,
+                    () => navigate(`/inventory/${inventory.id}`),
+                    () => navigate(`/user/${inventory.owner?.id}`)
+                ))}
 
-                {inventories.map((inventory) => createRow(columns, inventory, () => navigate(`/inventory/${inventory.id}`)))}
+                {(!inventories || inventories.length === 0) && <p className="mt-3">{t('inventory.noData')}</p>}
 
             </tbody>
         </Table>

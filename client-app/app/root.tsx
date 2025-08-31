@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import { store } from "../api/store";
 import './app.css';
 import '~/translation/init.translate';
+import { AlertDialogProvider } from "./components/AlertDialogContext";
 
 export function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -67,7 +68,9 @@ export function HydrateFallback() {
 export default function App() {
     return <Provider store={store}>
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-            <Outlet />
+            <AlertDialogProvider>
+                <Outlet />
+            </AlertDialogProvider>
         </GoogleOAuthProvider>
     </Provider>;
 }
