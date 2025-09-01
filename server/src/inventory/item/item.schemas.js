@@ -21,7 +21,7 @@ inflateInventoryCustomFields((prefix, field) => {
         case CustomFieldType.LINK:
             createItemSchemaData[prefix] = Joi.string().uri({
                 scheme: ['http', 'https']
-            });
+            }).allow('');
             break;
 
         case CustomFieldType.BOOLEAN:
