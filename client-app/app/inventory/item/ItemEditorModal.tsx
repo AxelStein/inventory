@@ -77,11 +77,3 @@ function createFormItem(field: InventoryField, register: UseFormRegister<any>): 
                 {...register(field.uid)} />;
     }
 }
-
-/*
-STRING: 'string',
-    TEXT: 'text',
-    INT: 'int',
-    LINK: 'link',
-    BOOLEAN: 'boolean',
-*/

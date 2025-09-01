@@ -21,7 +21,7 @@ const validator = (req, res, next) => {
         const prefix = `custom_${field.type}_${fieldCount}`;
         req.body[snakeToCamel(`${prefix}_name`)] = field.title;
         req.body[snakeToCamel(`${prefix}_description`)] = field.description;
-        req.body[snakeToCamel(`${prefix}_state`)] = field.isVisible ? CustomFieldState.VISIBLE : CustomFieldState.HIDDEN;
+        req.body[snakeToCamel(`${prefix}_state`)] = field.state;
     });
 
     delete req.body.customFields;

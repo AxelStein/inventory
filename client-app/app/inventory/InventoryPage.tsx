@@ -4,6 +4,7 @@ import InventoryEditorForm from "./components/InventoryEditorForm";
 import { Col, Container, Tab, Tabs } from "react-bootstrap";
 import ItemPage from "~/inventory/item/ItemPage";
 import { type Inventory } from "api/inventory/inventory.types";
+import FieldsPage from "./fields/FieldsPage";
 
 export const InventoryContext = React.createContext<InventoryContextData>({});
 
@@ -50,7 +51,7 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
                     Custom ID
                 </Tab>
                 <Tab eventKey="fields" title="Fields">
-                    Fields
+                    {inventory && <FieldsPage />}
                 </Tab>
             </Tabs>
         </Col>

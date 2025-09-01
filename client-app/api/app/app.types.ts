@@ -12,6 +12,12 @@ export interface AppLanguage {
 
 export interface InventoryConfig {
     imageConstraints: InventoryImageConstraints;
+    customField: InventoryCustomFieldConfig;
+}
+
+export interface InventoryCustomFieldConfig {
+    types: string[];
+    states: string[];
 }
 
 export interface InventoryImageConstraints {

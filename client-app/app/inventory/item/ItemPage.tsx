@@ -2,7 +2,7 @@ import type { InventoryField } from "api/inventory/inventory.types";
 import { useGetItemsQuery } from "api/item/item.api";
 import type { InventoryItem } from "api/item/item.types";
 import { useContext, useState } from "react";
-import { Button, Col, Modal, Table } from "react-bootstrap";
+import { Button, Col, FormCheck, Modal, Table } from "react-bootstrap";
 import { InventoryContext } from "../InventoryPage";
 import { MdAdd, MdCheck, MdCheckBox, MdCheckBoxOutlineBlank, MdDeleteOutline, MdOutlineCheckBox } from "react-icons/md";
 import ItemEditorModal from "./ItemEditorModal";
@@ -31,7 +31,7 @@ export default function ItemPage() {
         return <div className="spinner" />;
     }
     return <Col>
-        <div>
+        <div className="mb-3">
             <Button variant='outline-primary' className='me-2' onClick={handleOnAddClick}>
                 <MdAdd />
             </Button>
@@ -42,8 +42,8 @@ export default function ItemPage() {
         <Table hover responsive>
             <thead>
                 <tr>
+                    <th><FormCheck/></th>
                     {fields.map(createColumn)}
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -66,6 +66,7 @@ function createColumn(field: InventoryField) {
 
 function createRow(item: InventoryItem, fields: InventoryField[]) {
     return <tr>
+        <th><FormCheck/></th>
         {
             fields.map(field => {
                 const value = (item as any)[field.uid];
@@ -75,6 +76,5 @@ function createRow(item: InventoryItem, fields: InventoryField[]) {
                 return <td>{value}</td>;
             })
         }
-        <td></td>
     </tr>;
 }

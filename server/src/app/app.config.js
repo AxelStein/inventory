@@ -1,3 +1,5 @@
+import { CustomFieldState, CustomFieldType } from "../inventory/inventory.custom.field.js";
+
 export const appConfig = {
     inventory: {
         imageConstraints: {
@@ -8,6 +10,10 @@ export const appConfig = {
                 'image/webp'
             ],
             maxFileSize: 2 * 1024 * 1024
+        },
+        customField: {
+            types: Object.values(CustomFieldType),
+            states: Object.values(CustomFieldState)
         }
     },
     languages: [
@@ -24,5 +30,5 @@ export const appConfig = {
     themes: [
         'light',
         'dark'
-    ]
+    ],
 }

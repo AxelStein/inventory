@@ -1,10 +1,12 @@
 .inventory-image-container {
   position: relative;
+  width: 100%;
+  background-color: #eee;
 }
 
 .inventory-image {
-  background-color: #eee;
   width: 100%;
+  min-height: 400px;
   max-height: 400px;
   object-fit: contain;
 }
@@ -16,8 +18,13 @@
 }
 
 .inventory-image-preview {
+  background-color: #eee;
   width: 100px;
   height: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  min-height: 100px;
+  max-height: 100px;
   object-fit: cover;
 }
 

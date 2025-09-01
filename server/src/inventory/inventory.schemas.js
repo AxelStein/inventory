@@ -1,14 +1,14 @@
 import Joi from 'joi';
-import { CustomFieldType } from './inventory.custom.field.js';
+import { CustomFieldState, CustomFieldType } from './inventory.custom.field.js';
 import InventoryListFilters from './inventory.list.filters.js';
 import InventoryListSortBy from "./inventory.list.sort.js";
 
 const customFieldsSchema = Joi.array().items(
     Joi.object({
-        title: Joi.string().trim().required(),
+        name: Joi.string().trim().required(),
         description: Joi.string().trim().allow('').allow(null),
         type: Joi.string().valid(...Object.values(CustomFieldType)).required(),
-        isVisible: Joi.boolean().required(),
+        state: Joi.string().valid(...Object.values(CustomFieldState)).required(),
     }).required()
 );
 
@@ -17,7 +17,7 @@ export const createInventorySchema = Joi.object({
     description: Joi.string().trim().allow(''),
     categoryId: Joi.number().integer().required(),
     isPublic: Joi.boolean().required(),
-    customFields: customFieldsSchema
+    fields: customFieldsSchema
 }).required();
 
 export const updateInventorySchema = Joi.object({
@@ -26,7 +26,7 @@ export const updateInventorySchema = Joi.object({
     categoryId: Joi.number().integer(),
     isPublic: Joi.boolean(),
     version: Joi.number().integer().required(),
-    customFields: customFieldsSchema
+    fields: customFieldsSchema
 }).required();
 
 export const uploadImageSchema = Joi.object({
