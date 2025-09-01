@@ -8,6 +8,8 @@ import mime from 'mime-types';
 
 const s3Client = new S3Client();
 
+const imageConstraints = appConfig.inventory.imageConstraints;
+
 const config = multer({
     storage: multerS3({
         s3: s3Client,
@@ -15,12 +17,12 @@ const config = multer({
         metadata: (req, file, cb) => cb(null, { originalname: file.originalname }),
         key: (req, file, cb) => cb(null, `${crypto.randomUUID()}.${mime.extension(file.mimetype)}`)
     }),
-    limits: { fileSize: appConfig.inventory.imageConstraints.maxFileSize },
+    limits: { fileSize: imageConstraints.maxFileSize },
     fileFilter: (req, file, callback) => {
-        if (appConfig.inventoryImage.mimeTypes.find(e => e === file.mimetype) != null) {
+        if (imageConstraints.mimeTypes.find(e => e === file.mimetype) != null) {
             callback(null, true);
         } else {
-            callback(new ValidationError(__('image.error.invalidMimeType', appConfig.inventory.imageConstraints.mimeTypes.join(', '))), false);
+            callback(new ValidationError(__('image.error.invalidMimeType', imageConstraints.mimeTypes.join(', '))), false);
         }
     }
 });
