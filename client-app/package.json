@@ -5,13 +5,12 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
+    "preview": "vite preview",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
     "@react-router/node": "^7.7.1",
-    "@react-router/serve": "^7.7.1",
     "@reduxjs/toolkit": "^2.8.2",
     "bootstrap": "^5.3.7",
     "date-fns": "^4.1.0",
