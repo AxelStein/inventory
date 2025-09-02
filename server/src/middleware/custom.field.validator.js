@@ -1,9 +1,9 @@
 import { ValidationError } from "../error/index.js";
-import { CustomFieldState, MAX_FIELDS_PER_TYPE } from "../inventory/inventory.custom.field.js";
+import { MAX_FIELDS_PER_TYPE } from "../inventory/inventory.custom.field.js";
 import { snakeToCamel } from "../util/string.util.js";
 
 const validator = (req, res, next) => {
-    const fields = req.body?.customFields;
+    const fields = req.body?.fields;
     if (!fields) {
         return next();
     }
@@ -19,12 +19,12 @@ const validator = (req, res, next) => {
         types[field.type] = fieldCount;
 
         const prefix = `custom_${field.type}_${fieldCount}`;
-        req.body[snakeToCamel(`${prefix}_name`)] = field.title;
+        req.body[snakeToCamel(`${prefix}_name`)] = field.name;
         req.body[snakeToCamel(`${prefix}_description`)] = field.description;
         req.body[snakeToCamel(`${prefix}_state`)] = field.state;
     });
 
-    delete req.body.customFields;
+    delete req.body.fields;
 
     next();
 };

@@ -1,12 +1,13 @@
 import { useGetAppConfigQuery } from "api/app/app.api";
 import { useUpdateInventoryMutation } from "api/inventory/inventory.api";
-import type { Inventory } from "api/inventory/inventory.types";
+import type { Inventory, InventoryField } from "api/inventory/inventory.types";
 import { useCallback } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
 interface FieldEditorModalProps {
     inventory: Inventory;
+    editField?: InventoryField;
     show: boolean;
     onHide: () => void;
 }
@@ -18,18 +19,23 @@ interface FieldEditorForm {
     state: string;
 }
 
-export default function FieldEditorModal({ show, onHide, inventory }: FieldEditorModalProps) {
+export default function FieldEditorModal({ show, onHide, inventory, editField }: FieldEditorModalProps) {
     const { data: appConfig } = useGetAppConfigQuery();
     const [updateInventory] = useUpdateInventoryMutation();
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm<FieldEditorForm>();
 
-    const onSubmit = useCallback(() => {
-        const fields = inventory.fields;
-        updateInventory({ 
-            id: inventory.id, 
-            body: { 
-                fields: inventory.fields 
-            } 
+    const onSubmit = useCallback((form: FieldEditorForm) => {
+        const fields = inventory.fields?.map(({ uid, ...values }) => values) || [];
+        if (!editField) {
+            fields.push(form);
+        }
+
+        updateInventory({
+            id: inventory.id,
+            body: {
+                fields: fields,
+                version: inventory.version
+            }
         });
     }, []);
 

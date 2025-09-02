@@ -15,7 +15,11 @@ export default function FieldsPage() {
         setCreateModalVisible(false);
     };
 
-    const fields = inventory?.fields || [];
+    const fields = inventory!.fields || [];
+    const canEdit = inventory?.permissions?.inventory?.update === true;
+    if (!canEdit) {
+        return <p>You have not access to edit inventory fields</p>;
+    }
     return <Col>
         <div className="mb-3">
             <Button
