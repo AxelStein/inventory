@@ -5,8 +5,16 @@ export const RESOURCE_ITEM = 'item';
 export const RESOURCE_INVENTORY = 'inventory';
 export const RESOURCE_POST = 'post';
 export const RESOURCE_TAG = 'tag';
-export const RESOURCE_WRITE_ACCESS = 'write-access';
-export const RESOURCE_CUSTOM_ID = 'custom-id';
+export const RESOURCE_WRITE_ACCESS = 'writeAccess';
+export const RESOURCE_CUSTOM_ID = 'customId';
+export const RESOURCES = [
+    RESOURCE_ITEM,
+    RESOURCE_INVENTORY,
+    RESOURCE_POST,
+    RESOURCE_TAG,
+    RESOURCE_WRITE_ACCESS,
+    RESOURCE_CUSTOM_ID,
+];
 
 export const control = new AccessControl();
 control.grant(AccessRole.VIEWER)
@@ -23,17 +31,17 @@ control.grant(AccessRole.EDITOR)
 
     .create(RESOURCE_TAG)
     .delete(RESOURCE_TAG)
-    
+
     .createOwn(RESOURCE_POST)
     .updateOwn(RESOURCE_POST)
     .deleteOwn(RESOURCE_POST);
 
 control.grant(AccessRole.OWNER)
     .extend(AccessRole.EDITOR)
-    
+
     .update(RESOURCE_INVENTORY)
     .delete(RESOURCE_INVENTORY)
-    
+
     .delete(RESOURCE_ITEM)
     .delete(RESOURCE_POST)
 

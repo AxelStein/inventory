@@ -1,4 +1,13 @@
-import { control, RESOURCE_CUSTOM_ID, RESOURCE_INVENTORY, RESOURCE_ITEM, RESOURCE_POST, RESOURCE_TAG, RESOURCE_WRITE_ACCESS } from '../inventory/access/inventory.access.control.js';
+import { 
+    control, 
+    RESOURCE_CUSTOM_ID, 
+    RESOURCE_INVENTORY, 
+    RESOURCE_ITEM, 
+    RESOURCE_POST, 
+    RESOURCE_TAG, 
+    RESOURCE_WRITE_ACCESS, 
+    RESOURCES 
+} from '../inventory/access/inventory.access.control.js';
 import { ForbiddenError, NotFoundError } from "../error/index.js";
 import InventoryAccessRole from "../inventory/access/inventory.access.role.js";
 import postService from '../inventory/post/post.service.js';
@@ -7,6 +16,7 @@ import inventoryService from '../inventory/inventory.service.js';
 import itemService from '../inventory/item/item.service.js';
 import writeAccessService from '../inventory/write_access/write.access.service.js';
 import customIdService from '../inventory/custom_id/custom.id.service.js';
+import AccessAction from '../inventory/access/access.action.js';
 
 class InventoryEntity {
     constructor(inventory, isOwn = true) {
@@ -15,9 +25,12 @@ class InventoryEntity {
     }
 }
 
-const getInventoryAccessRole = (user, inventory) => {
+export const getInventoryAccessRole = (user, inventory) => {
     if (!inventory) {
         throw new NotFoundError(__('inventory.error.notFound'));
+    }
+    if (!user) {
+        return InventoryAccessRole.VIEWER;
     }
     if (user.role === UserRole.ADMIN) {
         return InventoryAccessRole.ADMIN;
@@ -29,6 +42,29 @@ const getInventoryAccessRole = (user, inventory) => {
         return InventoryAccessRole.EDITOR;
     }
     return inventory.writeAccess?.find(e => e.userId === user.id) ? InventoryAccessRole.EDITOR : InventoryAccessRole.VIEWER;
+}
+
+export const getInventoryPermissions = (role) => {
+    const map = {};
+    RESOURCES.forEach((resource) => {
+        const isGranted = (action) => {
+            return control.can(role)[action](resource).granted;
+        }
+        if (!map[resource]) {
+            map[resource] = {};
+        }
+        map[resource] = {
+            create: isGranted(AccessAction.CREATE.any),
+            read: isGranted(AccessAction.READ.any),
+            update: isGranted(AccessAction.UPDATE.any),
+            delete: isGranted(AccessAction.DELETE.any),
+            createOwn: isGranted(AccessAction.CREATE.own),
+            readOwn: isGranted(AccessAction.READ.own),
+            updateOwn: isGranted(AccessAction.UPDATE.own),
+            deleteOwn: isGranted(AccessAction.DELETE.own),
+        }
+    });
+    return map;
 }
 
 const checkHasPermission = (role, action, resource, isOwn) => {
@@ -64,7 +100,7 @@ const getPostById = async (id) => {
     return post;
 }
 
-export const checkInventoryAccess = (action) => checkResourceAccess(action, RESOURCE_INVENTORY, () => {})
+export const checkInventoryAccess = (action) => checkResourceAccess(action, RESOURCE_INVENTORY, () => { })
 
 export const checkPostAccess = (action) => checkResourceAccess(action, RESOURCE_POST, async (req) => {
     const post = await getPostById(req.params.id);

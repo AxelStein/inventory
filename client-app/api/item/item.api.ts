@@ -9,7 +9,7 @@ export const itemApi = createApi({
     endpoints: (builder) => ({
         getItems: builder.query<PagingList<InventoryItem>, GetInventoryItemsProps>({
             query: (props) => ({
-                url: makeApiPath('inventory/item/list'),
+                url: makeApiPath('inventory/item/list', props.asGuest),
                 params: { ...props, asGuest: undefined }
             }),
             keepUnusedDataFor: 0

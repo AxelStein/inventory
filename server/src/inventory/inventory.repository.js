@@ -3,6 +3,7 @@ import InventoryListFilter from './inventory.list.filters.js';
 import { mapInventory, mapInventoryList } from './inventory.mapper.js';
 import { Op, Sequelize } from "sequelize";
 import { createSortOrder } from "../db/sort.order.js";
+import { getInventoryPermissions, getInventoryAccessRole } from '../middleware/check.access.js';
 
 const createListInclude = () => {
     return [
@@ -41,20 +42,25 @@ const repository = {
         ]
     }),
 
-    getById: async (id, transaction, lock) => mapInventory(await Inventory.findOne({
-        where: { id },
-        include: [
-            { association: 'owner' },
-            { association: 'category' },
-            { association: 'tags', through: { attributes: [] } }
+    getById: async ({ reqUser, id, transaction, lock }) => {
+        const inventory = await Inventory.findOne({
+            where: { id },
+            include: [
+                { association: 'owner' },
+                { association: 'category' },
+                { association: 'writeAccess' },
+                { association: 'tags', through: { attributes: [] } }
 
-        ],
-        attributes: {
-            include: [createItemCountAttribute()]
-        },
-        transaction,
-        lock
-    })),
+            ],
+            attributes: {
+                include: [createItemCountAttribute()]
+            },
+            transaction,
+            lock
+        });
+        inventory.permissions = getInventoryPermissions(getInventoryAccessRole(reqUser, inventory));
+        return mapInventory(inventory);
+    },
 
     search: async ({ q, page, perPage, sortBy, sortAsc }) => {
         return getInventoryList(page, perPage, {
@@ -109,21 +115,21 @@ const repository = {
         });
     },
 
-    create: async (ownerId, data) => {
-        const inventory = await Inventory.create({ ...data, ownerId });
-        return repository.getById(inventory.id);
+    create: async ({ reqUser, data }) => {
+        const inventory = await Inventory.create({ ...data, ownerId: user.id });
+        return repository.getById({ reqUser, id: inventory.id });
     },
 
-    update: async (id, data) => {
-        await Inventory.optimisticLockUpdate(id, data)
-        return repository.getById(id);
+    update: async ({ reqUser, id, data }) => {
+        await Inventory.optimisticLockUpdate(id, data);
+        return repository.getById({ reqUser, id });
     },
 
     delete: (id) => Inventory.destroy({ where: { id } }),
 
-    deleteImage: async (id, version) => {
+    deleteImage: async ({ reqUser, id, version }) => {
         await Inventory.optimisticLockUpdate(id, { imageLink: null, version });
-        return repository.getById(id);
+        return repository.getById({ reqUser, id });
     }
 }
 

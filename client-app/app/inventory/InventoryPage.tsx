@@ -5,6 +5,7 @@ import { Col, Container, Tab, Tabs } from "react-bootstrap";
 import ItemPage from "~/inventory/item/ItemPage";
 import { type Inventory } from "api/inventory/inventory.types";
 import FieldsPage from "./fields/FieldsPage";
+import { isGuest } from "~/auth/auth.check.guest";
 
 export const InventoryContext = React.createContext<InventoryContextData>({});
 
@@ -18,7 +19,7 @@ interface InventoryPageProps {
 }
 
 export default function InventoryPage({ inventoryId }: InventoryPageProps) {
-    const { data, refetch, isLoading } = useGetInventoryByIdQuery({ id: inventoryId, asGuest: true });
+    const { data, refetch, isLoading } = useGetInventoryByIdQuery({ id: inventoryId, asGuest: isGuest() });
     const [inventory, setInventory] = useState<Inventory | undefined>();
 
     const onForceRefresh = useCallback(() => {
@@ -30,29 +31,34 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
     if (isLoading || !inventory) {
         return <div className="spinner" />;
     }
+
+    const canEditInventory = inventory.permissions?.inventory?.update == true;
+
     return <InventoryContext.Provider value={{ inventory, setInventory }}>
         <Col>
-            <h2>{inventory?.title}</h2>
+            <h2>{inventory.title}</h2>
             <Tabs className="mb-3" fill>
                 <Tab eventKey="items" title="Items">
-                    {inventory && <ItemPage />}
+                    <ItemPage />
                 </Tab>
-                <Tab eventKey='chat' title="Chat">
-                    Chat
+                <Tab eventKey='posts' title="Posts">
+                    Posts
                 </Tab>
-                <Tab eventKey="settings" title="Settings">
-                    <Container className="d-flex justify-content-center">
-                        <Col md={6}>
-                            <InventoryEditorForm />
-                        </Col>
-                    </Container>
-                </Tab>
-                <Tab eventKey="customId" title="Custom ID">
-                    Custom ID
-                </Tab>
-                <Tab eventKey="fields" title="Fields">
-                    {inventory && <FieldsPage />}
-                </Tab>
+                {canEditInventory && [
+                    <Tab eventKey="settings" title="Settings">
+                        <Container className="d-flex justify-content-center">
+                            <Col md={6}>
+                                <InventoryEditorForm />
+                            </Col>
+                        </Container>
+                    </Tab>,
+                    <Tab eventKey="customId" title="Custom ID">
+                        Custom ID
+                    </Tab>,
+                    <Tab eventKey="fields" title="Fields">
+                        <FieldsPage />
+                    </Tab>
+                ]}
             </Tabs>
         </Col>
     </InventoryContext.Provider>;

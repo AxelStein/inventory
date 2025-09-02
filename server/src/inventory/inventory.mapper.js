@@ -16,11 +16,11 @@ export const mapInventory = (inventory) => {
         category: inventory.category,
         createdAt: inventory.createdAt,
         updatedAt: inventory.updatedAt,
-        writeAccess: inventory.writeAccess,
         version: inventory.version,
         itemCount: inventory.dataValues.itemCount,
         fields: [],
         tags: inventory.tags,
+        permissions: inventory.permissions,
     };
 
     inflateInventoryCustomFields((prefix, field) => {

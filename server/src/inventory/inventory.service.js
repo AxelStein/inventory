@@ -10,15 +10,15 @@ const service = {
 
     search: (params) => repository.search(params),
 
-    getById: (id, transaction, lock) => repository.getById(id, transaction, lock),
+    getById: ({ reqUser, id, transaction, lock }) => repository.getById({ reqUser, id, transaction, lock }),
 
-    create: (ownerId, data) => repository.create(ownerId, data),
+    create: ({ reqUser, data }) => repository.create({ reqUser, data }),
 
-    update: (id, data) => repository.update(id, data),
+    update: ({ reqUser, id, data }) => repository.update({ reqUser, id, data }),
 
     delete: (id) => repository.delete(id),
 
-    deleteImage: (id, version) => repository.deleteImage(id, version)
+    deleteImage: ({ reqUser, id, version }) => repository.deleteImage({ reqUser, id, version })
 }
 
 export default service;

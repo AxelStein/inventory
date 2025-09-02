@@ -1,0 +1,1 @@
+export const isGuest = () => localStorage.getItem('user') == null;

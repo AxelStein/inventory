@@ -17,6 +17,27 @@ export interface Inventory {
     owner?: User | null;
     tags?: InventoryTag[] | null;
     fields?: InventoryField[] | null;
+    permissions?: InventoryPermissionSet;
+}
+
+export interface InventoryPermissionSet {
+    item: InventoryPermissions;
+    inventory: InventoryPermissions;
+    post: InventoryPermissions;
+    tag: InventoryPermissions;
+    writeAccess: InventoryPermissions;
+    customId: InventoryPermissions;
+}
+
+export interface InventoryPermissions {
+    create: boolean;
+    read: boolean;
+    update: boolean;
+    delete: boolean;
+    createOwn: boolean;
+    readOwn: boolean;
+    updateOwn: boolean;
+    deleteOwn: boolean;
 }
 
 export interface GetInventoriesProps extends PagingListProps {

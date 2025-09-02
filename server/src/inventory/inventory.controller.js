@@ -19,26 +19,31 @@ const controller = {
     },
 
     getById: async (req, res) => {
-        res.send(await service.getById(req.params.inventoryId));
+        res.send(await service.getById({ reqUser: req.user, id: req.params.inventoryId }));
     },
 
     create: async (req, res) => {
-        res.send(await service.create(req.user.id, req.body));
+        res.send(await service.create({ reqUser: req.user, data: req.body }));
     },
 
     update: async (req, res) => {
-        res.send(await service.update(req.params.inventoryId, req.body));
+        res.send(await service.update({
+            reqUser: req.user,
+            id: req.params.inventoryId,
+            data: req.body
+        }));
     },
 
     uploadImage: async (req, res) => {
         res.send(
-            await service.update(
-                req.params.inventoryId,
-                {
+            await service.update({
+                reqUser: req.user,
+                id: req.params.inventoryId,
+                data: {
                     version: req.query.version,
                     imageLink: req.file.location
                 }
-            )
+            })
         );
     },
 
@@ -48,7 +53,11 @@ const controller = {
     },
 
     deleteImage: async (req, res) => {
-        res.send(await service.deleteImage(req.params.inventoryId, req.validatedQuery?.version));
+        res.send(await service.deleteImage({
+            reqUser: req.user,
+            id: req.params.inventoryId,
+            version: req.validatedQuery?.version
+        }));
     }
 }
 

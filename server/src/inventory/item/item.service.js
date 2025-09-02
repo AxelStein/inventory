@@ -5,7 +5,7 @@ import inventoryService from './../inventory.service.js';
 import { ConflictError } from '../../error/index.js';
 
 const checkInventoryVersion = async (data, transaction) => {
-    const inventory = await inventoryService.getById(data.inventoryId, transaction);
+    const inventory = await inventoryService.getById({ id: data.inventoryId, transaction });
     if (inventory.version !== data.inventoryVersion) {
         throw new ConflictError();
     }
