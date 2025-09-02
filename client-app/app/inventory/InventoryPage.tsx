@@ -18,7 +18,7 @@ interface InventoryPageProps {
 }
 
 export default function InventoryPage({ inventoryId }: InventoryPageProps) {
-    const { data, refetch, isLoading } = useGetInventoryByIdQuery(inventoryId);
+    const { data, refetch, isLoading } = useGetInventoryByIdQuery({ id: inventoryId, asGuest: true });
     const [inventory, setInventory] = useState<Inventory | undefined>();
 
     const onForceRefresh = useCallback(() => {

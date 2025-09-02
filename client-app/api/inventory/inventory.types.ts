@@ -21,6 +21,12 @@ export interface Inventory {
 
 export interface GetInventoriesProps extends PagingListProps {
     filter?: string;
+    asGuest?: boolean;
+}
+
+export interface GetInventoryByIdProps {
+    id: number;
+    asGuest?: boolean;
 }
 
 export interface InventoryField {

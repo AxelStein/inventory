@@ -34,4 +34,5 @@ export interface InventoryItemLike {
 
 export interface GetInventoryItemsProps extends PagingListProps {
     inventoryId: number;
+    asGuest?: boolean;
 }

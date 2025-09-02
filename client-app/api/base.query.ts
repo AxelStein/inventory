@@ -8,3 +8,8 @@ export const createBaseQuery = (path: string) => {
         credentials: 'include',
     });
 }
+
+export const makeApiPath = (path: string, asGuest?: boolean) => {
+    const base = asGuest === true ? 'v1/guest' : 'v1/member';
+    return `${base}/${path}`;
+}

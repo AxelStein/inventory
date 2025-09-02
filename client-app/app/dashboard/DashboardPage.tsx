@@ -6,18 +6,22 @@ import { useTranslation } from "react-i18next";
 export default function DashboardPage() {
     const { t } = useTranslation();
 
+    const isGuest = localStorage.getItem('user') == null;
+
     const { data: popular, error: popularError, isLoading: popularLoading } = useGetInventoriesQuery({
         page: 1,
         perPage: 5,
         sortBy: 'itemCount',
-        sortAsc: false
+        sortAsc: false,
+        asGuest: isGuest,
     });
 
     const { data: latest, error: latestError, isLoading: latestLoading } = useGetInventoriesQuery({
         page: 1,
         perPage: 5,
         sortBy: 'createdAt',
-        sortAsc: false
+        sortAsc: false,
+        asGuest: isGuest,
     });
 
     return <Container>
