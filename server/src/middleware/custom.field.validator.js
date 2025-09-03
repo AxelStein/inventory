@@ -1,5 +1,5 @@
 import { ValidationError } from "../error/index.js";
-import { MAX_FIELDS_PER_TYPE } from "../inventory/inventory.custom.field.js";
+import { inflateInventoryCustomFields, MAX_FIELDS_PER_TYPE } from "../inventory/inventory.custom.field.js";
 import { snakeToCamel } from "../util/string.util.js";
 
 const validator = (req, res, next) => {
@@ -9,6 +9,12 @@ const validator = (req, res, next) => {
     }
 
     const types = {};
+
+    inflateInventoryCustomFields((prefix) => {
+        req.body[`${prefix}Name`] = null;
+        req.body[`${prefix}Description`] = null;
+        req.body[`${prefix}State`] = null;
+    });
 
     fields.forEach(field => {
         let fieldCount = types[field.type] || 0;

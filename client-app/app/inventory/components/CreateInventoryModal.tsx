@@ -7,10 +7,9 @@ import { useTranslation } from "react-i18next";
 interface CreateInventoryModalProps extends BaseModalProps {
     show: boolean,
     onHide: () => void,
-    onChanged: (inventory: Inventory) => void,
 }
 
-export default function CreateInventoryModal({ show, onHide, onChanged }: CreateInventoryModalProps) {
+export default function CreateInventoryModal({ show, onHide }: CreateInventoryModalProps) {
     const { t } = useTranslation();
     return <Modal show={show} onHide={onHide}>
         <Modal.Header>

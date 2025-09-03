@@ -27,8 +27,8 @@ export const CustomFieldState = Object.freeze({
 export const inflateInventoryCustomFields = (inflate) => {
     customFields.forEach(field => {
         for (let i = 1; i <= MAX_FIELDS_PER_TYPE; i++) {
-            const prefix = snakeToCamel(`custom_${field.type}_${i}`);
-            inflate(prefix, field);
+            const prefix = `custom_${field.type}_${i}`;
+            inflate(snakeToCamel(prefix), field);
         }
     });
 }

@@ -7,7 +7,6 @@ import { useCreateInventoryMutation, useDeleteImageMutation, useUpdateInventoryM
 import { useForm } from 'react-hook-form';
 import { MdDelete } from "react-icons/md";
 import { filesize } from "filesize";
-import type { Inventory } from "api/inventory/inventory.types";
 import { useGetAppConfigQuery } from "api/app/app.api";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useTranslation } from "react-i18next";
@@ -30,7 +29,7 @@ interface InventoryImageForm {
 
 export default function InventoryEditorForm() {
     const typeaheadRef = useRef<any>(null);
-    const { inventory, setInventory } = useContext(InventoryContext);
+    const { inventory, setInventory, handleInventoryError } = useContext(InventoryContext);
 
     const [uploadImage, { isLoading: isUploadingImage }] = useUploadImageMutation();
     const [deleteImage] = useDeleteImageMutation();
@@ -106,17 +105,6 @@ export default function InventoryEditorForm() {
         }
     });
 
-    const onInventorySaved = useCallback((newInventory: Inventory) => {
-        setInventory?.(newInventory);
-    }, []);
-
-    const onInventorySaveError = useCallback((err: any) => {
-        if (err.status === 409) {
-            // todo
-        }
-        console.log(err);
-    }, []);
-
     const debounceSave = useCallback(debounce(() => {
         if (!inventory) return;
 
@@ -127,8 +115,8 @@ export default function InventoryEditorForm() {
             id: inventory.id,
             body
         }).unwrap()
-            .then(onInventorySaved)
-            .catch(onInventorySaveError);
+            .then(setInventory)
+            .catch(handleInventoryError);
     }, 3000), [inventory]);
 
     const handleInventoryFormChange = () => {
@@ -147,12 +135,8 @@ export default function InventoryEditorForm() {
 
     const createInventoryCallback = useCallback((form: InventoryForm) => {
         createInventory(form).unwrap()
-            .then((newInventory: Inventory) => {
-
-                // todo
-                console.log(newInventory);
-            })
-            .catch(error => console.log(error));
+            .then(setInventory)
+            .catch(handleInventoryError);
     }, []);
 
     const uploadImageCallback = useCallback((form: InventoryImageForm) => {
@@ -168,8 +152,8 @@ export default function InventoryEditorForm() {
             version: inventory.version,
             formData,
         }).unwrap()
-            .then(onInventorySaved)
-            .catch(onInventorySaveError);
+            .then(setInventory)
+            .catch(handleInventoryError);
     }, [inventory]);
 
 
@@ -181,8 +165,8 @@ export default function InventoryEditorForm() {
                     inventoryId: inventory!.id,
                     version: inventory!.version,
                 }).unwrap()
-                    .then(onInventorySaved)
-                    .catch(onInventorySaveError);
+                    .then(setInventory)
+                    .catch(handleInventoryError);
             }
         });
     }, [inventory]);

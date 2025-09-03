@@ -1,9 +1,11 @@
 import { useGetAppConfigQuery } from "api/app/app.api";
 import { useUpdateInventoryMutation } from "api/inventory/inventory.api";
 import type { Inventory, InventoryField } from "api/inventory/inventory.types";
-import { useCallback } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { MdDeleteOutline } from "react-icons/md";
+import { InventoryContext } from "../InventoryPage";
 
 interface FieldEditorModalProps {
     inventory: Inventory;
@@ -22,34 +24,58 @@ interface FieldEditorForm {
 export default function FieldEditorModal({ show, onHide, inventory, editField }: FieldEditorModalProps) {
     const { data: appConfig } = useGetAppConfigQuery();
     const [updateInventory] = useUpdateInventoryMutation();
-    const { register, handleSubmit } = useForm<FieldEditorForm>({defaultValues: {
-        name: editField?.name,
-        description: editField?.description ?? '',
-        type: editField?.type,
-        state: editField?.state,
-    }});
+    const { register, handleSubmit, reset: resetForm } = useForm<FieldEditorForm>();
+    const { setInventory, handleInventoryError } = useContext(InventoryContext);
 
-    const onSubmit = useCallback((form: FieldEditorForm) => {
-        const fields = inventory.fields?.map(({ uid, ...values }) => values) || [];
-        if (!editField) {
-            fields.push(form);
+    useEffect(() => {
+        if (editField) {
+            resetForm({
+                name: editField?.name,
+                description: editField?.description ?? '',
+                type: editField?.type,
+                state: editField?.state,
+            });
         }
+    }, [editField, resetForm]);
 
+    const updateFields = (fields: FieldEditorForm[]) => {
         updateInventory({
             id: inventory.id,
             body: {
                 fields: fields,
                 version: inventory.version
             }
-        });
-    }, []);
+        }).unwrap()
+            .then(setInventory)
+            .catch(handleInventoryError);
+    }
+
+    const onSubmit = (form: FieldEditorForm) => {
+        const fields = inventory.fields?.map(({ uid, ...values }) => {
+            return uid === editField?.uid ? form : values as FieldEditorForm;
+        }) || [];
+        if (!editField) {
+            fields.push(form);
+        }
+        updateFields(fields);
+    }
+    const handleDelete = () => {
+        if (editField) {
+            updateFields(
+                inventory.fields
+                    ?.filter(f => f.uid !== editField.uid)
+                    .map(({ uid, ...values }) => (values as FieldEditorForm))
+                || []
+            );
+        }
+    }
 
     if (!appConfig) {
         return <div className="spinner" />;
     }
     const config = appConfig.inventory.customField;
     return <Modal show={show} onHide={onHide}>
-        <Modal.Header>Add field</Modal.Header>
+        <Modal.Header>{editField != null ? 'Edit' : 'Add'} field</Modal.Header>
         <Modal.Body>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Control
@@ -76,11 +102,20 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
                     {config.states.map((state) => (<option value={state}>{state}</option>))}
                 </Form.Select>
 
-                <Button
-                    className="btn btn-primary"
-                    type='submit'>
-                    Add
-                </Button>
+                <div className="d-flex justify-content-between">
+                    {editField != null ? (
+                        <Button variant='outline-danger' onClick={handleDelete}>
+                            <MdDeleteOutline />
+                        </Button>
+                    ) : (<span></span>)}
+
+                    <Button
+                        className="btn btn-primary"
+                        type='submit'>
+                        {editField != null ? 'Save' : 'Add'}
+                    </Button>
+                </div>
+
             </Form>
         </Modal.Body>
     </Modal>;

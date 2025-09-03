@@ -12,6 +12,7 @@ export const InventoryContext = React.createContext<InventoryContextData>({});
 interface InventoryContextData {
     inventory?: Inventory;
     setInventory?: (inventory: Inventory) => void;
+    handleInventoryError?: (err: any) => void;
 }
 
 interface InventoryPageProps {
@@ -26,6 +27,10 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
         refetch();
     }, []);
 
+    const handleInventoryError = (err: any) => {
+
+    }
+
     useEffect(() => setInventory(data), [data]);
 
     if (isLoading || !inventory) {
@@ -34,7 +39,7 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
 
     const canEditInventory = inventory.permissions?.inventory?.update == true;
 
-    return <InventoryContext.Provider value={{ inventory, setInventory }}>
+    return <InventoryContext.Provider value={{ inventory, setInventory, handleInventoryError }}>
         <Col>
             <h2 className="mb-4">{inventory.title}</h2>
             <Tabs className="mb-3" fill>
