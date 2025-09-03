@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQuery, makeApiPath } from "api/base.query";
-import type { GetTagsProps, InventoryTag } from "./tag.types";
+import { type DeleteTagProps, type CreateTagProps, type GetTagsProps, type InventoryTag } from "./tag.types";
 
 export const tagApi = createApi({
     reducerPath: "tagApi",
@@ -10,8 +10,28 @@ export const tagApi = createApi({
             query: (props) => ({
                 url: makeApiPath('inventory/tag/list', props.asGuest)
             }),
+            keepUnusedDataFor: 0
+        }),
+        createTag: builder.mutation<InventoryTag, CreateTagProps>({
+            query: (props) => ({
+                url: makeApiPath('inventory/tag/create'),
+                method: 'post',
+                body: props
+            })
+        }),
+        deleteTag: builder.mutation<any, DeleteTagProps>({
+            query: (props) => ({
+                url: makeApiPath(`inventory/tag/${props.tagId}/from-inventory/${props.inventoryId}`),
+                method: 'delete',
+                body: props,
+                responseHandler: (response) => response.text(),
+            }),
         })
     })
 });
 
-export const { useGetTagsQuery } = tagApi;
+export const { 
+    useGetTagsQuery,
+    useCreateTagMutation, 
+    useDeleteTagMutation 
+} = tagApi;

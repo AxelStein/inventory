@@ -1,12 +1,11 @@
 import { useGetCategoriesQuery } from "api/category/category.api";
-import { useRef, useCallback, useContext } from "react";
+import { useRef, useCallback, useContext, useState, useEffect } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Button, Form } from "react-bootstrap";
-import { useGetTagsQuery } from "api/tag/tag.api";
+import { useCreateTagMutation, useDeleteTagMutation, useGetTagsQuery } from "api/tag/tag.api";
 import { useCreateInventoryMutation, useDeleteImageMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
 import { useForm } from 'react-hook-form';
 import { MdDelete } from "react-icons/md";
-import type { Option } from "react-bootstrap-typeahead/types/types";
 import { filesize } from "filesize";
 import type { Inventory } from "api/inventory/inventory.types";
 import { useGetAppConfigQuery } from "api/app/app.api";
@@ -15,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useAlertDialog } from "~/components/AlertDialogContext";
 import debounce from 'lodash.debounce';
 import { InventoryContext } from "../InventoryPage";
+import type { InventoryTag } from "api/tag/tag.types";
 
 interface InventoryForm {
     title: string;
@@ -39,21 +39,63 @@ export default function InventoryEditorForm() {
     const isSubmit = isCreatingInventory || isUpdatingInventory;
 
     const { data: categories } = useGetCategoriesQuery();
-    const { data: tags } = useGetTagsQuery({}, { skip: !inventory });
+    const { data: tagsQuery } = useGetTagsQuery({}, { skip: !inventory });
+    const [createTag] = useCreateTagMutation();
+    const [deleteTag] = useDeleteTagMutation();
+    const [availableTags, setAvailableTags] = useState<InventoryTag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<InventoryTag[]>([]); // inventory?.tags || 
+
+    useEffect(() => {
+        setAvailableTags(tagsQuery || []);
+        setSelectedTags(inventory?.tags || []);
+    }, [tagsQuery]);
 
     const { data: appConfig } = useGetAppConfigQuery();
     const { t } = useTranslation();
     const { showAlertDialog } = useAlertDialog();
 
-    const onTagsChange = useCallback((selected: Option[]) => {
-        console.log(selected);
-    }, []);
+    const [tagInput, setTagInput] = useState('');
+
+    const handleTagInputChange = (text: string) => {
+        setTagInput(text);
+    };
+
+    const handleTagFilter = (option: any) => !selectedTags.some(tag => tag.id === option.id);
+
+    const handleTagsChange = (newTags: any[]) => {
+        const ids = new Set(selectedTags.map(tag => tag.id));
+        const newIds = new Set(newTags.map(tag => tag.id));
+
+        const added = newTags.filter(tag => !ids.has(tag.id));
+        const removed = selectedTags.filter(tag => !newIds.has(tag.id));
+
+        if (added.length !== 0) {
+            createTag({
+                inventoryId: inventory!.id,
+                name: added[0].name
+            }).unwrap()
+                .then((newTag) => {
+                    setSelectedTags([...selectedTags, newTag]);
+                    if (!availableTags.some(tag => tag.id === newTag.id)) {
+                        setAvailableTags([...availableTags, newTag]);
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+        if (removed.length !== 0) {
+            const removedId = removed[0].id;
+            deleteTag({
+                inventoryId: inventory!.id,
+                tagId: removedId
+            }).unwrap()
+                .then(() => setSelectedTags(selectedTags.filter(tag => tag.id !== removedId)))
+                .catch((err) => console.log(err));
+        }
+    }
 
     const {
         register: registerInventoryForm,
         handleSubmit: handleInventorySubmit,
-        control: inventoryFormControl,
-        formState: inventoryFormState,
         watch: inventoryFormWatch,
     } = useForm<InventoryForm>({
         defaultValues: {
@@ -65,16 +107,12 @@ export default function InventoryEditorForm() {
     });
 
     const onInventorySaved = useCallback((newInventory: Inventory) => {
-        console.log('setInventory', setInventory, newInventory);
         setInventory?.(newInventory);
-        // inventoryRef.current = newInventory;
-        // setImageUrl(newInventory.imageLink);
-        // onChanged?.(newInventory);
     }, []);
 
     const onInventorySaveError = useCallback((err: any) => {
         if (err.status === 409) {
-            // todo onForceRefresh?.();
+            // todo
         }
         console.log(err);
     }, []);
@@ -234,19 +272,22 @@ export default function InventoryEditorForm() {
             </Form>
         }
 
-        {tags &&
+        {availableTags &&
             <div>
                 <p className="label">{t('inventory.editorForm.labelTags')}</p>
                 <Typeahead
                     id="tags"
                     multiple
-                    options={tags}
+                    options={availableTags}
                     labelKey='name'
-                    allowNew
-                    defaultSelected={inventory?.tags || undefined}
-                    onChange={onTagsChange}
+                    allowNew={tagInput.length >= 4}
+                    onInputChange={handleTagInputChange}
+                    selected={selectedTags}
+                    onChange={handleTagsChange}
+                    filterBy={handleTagFilter}
                     ref={typeaheadRef}
-                    className='mb-3' />
+                    className='mb-3'
+                    dropup />
             </div>
         }
     </>;

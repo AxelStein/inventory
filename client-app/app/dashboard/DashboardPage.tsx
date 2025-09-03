@@ -42,7 +42,7 @@ export default function DashboardPage() {
 
             <h4>{t('dashboard.title.tags')}</h4>
             <TagCloud
-                maxSize={35}
+                maxSize={50}
                 minSize={12}
                 tags={cloudTags}
                 onClick={() => { }} />

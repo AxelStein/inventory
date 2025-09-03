@@ -12,8 +12,7 @@ const controller = {
 
     create: async (req, res) => {
         const { inventoryId, name } = req.body;
-        await service.create(inventoryId, name);
-        res.sendStatus(200);
+        res.send(await service.create(inventoryId, name));
     },
 
     delete: async (req, res) => {
