@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 
 interface FieldEditorModalProps {
     inventory: Inventory;
-    editField?: InventoryField;
+    editField: InventoryField | null;
     show: boolean;
     onHide: () => void;
 }
@@ -22,7 +22,12 @@ interface FieldEditorForm {
 export default function FieldEditorModal({ show, onHide, inventory, editField }: FieldEditorModalProps) {
     const { data: appConfig } = useGetAppConfigQuery();
     const [updateInventory] = useUpdateInventoryMutation();
-    const { register, handleSubmit } = useForm<FieldEditorForm>();
+    const { register, handleSubmit } = useForm<FieldEditorForm>({defaultValues: {
+        name: editField?.name,
+        description: editField?.description ?? '',
+        type: editField?.type,
+        state: editField?.state,
+    }});
 
     const onSubmit = useCallback((form: FieldEditorForm) => {
         const fields = inventory.fields?.map(({ uid, ...values }) => values) || [];

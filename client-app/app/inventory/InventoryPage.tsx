@@ -36,7 +36,7 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
 
     return <InventoryContext.Provider value={{ inventory, setInventory }}>
         <Col>
-            <h2>{inventory.title}</h2>
+            <h2 className="mb-4">{inventory.title}</h2>
             <Tabs className="mb-3" fill>
                 <Tab eventKey="items" title="Items">
                     <ItemPage />

@@ -15,6 +15,7 @@ import '~/translation/init.translate';
 import { AlertDialogProvider } from "./components/AlertDialogContext";
 
 export function Layout({ children }: { children: React.ReactNode }) {
+    //  data-bs-theme="dark"
     return (
         <html lang="en">
             <head>

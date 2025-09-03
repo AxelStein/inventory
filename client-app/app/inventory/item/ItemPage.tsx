@@ -40,7 +40,7 @@ export default function ItemPage() {
             <div className="mb-3">
                 {canAdd && (
                     <Button variant='outline-primary' className='me-2' onClick={handleOnAddClick}>
-                        <MdAdd />
+                        <MdAdd /> Add
                     </Button>
                 )}
 

@@ -69,8 +69,16 @@
   z-index: 1020;
 }
 
+.app-bar-dark {
+  background-color: black;
+}
+
 .app-bar-title {
   margin: 0;
+}
+
+.app-bar-title-link {
+  text-decoration: none;
 }
 
 .app-bar-username {

@@ -3,17 +3,24 @@ import { Button, Col, Form, FormCheck, Table } from "react-bootstrap";
 import { InventoryContext } from "../InventoryPage";
 import { MdAdd, MdDeleteOutline } from "react-icons/md";
 import FieldEditorModal from "./FieldEditorModal";
+import type { InventoryField } from "api/inventory/inventory.types";
 
 export default function FieldsPage() {
     const { inventory } = useContext(InventoryContext);
-    const [createModalVisible, setCreateModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [editField, setEditField] = useState<InventoryField | null>(null);
 
     const handleOnAddClick = () => {
-        setCreateModalVisible(true);
+        setEditField(null);
+        setModalVisible(true);
     };
     const handleHideModal = () => {
-        setCreateModalVisible(false);
+        setModalVisible(false);
     };
+    const onFieldClick = (field: InventoryField) => {
+        setEditField(field);
+        setModalVisible(true);
+    }
 
     const fields = inventory!.fields || [];
     const canEdit = inventory?.permissions?.inventory?.update === true;
@@ -44,7 +51,7 @@ export default function FieldsPage() {
             </thead>
             <tbody>
                 {fields.map((field) => {
-                    return <tr>
+                    return <tr onClick={() => onFieldClick(field)}>
                         <td><FormCheck /></td>
                         <td>{field.name}</td>
                         <td>{field.description}</td>
@@ -58,7 +65,8 @@ export default function FieldsPage() {
         {inventory && (
             <FieldEditorModal
                 inventory={inventory}
-                show={createModalVisible}
+                editField={editField}
+                show={modalVisible}
                 onHide={handleHideModal} />
         )}
     </Col>;

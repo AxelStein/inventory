@@ -63,13 +63,18 @@ function createRow(
 ): ReactNode {
     return <tr
         key={inventory.id.toString()}
-        onClick={onClick}
+        onClick={(event) => {
+            const target = event.target as Element;
+            if (!target.closest('.no-row-click')) {
+                onClick();
+            }
+        }}
         role="button"
         tabIndex={0}>{
             columns.map((column) => {
                 switch (column) {
                     case InventoryTableColumn.CHECKBOX:
-                        return <td key={column}><Form.Check /></td>;
+                        return <td key={column} className="no-row-click"><Form.Check /></td>;
 
                     case InventoryTableColumn.TITLE:
                         return <td key={column}>{inventory.title}</td>;
@@ -94,11 +99,8 @@ function createRow(
                     case InventoryTableColumn.AUTHOR:
                         return <td key={column}>
                             <span
-                                className="author-link"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onAuthorClick();
-                                }}>
+                                className="author-link no-row-click"
+                                onClick={onAuthorClick}>
                                 {inventory.owner?.name}
                             </span>
                         </td>

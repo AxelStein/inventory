@@ -24,7 +24,7 @@ export default function ItemEditorModal({ inventory, show, fields, onHide }: Ite
     }
     const { register, handleSubmit } = useForm<any>();
     return <Modal show={show} onHide={onHide}>
-        <Modal.Header>Create item</Modal.Header>
+        <Modal.Header>Add item</Modal.Header>
         <Modal.Body>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 {fields.map(field => createFormItem(field, register))}
