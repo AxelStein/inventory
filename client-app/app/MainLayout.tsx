@@ -15,7 +15,7 @@ export default function AuthLayout() {
 
                 {user != null ? (
                     <SplitButton
-                        title={user.name}
+                        title={<span className="app-bar-username">{user.name}</span>}
                         variant='outline-primary'
                         href='/user/own'>
                         <Dropdown.Item>Sign out</Dropdown.Item>

@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import type { Inventory } from "api/inventory/inventory.types";
 import { useTranslation } from "react-i18next";
 import { ru, enUS } from 'date-fns/locale';
+import ReactMarkdown from 'react-markdown';
 
 interface InventoryTableProps {
     title?: string;
@@ -85,7 +86,7 @@ function createRow(
                         return <td key={column}></td>;
 
                     case InventoryTableColumn.DESCRIPTION:
-                        return <td key={column}>{inventory.description}</td>;
+                        return <td key={column}><ReactMarkdown>{inventory.description}</ReactMarkdown></td>;
 
                     case InventoryTableColumn.CATEGORY:
                         return <td key={column}>{inventory.category?.name}</td>

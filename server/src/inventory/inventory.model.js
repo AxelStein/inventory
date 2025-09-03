@@ -19,7 +19,7 @@ const columns = {
         allowNull: false,
     },
     description: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
     },
     imageLink: {
         type: DataTypes.STRING,

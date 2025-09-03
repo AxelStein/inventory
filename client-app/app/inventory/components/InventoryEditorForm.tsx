@@ -33,14 +33,13 @@ export default function InventoryEditorForm() {
     const { inventory, setInventory } = useContext(InventoryContext);
 
     const [uploadImage, { isLoading: isUploadingImage }] = useUploadImageMutation();
-    const [deleteImage, { isLoading: isDeletingImage }] = useDeleteImageMutation();
+    const [deleteImage] = useDeleteImageMutation();
     const [createInventory, { isLoading: isCreatingInventory }] = useCreateInventoryMutation();
     const [updateInventory, { isLoading: isUpdatingInventory }] = useUpdateInventoryMutation();
     const isSubmit = isCreatingInventory || isUpdatingInventory;
 
     const { data: categories } = useGetCategoriesQuery();
-    const { data: tags } = useGetTagsQuery(undefined, { skip: !inventory });
-    // const [imageUrl, setImageUrl] = useState<string | undefined | null>(inventory?.imageLink);
+    const { data: tags } = useGetTagsQuery({}, { skip: !inventory });
 
     const { data: appConfig } = useGetAppConfigQuery();
     const { t } = useTranslation();
