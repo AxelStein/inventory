@@ -1,6 +1,7 @@
 import Tag from "./tag.model.js";
 import Inventory from "../inventory.model.js";
 import { NotFoundError } from "../../error/index.js";
+import { Sequelize } from "sequelize";
 
 const repository = {
 
@@ -16,7 +17,20 @@ const repository = {
         return inventory.tags;
     },
 
-    getList: () => Tag.findAll(),
+    getList: () => Tag.findAll({
+        attributes: {
+            include: [
+                [
+                    Sequelize.literal(`(
+                        SELECT CAST(COUNT(*) AS INTEGER)
+                        FROM inventory_tags_embedded
+                        WHERE "tagId" = "InventoryTag"."id"
+                    )`),
+                    'inventoryCount'
+                ]
+            ]
+        }
+    }),
 
     create: async (inventoryId, name) => {
         const inventory = await Inventory.findByPk(inventoryId);
