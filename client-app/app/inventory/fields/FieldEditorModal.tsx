@@ -27,16 +27,16 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
     const { register, handleSubmit, reset: resetForm } = useForm<FieldEditorForm>();
     const { setInventory, handleInventoryError } = useContext(InventoryContext);
 
+    const config = appConfig?.inventory.customField;
+
     useEffect(() => {
-        if (editField) {
-            resetForm({
-                name: editField?.name,
-                description: editField?.description ?? '',
-                type: editField?.type,
-                state: editField?.state,
-            });
-        }
-    }, [editField, resetForm]);
+        resetForm({
+            name: editField?.name ?? '',
+            description: editField?.description ?? '',
+            type: editField?.type ?? config?.types[0] ?? '',
+            state: editField?.state ?? config?.states[0] ?? '',
+        });
+    }, [config, editField, resetForm]);
 
     const updateFields = (fields: FieldEditorForm[]) => {
         updateInventory({
@@ -73,7 +73,6 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
     if (!appConfig) {
         return <div className="spinner" />;
     }
-    const config = appConfig.inventory.customField;
     return <Modal show={show} onHide={onHide}>
         <Modal.Header>{editField != null ? 'Edit' : 'Add'} field</Modal.Header>
         <Modal.Body>
@@ -93,13 +92,13 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
                 <Form.Select
                     className="mb-3"
                     {...register('type', { required: true })}>
-                    {config.types.map((type) => (<option value={type}>{type}</option>))}
+                    {config?.types.map((type) => (<option value={type}>{type}</option>))}
                 </Form.Select>
 
                 <Form.Select
                     className="mb-3"
                     {...register('state', { required: true })}>
-                    {config.states.map((state) => (<option value={state}>{state}</option>))}
+                    {config?.states.map((state) => (<option value={state}>{state}</option>))}
                 </Form.Select>
 
                 <div className="d-flex justify-content-between">

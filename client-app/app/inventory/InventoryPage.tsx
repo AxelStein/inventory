@@ -23,12 +23,10 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
     const { data, refetch, isLoading } = useGetInventoryByIdQuery({ id: inventoryId, asGuest: isGuest() });
     const [inventory, setInventory] = useState<Inventory | undefined>();
 
-    const onForceRefresh = useCallback(() => {
-        refetch();
-    }, []);
-
     const handleInventoryError = (err: any) => {
-
+        if (err.status === 409) {
+            refetch();
+        }
     }
 
     useEffect(() => setInventory(data), [data]);
