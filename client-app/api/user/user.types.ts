@@ -7,3 +7,8 @@ export interface User {
     isBlocked: boolean;
     lastSeen: string;
 }
+
+export interface UserSettings {
+    theme: string;
+    locale: string;
+}

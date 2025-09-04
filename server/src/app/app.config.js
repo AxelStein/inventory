@@ -1,4 +1,5 @@
 import { CustomFieldState, CustomFieldType } from "../inventory/inventory.custom.field.js";
+import CustomIdType from "../inventory/custom_id/custom.id.type.js";
 
 export const appConfig = {
     inventory: {
@@ -14,7 +15,8 @@ export const appConfig = {
         customField: {
             types: Object.values(CustomFieldType),
             states: Object.values(CustomFieldState)
-        }
+        },
+        customIdTypes: Object.values(CustomIdType)
     },
     languages: [
         {

@@ -1,5 +1,5 @@
 import { fetchBaseQuery, type BaseQueryFn, type FetchArgs, type FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
-import { logout } from "./auth/auth.slice";
+import { logout } from "./slice/auth.slice";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 

@@ -1,11 +1,12 @@
-import type { User } from "api/user/user.types";
+import type { User, UserSettings } from "api/user/user.types";
 
 export interface SignInResponse {
-    token: string | undefined;
-    user: User | undefined;
-    userId: number | undefined;
-    status: string | undefined;
-    email: string | undefined;
+    token?: string;
+    user?: User;
+    settings: UserSettings;
+    userId?: number;
+    status?: string;
+    email?: string;
 }
 
 export interface UploadImageProps {

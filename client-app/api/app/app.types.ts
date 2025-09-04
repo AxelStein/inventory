@@ -13,6 +13,7 @@ export interface AppLanguage {
 export interface InventoryConfig {
     imageConstraints: InventoryImageConstraints;
     customField: InventoryCustomFieldConfig;
+    customIdTypes: CustomIdType[];
 }
 
 export interface InventoryCustomFieldConfig {
@@ -23,4 +24,15 @@ export interface InventoryCustomFieldConfig {
 export interface InventoryImageConstraints {
     mimeTypes: string[];
     maxFileSize: number;
+}
+
+export enum CustomIdType {
+    FIXED = 'fixed',
+    RND_20_BIT = 'rnd_20_bit',
+    RND_32_BIT = 'rnd_32_bit',
+    RND_6_DIGIT = 'rnd_6_digit',
+    RND_9_DIGIT = 'rnd_9_digit',
+    GUID = 'guid',
+    DATE_TIME = 'date_time',
+    SEQUENCE = 'sequence'
 }

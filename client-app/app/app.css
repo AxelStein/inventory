@@ -95,3 +95,9 @@
   margin-top: 1rem;
   margin-bottom: 3rem;
 }
+
+.custom-id-group {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}

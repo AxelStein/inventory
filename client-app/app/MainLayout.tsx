@@ -1,16 +1,35 @@
 import { useEffect, useState } from "react";
 import { Dropdown, SplitButton } from "react-bootstrap";
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, useNavigate } from "react-router";
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import classNames from 'classnames';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useSignOutMutation } from "api/auth/auth.api";
+import { logout } from "api/slice/auth.slice";
 
 export default function AuthLayout() {
     const [isDarkMode, setDarkMode] = useState(false);
     const user = useSelector((state: any) => state.auth.user);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [signOut] = useSignOutMutation();
+
     useEffect(() => {
         document.documentElement.setAttribute('data-bs-theme', isDarkMode ? 'dark' : 'light')
     }, [isDarkMode]);
+
+    const handleUserClick = () => {
+        navigate('/user/own');
+    }
+
+    const handleSignOutClick = () => {
+        signOut().unwrap()
+            .then(() => {
+                dispatch(logout());
+                navigate('/');
+            });
+    }
+
     return <div>
         <div className={classNames('app-bar', { 'app-bar-dark': isDarkMode })}>
             <Link
@@ -27,10 +46,12 @@ export default function AuthLayout() {
                 />
                 {user != null ? (
                     <SplitButton
-                        title={<span className="app-bar-username">{user.name}</span>}
-                        variant='outline-primary'
-                        href='/user/own'>
-                        <Dropdown.Item >Sign out</Dropdown.Item>
+                        onClick={handleUserClick}
+                        title={<span className="app-bar-username">
+                            {user.name}
+                        </span>}
+                        variant='outline-primary'>
+                        <Dropdown.Item onClick={handleSignOutClick}>Sign out</Dropdown.Item>
                     </SplitButton>
                 ) : (
                     <Link to="/auth/sign-in">Sign in</Link>

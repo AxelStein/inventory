@@ -1,17 +1,32 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { User } from 'api/user/user.types';
+import type { User, UserSettings } from 'api/user/user.types';
 
 interface AuthState {
     user: User | null;
+    settings: UserSettings | null;
 }
 
 const initialState: AuthState = {
     user: null,
+    settings: null,
 };
 
 try {
     initialState.user = JSON.parse(localStorage.getItem('user') ?? '');
-} catch (e) {}
+} catch (e) { }
+
+const clearStorage = () => {
+    removeUserFromStorage();
+    removeSettingsFromStorage();
+}
+
+const removeSettingsFromStorage = () => {
+    localStorage.removeItem('settings');
+}
+
+const removeUserFromStorage = () => {
+    localStorage.removeItem('user');
+}
 
 const authSlice = createSlice({
     name: 'auth',
@@ -22,12 +37,13 @@ const authSlice = createSlice({
             if (state.user != null) {
                 localStorage.setItem('user', JSON.stringify(state.user));
             } else {
-                localStorage.removeItem('user');
+                clearStorage();
             }
         },
         logout(state) {
             state.user = null;
-            localStorage.removeItem('user');
+            state.settings = null;
+            clearStorage();
         },
     },
 });

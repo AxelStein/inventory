@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router";
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
 import type { SignInResponse } from "api/auth/auth.types";
 import { useDispatch } from "react-redux";
-import { setUser } from "api/auth/auth.slice";
+import { setUser } from "api/slice/auth.slice";
 
 export const useAuthSignIn = () => {
     const navigate = useNavigate();

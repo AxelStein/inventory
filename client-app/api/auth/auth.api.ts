@@ -23,8 +23,9 @@ export const authApi = createApi({
         signOut: builder.mutation<void, void>({
             query: () => ({
                 url: '/sign-out',
-                method: 'post'
-            })
+                method: 'post',
+                responseHandler: 'text'
+            }),
         }),
         signInWithGoogle: builder.mutation<SignInResponse, string>({
             query: (token) => ({

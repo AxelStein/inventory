@@ -7,7 +7,7 @@ import { authApi } from "./auth/auth.api";
 import { appApi } from "./app/app.api";
 import { itemApi } from "./item/item.api";
 import { localeApi } from "./app/locale.api";
-import authReducer from 'api/auth/auth.slice';
+import authReducer from 'api/slice/auth.slice';
 import { itemLikeApi } from "./item/item.like.api";
 import { customIdApi } from "./custom_id/custom.id.api";
 
