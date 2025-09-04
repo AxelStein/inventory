@@ -20,7 +20,7 @@ const service = {
     create: (creatorId, data) => db.transaction(async (transaction) => {
         await checkInventoryVersion(data, transaction);
 
-        if (!data.customId) {
+        if (!data.customId || data.customId.length === 0) {
             data.customId = await generateCustomId({ inventoryId: data.inventoryId, transaction });
         }
         return repository.create(creatorId, data, transaction);

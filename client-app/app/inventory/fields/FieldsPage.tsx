@@ -19,12 +19,9 @@ export default function FieldsPage() {
     const handleHideModal = () => {
         setModalVisible(false);
     };
-    const handleFieldClick = (event: any, field: InventoryField) => {
-        const target = event.target as Element;
-        if (!target.closest('.no-row-click')) {
-            setEditField(field);
-            setModalVisible(true);
-        }
+    const handleFieldClick = (field: InventoryField) => {
+        setEditField(field);
+        setModalVisible(true);
     }
 
     const fields = inventory!.fields || [];
@@ -52,7 +49,7 @@ export default function FieldsPage() {
             </thead>
             <tbody>
                 {fields.map((field) => {
-                    return <tr onClick={(event) => handleFieldClick(event, field)}>
+                    return <tr onClick={() => handleFieldClick(field)}>
                         <td>{field.name}</td>
                         <td>{field.description}</td>
                         <td>{field.type}</td>

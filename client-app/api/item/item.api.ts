@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQuery, makeApiPath } from "api/base.query";
-import type { GetInventoryItemsProps, InventoryItem } from "./item.types";
+import type { CreateItemProps, GetInventoryItemsProps, InventoryItem, UpdateItemProps } from "./item.types";
 import type { PagingList } from "api/types";
 
 export const itemApi = createApi({
@@ -8,20 +8,36 @@ export const itemApi = createApi({
     baseQuery: createBaseQuery(''),
     endpoints: (builder) => ({
         getItems: builder.query<PagingList<InventoryItem>, GetInventoryItemsProps>({
-            query: (props) => ({
-                url: makeApiPath('inventory/item/list', props.asGuest),
-                params: { ...props, asGuest: undefined }
+            query: ({ asGuest, ...params }) => ({
+                url: makeApiPath('inventory/item/list', asGuest),
+                params: params
             }),
             keepUnusedDataFor: 0
         }),
-        createItem: builder.mutation<InventoryItem, any>({
-            query: (props) => ({
+        createItem: builder.mutation<InventoryItem, CreateItemProps>({
+            query: ({ inventoryId, inventoryVersion, ...body }) => ({
                 url: makeApiPath('inventory/item/create'),
                 method: 'post',
-                body: props
+                body: { 
+                    ...body, 
+                    inventoryId, 
+                    inventoryVersion 
+                },
             })
         }),
+        updateItem: builder.mutation<InventoryItem, UpdateItemProps>({
+            query: ({ itemId, inventoryId, inventoryVersion, version, ...body }) => ({
+                url: makeApiPath(`inventory/item/${itemId}/update`),
+                method: 'post',
+                body: { 
+                    ...body, 
+                    inventoryId, 
+                    inventoryVersion, 
+                    version 
+                },
+            })
+        })
     })
 });
 
-export const { useGetItemsQuery, useCreateItemMutation } = itemApi;
+export const { useGetItemsQuery, useCreateItemMutation, useUpdateItemMutation } = itemApi;

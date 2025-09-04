@@ -109,10 +109,10 @@ function createRow(
                         return <td key={column}>{inventory.itemCount}</td>
 
                     case InventoryTableColumn.CREATED_AT:
-                        return <td key={column}>{formatRelative(inventory.createdAt, new Date(), { locale: ru })}</td>
+                        return <td key={column}>{formatRelative(inventory.createdAt, new Date())}</td>
 
                     case InventoryTableColumn.UPDATED_AT:
-                        return <td key={column}>{formatRelative(inventory.updatedAt, new Date(), { locale: ru })}</td>
+                        return <td key={column}>{formatRelative(inventory.updatedAt, new Date())}</td>
                 }
             })
         }</tr>

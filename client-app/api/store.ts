@@ -1,13 +1,14 @@
-import {configureStore} from "@reduxjs/toolkit";
-import {inventoryApi} from "./inventory/inventory.api";
-import {setupListeners} from "@reduxjs/toolkit/query";
-import {categoryApi} from "./category/category.api";
+import { configureStore } from "@reduxjs/toolkit";
+import { inventoryApi } from "./inventory/inventory.api";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { categoryApi } from "./category/category.api";
 import { tagApi } from "./tag/tag.api";
 import { authApi } from "./auth/auth.api";
 import { appApi } from "./app/app.api";
 import { itemApi } from "./item/item.api";
 import { localeApi } from "./app/locale.api";
 import authReducer from 'api/auth/auth.slice';
+import { itemLikeApi } from "./item/item.like.api";
 
 export const store = configureStore({
     reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
         [appApi.reducerPath]: appApi.reducer,
         [itemApi.reducerPath]: itemApi.reducer,
         [localeApi.reducerPath]: localeApi.reducer,
+        [itemLikeApi.reducerPath]: itemLikeApi.reducer,
         auth: authReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
@@ -27,7 +29,8 @@ export const store = configureStore({
         authApi.middleware,
         appApi.middleware,
         itemApi.middleware,
-        localeApi.middleware
+        localeApi.middleware,
+        itemLikeApi.middleware
     ),
 });
 

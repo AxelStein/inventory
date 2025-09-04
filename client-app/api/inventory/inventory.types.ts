@@ -54,8 +54,22 @@ export interface InventoryField {
     uid: string;
     name: string;
     description?: string | null;
-    state: string;
-    type: string;
+    state: InventoryFieldState;
+    type: InventoryFieldType;
+}
+
+export enum InventoryFieldType {
+    customId = 'customId',
+    string = 'string',
+    text = 'text',
+    int = 'int',
+    link = 'link',
+    boolean = "boolean",
+}
+
+export enum InventoryFieldState {
+    visible = 'visible',
+    hidden = 'hidden'
 }
 
 export interface UpdateInventoryProps {

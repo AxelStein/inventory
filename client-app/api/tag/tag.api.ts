@@ -24,6 +24,7 @@ export const tagApi = createApi({
                 url: makeApiPath(`inventory/tag/${props.tagId}/from-inventory/${props.inventoryId}`),
                 method: 'delete',
                 body: props,
+                responseHandler: 'text'
             }),
         })
     })

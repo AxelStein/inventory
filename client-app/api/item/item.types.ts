@@ -36,3 +36,17 @@ export interface GetInventoryItemsProps extends PagingListProps {
     inventoryId: number;
     asGuest?: boolean;
 }
+
+export interface CreateItemProps {
+    inventoryId: number;
+    inventoryVersion: number;
+    body: any;
+}
+
+export interface UpdateItemProps {
+    itemId: number;
+    inventoryId: number;
+    inventoryVersion: number;
+    version: number;
+    body: any;
+}

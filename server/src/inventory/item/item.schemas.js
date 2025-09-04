@@ -4,7 +4,7 @@ import { CustomFieldType, inflateInventoryCustomFields } from '../inventory.cust
 const createItemSchemaData = {
     inventoryId: Joi.number().integer().required(),
     inventoryVersion: Joi.number().integer().required(),
-    customId: Joi.string(),
+    customId: Joi.string().trim().allow(''),
 };
 
 inflateInventoryCustomFields((prefix, field) => {
