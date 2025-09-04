@@ -114,7 +114,6 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
                         {editField != null ? 'Save' : 'Add'}
                     </Button>
                 </div>
-
             </Form>
         </Modal.Body>
     </Modal>;
