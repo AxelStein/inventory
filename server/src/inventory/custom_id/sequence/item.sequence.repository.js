@@ -1,5 +1,6 @@
 import db from "../../../db/index.js";
 import {QueryTypes} from "sequelize";
+import ItemSequence from "./item.sequence.model.js";
 
 const repository = {
 
