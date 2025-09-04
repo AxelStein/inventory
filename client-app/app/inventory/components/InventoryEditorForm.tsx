@@ -3,7 +3,7 @@ import { useRef, useCallback, useContext, useState, useEffect } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Button, Form } from "react-bootstrap";
 import { useCreateTagMutation, useDeleteTagMutation, useGetTagsQuery } from "api/tag/tag.api";
-import { useCreateInventoryMutation, useDeleteImageMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
+import { useCreateInventoryMutation, useDeleteImageMutation, useDeleteInventoryMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
 import { useForm } from 'react-hook-form';
 import { MdDelete } from "react-icons/md";
 import { filesize } from "filesize";
@@ -14,6 +14,7 @@ import { useAlertDialog } from "~/components/AlertDialogContext";
 import debounce from 'lodash.debounce';
 import { InventoryContext } from "../InventoryPage";
 import type { InventoryTag } from "api/tag/tag.types";
+import { useNavigate } from "react-router";
 
 interface InventoryForm {
     title: string;
@@ -35,6 +36,8 @@ export default function InventoryEditorForm() {
     const [deleteImage] = useDeleteImageMutation();
     const [createInventory, { isLoading: isCreatingInventory }] = useCreateInventoryMutation();
     const [updateInventory, { isLoading: isUpdatingInventory }] = useUpdateInventoryMutation();
+    const [deleteInventory, { isLoading: isDeletingInventory }] = useDeleteInventoryMutation();
+    const navigate = useNavigate();
     const isSubmit = isCreatingInventory || isUpdatingInventory;
 
     const { data: categories } = useGetCategoriesQuery();
@@ -42,7 +45,7 @@ export default function InventoryEditorForm() {
     const [createTag] = useCreateTagMutation();
     const [deleteTag] = useDeleteTagMutation();
     const [availableTags, setAvailableTags] = useState<InventoryTag[]>([]);
-    const [selectedTags, setSelectedTags] = useState<InventoryTag[]>([]); // inventory?.tags || 
+    const [selectedTags, setSelectedTags] = useState<InventoryTag[]>([]);
 
     useEffect(() => {
         setAvailableTags(tagsQuery || []);
@@ -135,7 +138,10 @@ export default function InventoryEditorForm() {
 
     const createInventoryCallback = useCallback((form: InventoryForm) => {
         createInventory(form).unwrap()
-            .then(setInventory)
+            .then((inventory) => {
+                setInventory?.(inventory);
+                navigate(`/inventory/${inventory.id}`);
+            })
             .catch(handleInventoryError);
     }, []);
 
@@ -167,6 +173,19 @@ export default function InventoryEditorForm() {
                 }).unwrap()
                     .then(setInventory)
                     .catch(handleInventoryError);
+            }
+        });
+    }, [inventory]);
+
+    const handleDeleteInventoryClick = useCallback(() => {
+        showAlertDialog({
+            message: 'Are you sure you want to delete this inventory? This action cannot be undone.',
+            confirmLabel: 'Delete',
+            onConfirm: () => {
+                deleteInventory(inventory!.id)
+                    .unwrap()
+                    .then(() => navigate('/'))
+                    .catch(err => console.log(err));
             }
         });
     }, [inventory]);
@@ -256,7 +275,7 @@ export default function InventoryEditorForm() {
             </Form>
         }
 
-        {availableTags &&
+        {inventory && availableTags &&
             <div>
                 <p className="label">{t('inventory.editorForm.labelTags')}</p>
                 <Typeahead
@@ -274,6 +293,15 @@ export default function InventoryEditorForm() {
                     dropup />
             </div>
         }
+
+        {inventory && (
+            <Button
+                className="btn btn-danger mb-3"
+                onClick={handleDeleteInventoryClick}
+                disabled={isDeletingInventory}>
+                Delete inventory
+            </Button>
+        )}
     </>;
 }
 

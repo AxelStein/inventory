@@ -35,6 +35,13 @@ export const inventoryApi = createApi({
                 body: params.body,
             })
         }),
+        deleteInventory: builder.mutation<void, number>({
+            query: (inventoryId) => ({
+                url: makeApiPath(`inventory/${inventoryId}`),
+                method: 'delete',
+                responseHandler: 'text'
+            })
+        }),
         uploadImage: builder.mutation<Inventory, UploadImageProps>({
             query: ({ inventoryId, formData, version }) => ({
                 url: makeApiPath(`inventory/${inventoryId}/upload-image`),
@@ -59,5 +66,6 @@ export const {
     useCreateInventoryMutation,
     useUpdateInventoryMutation,
     useUploadImageMutation,
+    useDeleteInventoryMutation,
     useDeleteImageMutation
 } = inventoryApi;

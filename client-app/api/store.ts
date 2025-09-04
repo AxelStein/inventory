@@ -9,6 +9,7 @@ import { itemApi } from "./item/item.api";
 import { localeApi } from "./app/locale.api";
 import authReducer from 'api/auth/auth.slice';
 import { itemLikeApi } from "./item/item.like.api";
+import { customIdApi } from "./custom_id/custom.id.api";
 
 export const store = configureStore({
     reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
         [itemApi.reducerPath]: itemApi.reducer,
         [localeApi.reducerPath]: localeApi.reducer,
         [itemLikeApi.reducerPath]: itemLikeApi.reducer,
+        [customIdApi.reducerPath]: customIdApi.reducer,
         auth: authReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
@@ -30,7 +32,8 @@ export const store = configureStore({
         appApi.middleware,
         itemApi.middleware,
         localeApi.middleware,
-        itemLikeApi.middleware
+        itemLikeApi.middleware,
+        customIdApi.middleware
     ),
 });
 

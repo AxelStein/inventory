@@ -116,7 +116,7 @@ const repository = {
     },
 
     create: async ({ reqUser, data }) => {
-        const inventory = await Inventory.create({ ...data, ownerId: user.id });
+        const inventory = await Inventory.create({ ...data, ownerId: reqUser.id });
         return repository.getById({ reqUser, id: inventory.id });
     },
 

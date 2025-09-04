@@ -13,12 +13,10 @@ export default function CreateInventoryModal({ show, onHide }: CreateInventoryMo
     const { t } = useTranslation();
     return <Modal show={show} onHide={onHide}>
         <Modal.Header>
-            <Modal.Title>{t('inventory.createModal.title')}</Modal.Title>
+            {t('inventory.createModal.title')}
         </Modal.Header>
         <Modal.Body>
             <InventoryEditorForm/>
         </Modal.Body>
-        <Modal.Footer>
-        </Modal.Footer>
     </Modal>
 }
