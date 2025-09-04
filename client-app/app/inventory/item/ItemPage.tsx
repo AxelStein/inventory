@@ -71,7 +71,7 @@ export default function ItemPage() {
         <Table hover responsive>
             <thead>
                 <tr>
-                    <FormCheck />
+                    <th><FormCheck /></th>
                     {fields.map(createColumn)}
                     <th>Created at</th>
                     <th>Updated at</th>
@@ -135,7 +135,7 @@ function ItemRow({ item, fields, onClick }: ItemRowProps) {
     }
 
     return <tr onClick={handleClick}>
-        <FormCheck className="no-row-click" />
+        <td><FormCheck className="no-row-click" /></td>
         {
             fields.map(field => {
                 const value = (item as any)[field.uid];

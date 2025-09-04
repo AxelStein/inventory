@@ -6,6 +6,7 @@ import ItemPage from "~/inventory/item/ItemPage";
 import { type Inventory } from "api/inventory/inventory.types";
 import FieldsPage from "./fields/FieldsPage";
 import { isGuest } from "~/auth/auth.check.guest";
+import CustomIdPage from "./custom_id/CustomIdPage";
 
 export const InventoryContext = React.createContext<InventoryContextData>({});
 
@@ -56,7 +57,7 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
                         </Container>
                     </Tab>,
                     <Tab eventKey="customId" title="Custom ID">
-                        Custom ID
+                        <CustomIdPage/>
                     </Tab>,
                     <Tab eventKey="fields" title="Fields">
                         <FieldsPage />
