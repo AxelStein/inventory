@@ -36,7 +36,7 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
             type: editField?.type ?? config?.types[0] ?? '',
             state: editField?.state ?? config?.states[0] ?? '',
         });
-    }, [config, editField, resetForm]);
+    }, [show, config, editField, resetForm]);
 
     const updateFields = (fields: FieldEditorForm[]) => {
         updateInventory({
