@@ -70,5 +70,8 @@
   },
   "actions": {
     "cancel": "Cancel"
+  },
+  "tag": {
+    "noData": "No tags"
   }
 }

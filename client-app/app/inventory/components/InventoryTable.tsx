@@ -135,7 +135,7 @@ export function InventoryTable({ title, inventories }: InventoryTableProps) {
         {title && <h4>{title}</h4>}
 
         {(!inventories || inventories.length === 0) ? (
-            <p className="mt-3">{t('inventory.noData')}</p>
+            <p className="no-data">{t('inventory.noData')}</p>
         ) : (
             <Table hover responsive>
                 <thead>

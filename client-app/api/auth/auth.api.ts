@@ -33,14 +33,14 @@ export const authApi = createApi({
                 body: { token }
             })
         }),
-        resetPassword: builder.mutation<SignInResponse, string>({
+        resetPassword: builder.mutation<void, string>({
             query: (email) => ({
                 url: '/reset-password',
                 method: 'post',
                 body: { email }
             })
         }),
-        restorePassword: builder.mutation<SignInResponse, RestorePasswordBody>({
+        restorePassword: builder.mutation<void, RestorePasswordBody>({
             query: (body) => ({
                 url: '/restore-password',
                 method: 'post',

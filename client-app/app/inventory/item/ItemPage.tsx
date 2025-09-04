@@ -43,18 +43,11 @@ export default function ItemPage() {
                         <MdAdd /> Add
                     </Button>
                 )}
-
-                {canDelete && (
-                    <Button variant='outline-danger'>
-                        <MdDeleteOutline />
-                    </Button>
-                )}
             </div>
         )}
         <Table hover responsive>
             <thead>
                 <tr>
-                    <th><FormCheck /></th>
                     {fields.map(createColumn)}
                 </tr>
             </thead>
@@ -78,7 +71,6 @@ function createColumn(field: InventoryField) {
 
 function createRow(item: InventoryItem, fields: InventoryField[]) {
     return <tr>
-        <th><FormCheck /></th>
         {
             fields.map(field => {
                 const value = (item as any)[field.uid];

@@ -19,12 +19,11 @@ export const tagApi = createApi({
                 body: props
             })
         }),
-        deleteTag: builder.mutation<any, DeleteTagProps>({
+        deleteTag: builder.mutation<void, DeleteTagProps>({
             query: (props) => ({
                 url: makeApiPath(`inventory/tag/${props.tagId}/from-inventory/${props.inventoryId}`),
                 method: 'delete',
                 body: props,
-                responseHandler: (response) => response.text(),
             }),
         })
     })

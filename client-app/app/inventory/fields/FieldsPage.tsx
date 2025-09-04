@@ -40,14 +40,10 @@ export default function FieldsPage() {
                 onClick={handleOnAddClick}>
                 <MdAdd /> Add
             </Button>
-            <Button variant='outline-danger'>
-                <MdDeleteOutline />
-            </Button>
         </div>
         <Table hover responsive>
             <thead>
                 <tr>
-                    <th><FormCheck /></th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Type</th>
@@ -57,7 +53,6 @@ export default function FieldsPage() {
             <tbody>
                 {fields.map((field) => {
                     return <tr onClick={(event) => handleFieldClick(event, field)}>
-                        <td className="no-row-click"><FormCheck /></td>
                         <td>{field.name}</td>
                         <td>{field.description}</td>
                         <td>{field.type}</td>

@@ -1,7 +1,7 @@
 import type { Inventory, InventoryField } from "api/inventory/inventory.types";
 import { useCreateItemMutation } from "api/item/item.api";
 import { t } from "i18next";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm, type UseFormRegister } from "react-hook-form";
 
@@ -22,7 +22,14 @@ export default function ItemEditorModal({ inventory, show, fields, onHide }: Ite
             .then(item => console.log(item))
             .catch(err => console.log(err))
     }
-    const { register, handleSubmit } = useForm<any>();
+    const { register, handleSubmit, reset } = useForm<any>();
+    useEffect(() => {
+        const form: Record<string, string> = {};
+        fields.forEach(f => {
+            form[f.uid] = '';
+        })
+        reset(form);
+    }, [show, fields]);
     return <Modal show={show} onHide={onHide}>
         <Modal.Header>Add item</Modal.Header>
         <Modal.Body>

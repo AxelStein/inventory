@@ -1,4 +1,5 @@
 import { fetchBaseQuery, type BaseQueryFn, type FetchArgs, type FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+import { logout } from "./auth/auth.slice";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -12,9 +13,9 @@ export const createBaseQuery = (path: string) => {
         unknown,
         FetchBaseQueryError
     > = async (args, api, extraOptions) => {
-        let result = await baseQuery(args, api, extraOptions)
+        const result = await baseQuery(args, api, extraOptions);
         if (result.error && result.error.status === 401) {
-            localStorage.removeItem('user');
+            api.dispatch(logout());
         }
         return result
     }

@@ -28,8 +28,8 @@ export default function DashboardPage() {
     const { data: tags } = useGetTagsQuery({
         asGuest: isGuest()
     });
-    const cloudTags = tags?.map(tag => ({ 
-        value: tag.name, 
+    const cloudTags = tags?.map(tag => ({
+        value: tag.name,
         count: tag.inventoryCount ?? 0,
         key: tag.id.toString(),
     })) || [];
@@ -46,6 +46,9 @@ export default function DashboardPage() {
                 minSize={12}
                 tags={cloudTags}
                 onClick={() => { }} />
+            {cloudTags.length === 0 && (
+                <p className="no-data">{t('tag.noData')}</p>
+            )}
         </Col>
     </Container>
 }

@@ -90,3 +90,8 @@
   display: inline-block;
   vertical-align: middle;
 }
+
+.no-data {
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+}
