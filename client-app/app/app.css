@@ -101,3 +101,15 @@
   padding: 0;
   margin: 0;
 }
+
+.custom-id-btn-delete {
+  display: flex;
+  padding: 10px;
+}
+
+.custom-id-drag-indicator {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
