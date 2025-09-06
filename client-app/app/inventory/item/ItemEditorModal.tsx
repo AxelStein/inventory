@@ -2,9 +2,10 @@ import { InventoryFieldType, type Inventory, type InventoryField } from "api/inv
 import { useCreateItemMutation, useDeleteItemMutation, useUpdateItemMutation } from "api/item/item.api";
 import type { InventoryItem } from "api/item/item.types";
 import { t } from "i18next";
-import { useEffect, type ReactNode } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
-import { useForm, type UseFormRegister } from "react-hook-form";
+import { useEffect, useState, type ReactNode } from "react";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
+import type { AsProp } from "react-bootstrap/esm/helpers";
+import { useForm, type FormState, type RegisterOptions, type UseFormRegister } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
 
 interface ItemEditorModalProps {
@@ -20,7 +21,14 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
     const [createItem] = useCreateItemMutation();
     const [updateItem] = useUpdateItemMutation();
     const [deleteItem] = useDeleteItemMutation();
-    const { register, handleSubmit, reset } = useForm<any>();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState,
+        setError: setFormError
+    } = useForm<any>();
+    const [errorMessage, setErrorMessage] = useState<string>();
 
     useEffect(() => {
         const form: Record<string, any> = {};
@@ -34,6 +42,25 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
         reset(form);
     }, [show, fields, editItem]);
 
+    const handleError = (err: any) => {
+        if (!err.data) {
+            setErrorMessage('Network error');
+            return;
+        }
+        const details = err.data?.details;
+        if (!details) {
+            setErrorMessage(err.data?.message);
+            return;
+        }
+        Object.keys(details).forEach((key) => {
+            setFormError(key, { message: details[key] });
+        });
+    }
+
+    const handleFormChange = () => {
+        setErrorMessage(undefined);
+    }
+
     const onSubmit = (values: any) => {
         values.inventoryId = inventory.id;
         values.inventoryVersion = inventory.version;
@@ -44,12 +71,12 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
             updateItem(values)
                 .unwrap()
                 .then(setItem)
-                .catch(err => console.log(err));
+                .catch(handleError);
         } else {
             createItem(values)
                 .unwrap()
                 .then(setItem)
-                .catch(err => console.log(err));
+                .catch(handleError);
         }
     }
 
@@ -65,8 +92,13 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
     return <Modal show={show} onHide={onHide}>
         <Modal.Header>{editItem != null ? 'Edit' : 'Add'} item</Modal.Header>
         <Modal.Body>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-                {fields.map(field => createFormItem(field, register))}
+            <Form
+                onSubmit={handleSubmit(onSubmit)}
+                onChange={handleFormChange}>
+
+                {fields.map(field => createFormItem(field, register, formState))}
+
+                <div className="validation-error-message">{errorMessage}</div>
 
                 <div className="d-flex justify-content-between">
                     {editItem != null ? (
@@ -82,54 +114,59 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
                     </Button>
                 </div>
             </Form>
+
         </Modal.Body>
     </Modal>;
 }
 
-function createFormItem(field: InventoryField, register: UseFormRegister<any>): ReactNode {
+function createFormItem(
+    field: InventoryField,
+    register: UseFormRegister<any>,
+    formState: FormState<any>
+): ReactNode {
+    const err = formState.errors[field.uid]?.message?.toString();
+
+    let type = 'text';
+    let placeholder = field.name ?? '';
+    let options = { required: true } as RegisterOptions | undefined;
+    let asTextArea = false;
+
     switch (field.type) {
         case InventoryFieldType.customId:
-            return <Form.Control
-                type="text"
-                placeholder='ID (leave empty to autogenerate)'
-                className='mb-3'
-                {...register(field.uid)} />;
-
-        case InventoryFieldType.string:
-            return <Form.Control
-                type="text"
-                placeholder={field.name ?? ""}
-                className='mb-3'
-                {...register(field.uid)} />;
+            placeholder = 'ID (leave empty to autogenerate)';
+            options = undefined;
+            break;
 
         case InventoryFieldType.text:
-            return <Form.Control
-                as='textarea'
-                placeholder={field.name ?? ""}
-                className='mb-3'
-                rows={6}
-                {...register(field.uid)} />;
+            asTextArea = true;
+            break;
 
         case InventoryFieldType.int:
-            return <Form.Control
-                type="number"
-                placeholder={field.name ?? ""}
-                className='mb-3'
-                {...register(field.uid, { valueAsNumber: true })} />;
-
-        case InventoryFieldType.link:
-            return <Form.Control
-                type="text"
-                placeholder={field.name ?? ""}
-                className='mb-3'
-                {...register(field.uid)} />;
+            options!.valueAsNumber = true;
+            type = 'number';
+            break;
 
         case InventoryFieldType.boolean:
-            return <Form.Switch
-                label={field.name}
-                className='mb-3'
-                {...register(field.uid, {
-                    setValueAs: (value) => (value === 'on')
-                })} />;
+            return <>
+                <Form.Switch
+                    label={field.name}
+                    className='mb-3'
+                    isInvalid={err != null}
+                    {...register(field.uid, {
+                        setValueAs: (value) => (value === 'on')
+                    })} />
+                <Form.Control.Feedback type='invalid'>{err}</Form.Control.Feedback>
+            </>
     }
+
+    return <Form.Group>
+        <Form.Control
+            type={type}
+            as={asTextArea ? 'textarea' : undefined}
+            placeholder={placeholder}
+            className='mb-3'
+            isInvalid={err != null}
+            {...register(field.uid, options)} />
+        <Form.Control.Feedback type='invalid'>{err}</Form.Control.Feedback>
+    </Form.Group>
 }

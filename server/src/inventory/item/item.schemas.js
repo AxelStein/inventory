@@ -11,7 +11,7 @@ inflateInventoryCustomFields((prefix, field) => {
     switch (field.type) {
         case CustomFieldType.STRING:
         case CustomFieldType.TEXT:
-            createItemSchemaData[prefix] = Joi.string().trim().allow('');
+            createItemSchemaData[prefix] = Joi.string().trim().allow('').allow(null);
             break;
 
         case CustomFieldType.INT:

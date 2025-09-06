@@ -76,3 +76,8 @@ export interface UpdateInventoryProps {
     id: number;
     body: any;
 }
+
+export enum InventoryListFilter {
+    own = 'own',
+    writeAccess = 'writeAccess',
+}

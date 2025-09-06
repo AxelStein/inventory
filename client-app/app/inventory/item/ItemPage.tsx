@@ -136,8 +136,6 @@ export default function ItemPage() {
     const canAdd = inventory!.permissions?.item?.create == true;
     const canDelete = inventory!.permissions?.item?.delete == true;
 
-    console.log(checkedItems.size === items.length, checkedItems.size, items.length);
-
     return <InfiniteScroll
         hasMore={data.hasMore}
         dataLength={items.length}
@@ -263,7 +261,9 @@ function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowPro
                         return <td>{formatRelative(item.updatedAt, new Date())}</td>;
 
                     case 'likes':
-                        return <td className="no-row-click" onClick={handleFavoriteClick}>
+                        return <td
+                            className="no-row-click"
+                            onClick={handleFavoriteClick}>
                             {ownLike ? (<MdFavorite color="#c44512" />) : (<MdFavoriteBorder />)} {likeCount}
                         </td>
                 }
@@ -273,10 +273,3 @@ function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowPro
 
     </tr>;
 }
-/*
-        <td>{formatRelative(item.createdAt, new Date())}</td>
-        <td>{formatRelative(item.updatedAt, new Date())}</td>
-        <td className="no-row-click" onClick={handleFavoriteClick}>
-            {ownLike ? (<MdFavorite color="#c44512" />) : (<MdFavoriteBorder />)} {likeCount}
-        </td>
-        */
