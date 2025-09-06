@@ -45,9 +45,6 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
                 <Tab eventKey="items" title="Items">
                     <ItemPage />
                 </Tab>
-                <Tab eventKey='posts' title="Posts">
-                    Posts
-                </Tab>
                 {canEditInventory && [
                     <Tab eventKey="settings" title="Settings">
                         <Container className="d-flex justify-content-center">

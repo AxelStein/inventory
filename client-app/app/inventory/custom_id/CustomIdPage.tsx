@@ -59,10 +59,6 @@ export default function CustomIdPage() {
         }
     }, [customIdsQuery]);
 
-    useEffect(() => {
-        console.log(ids, items);
-    }, [ids, items]);
-
     const setItem = (newItem: InventoryCustomId) => {
         items.current.set(newItem.id, newItem);
         if (!ids.includes(newItem.id)) {

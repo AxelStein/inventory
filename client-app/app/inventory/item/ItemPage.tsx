@@ -4,19 +4,24 @@ import type { InventoryItem } from "api/item/item.types";
 import { useContext, useEffect, useState } from "react";
 import { Button, Col, FormCheck, Table } from "react-bootstrap";
 import { InventoryContext } from "../InventoryPage";
-import { MdAdd, MdCheckBox, MdCheckBoxOutlineBlank, MdDelete, MdDeleteOutline, MdFavorite, MdFavoriteBorder, MdHeartBroken } from "react-icons/md";
+import { MdAdd, MdArrowDownward, MdArrowDropDown, MdArrowUpward, MdCheckBox, MdCheckBoxOutlineBlank, MdDelete, MdDeleteOutline, MdFavorite, MdFavoriteBorder, MdHeartBroken } from "react-icons/md";
 import ItemEditorModal from "./ItemEditorModal";
 import { isGuest } from "~/auth/auth.check.guest";
 import { formatRelative } from "date-fns/formatRelative";
 import { useSelector } from "react-redux";
 import { useLikeItemMutation, useUnlikeItemMutation } from "api/item/item.like.api";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 export default function ItemPage() {
     const { inventory } = useContext(InventoryContext);
     const [page, setPage] = useState(1);
+    const [sortBy, setSortBy] = useState('customId');
+    const [sortAsc, setSortAsc] = useState(true);
     const { data, isLoading, refetch } = useGetItemsQuery({
         inventoryId: inventory!.id,
         asGuest: isGuest(),
+        sortBy: sortBy,
+        sortAsc: sortAsc,
         page: page,
         perPage: 20
     });
@@ -33,7 +38,13 @@ export default function ItemPage() {
         } else {
             setItems([...items, ...data.items]);
         }
-    }, [data, page]);
+        setCheckedItems(new Set());
+    }, [data]);
+
+    const refreshData = () => {
+        setPage(1);
+        refetch();
+    }
 
     const handleOnAddClick = () => {
         setEditItem(null);
@@ -43,8 +54,8 @@ export default function ItemPage() {
         setModalVisible(false);
     };
     const handleSetItem = (item: InventoryItem | null) => {
-        setPage(1);
         setModalVisible(false);
+        refreshData();
     };
     const handleItemClick = (item: InventoryItem) => {
         setEditItem(item);
@@ -70,10 +81,24 @@ export default function ItemPage() {
         deleteItemsByIds({
             inventoryId: inventory!.id,
             ids: [...checkedItems]
-        }).unwrap().then(() => {
-            setItems(items.filter((item) => !checkedItems.has(item.id)));
-            setCheckedItems(new Set());
-        });
+        }).unwrap().then(refreshData);
+    }
+    const renderSortIndicator = (column: string) => {
+        if (column === sortBy) {
+            return sortAsc ? <MdArrowUpward /> : <MdArrowDownward />;
+        }
+        return null;
+    }
+    const handleColumnClick = (column: string) => {
+        setPage(1);
+        if (column === sortBy) {
+            setSortAsc(!sortAsc);
+        } else {
+            setSortBy(column);
+        }
+    }
+    const fetchNextPage = () => {
+        setPage(page + 1);
     }
 
     if (!data || isLoading) {
@@ -88,72 +113,96 @@ export default function ItemPage() {
         type: InventoryFieldType.customId
     });
 
+    const tableFields = [...fields];
+    tableFields.push({
+        uid: 'createdAt',
+        name: 'Created at',
+        state: InventoryFieldState.visible,
+        type: InventoryFieldType.customId
+    });
+    tableFields.push({
+        uid: 'updatedAt',
+        name: 'Updated at',
+        state: InventoryFieldState.visible,
+        type: InventoryFieldType.customId
+    });
+    tableFields.push({
+        uid: 'likes',
+        name: 'Likes',
+        state: InventoryFieldState.visible,
+        type: InventoryFieldType.customId
+    });
+
     const canAdd = inventory!.permissions?.item?.create == true;
     const canDelete = inventory!.permissions?.item?.delete == true;
 
-    return <Col>
-        {(canAdd || canDelete) && (
-            <div className="mb-3">
-                {canAdd && (
-                    <Button
-                        variant='outline-primary'
-                        className='me-2'
-                        onClick={handleOnAddClick}>
-                        <MdAdd /> Add
-                    </Button>
-                )}
-                {canDelete && (
-                    <Button
-                        variant='outline-danger'
-                        className='me-2'
-                        onClick={handleDeleteItemsClick}
-                        disabled={checkedItems.size === 0}>
-                        <MdDeleteOutline />
-                    </Button>
-                )}
-            </div>
-        )}
-        <Table hover responsive>
-            <thead>
-                <tr>
-                    <th>
-                        <FormCheck
-                            checked={checkedItems.size === items.length}
-                            onClick={handleAllItemsCheck} />
-                    </th>
-                    {fields.map(createColumn)}
-                    <th>Created at</th>
-                    <th>Updated at</th>
-                    <th>Likes</th>
-                </tr>
-            </thead>
-            <tbody>
-                {items.map(item => (
-                    <ItemRow
-                        item={item}
-                        fields={fields}
-                        onClick={handleItemClick}
-                        isChecked={checkedItems.has(item.id)}
-                        toggleChecked={handleItemCheck} />
-                ))}
-            </tbody>
-        </Table>
-        {inventory && (
-            <ItemEditorModal
-                inventory={inventory}
-                show={modalVisible}
-                editItem={editItem}
-                setItem={handleSetItem}
-                fields={fields}
-                onHide={handleHideModal} />
-        )}
-    </Col>
-}
+    console.log(checkedItems.size === items.length, checkedItems.size, items.length);
 
-function createColumn(field: InventoryField) {
-    return <th>{field.name}</th>;
+    return <InfiniteScroll
+        hasMore={data.hasMore}
+        dataLength={items.length}
+        next={fetchNextPage}
+        loader={(
+            <div className="spinner" />
+        )}>
+        <Col>
+            {(canAdd || canDelete) && (
+                <div className="mb-3">
+                    {canAdd && (
+                        <Button
+                            variant='outline-primary'
+                            className='me-2'
+                            onClick={handleOnAddClick}>
+                            <MdAdd /> Add
+                        </Button>
+                    )}
+                    {canDelete && (
+                        <Button
+                            variant='outline-danger'
+                            className='me-2'
+                            onClick={handleDeleteItemsClick}
+                            disabled={checkedItems.size === 0}>
+                            <MdDeleteOutline />
+                        </Button>
+                    )}
+                </div>
+            )}
+            <Table hover responsive>
+                <thead>
+                    <tr>
+                        <th>
+                            <FormCheck
+                                checked={checkedItems.size === items.length}
+                                onClick={handleAllItemsCheck} />
+                        </th>
+                        {tableFields.map((field) => (
+                            <th onClick={() => handleColumnClick(field.uid)}>{field.name} {renderSortIndicator(field.uid)}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {items.map(item => (
+                        <ItemRow
+                            item={item}
+                            fields={tableFields}
+                            onClick={handleItemClick}
+                            isChecked={checkedItems.has(item.id)}
+                            toggleChecked={handleItemCheck} />
+                    ))}
+                </tbody>
+            </Table>
+            {inventory && (
+                <ItemEditorModal
+                    inventory={inventory}
+                    show={modalVisible}
+                    editItem={editItem}
+                    setItem={handleSetItem}
+                    fields={fields}
+                    onHide={handleHideModal} />
+            )}
+        </Col>
+    </InfiniteScroll>
 }
-
 
 interface ItemRowProps {
     item: InventoryItem;
@@ -206,13 +255,28 @@ function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowPro
                 if (field.type === 'boolean') {
                     return <td>{value ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}</td>;
                 }
+                switch (field.uid) {
+                    case 'createdAt':
+                        return <td>{formatRelative(item.createdAt, new Date())}</td>;
+
+                    case 'updatedAt':
+                        return <td>{formatRelative(item.updatedAt, new Date())}</td>;
+
+                    case 'likes':
+                        return <td className="no-row-click" onClick={handleFavoriteClick}>
+                            {ownLike ? (<MdFavorite color="#c44512" />) : (<MdFavoriteBorder />)} {likeCount}
+                        </td>
+                }
                 return <td>{value}</td>;
             })
         }
+
+    </tr>;
+}
+/*
         <td>{formatRelative(item.createdAt, new Date())}</td>
         <td>{formatRelative(item.updatedAt, new Date())}</td>
         <td className="no-row-click" onClick={handleFavoriteClick}>
             {ownLike ? (<MdFavorite color="#c44512" />) : (<MdFavoriteBorder />)} {likeCount}
         </td>
-    </tr>;
-}
+        */

@@ -55,7 +55,7 @@ export interface InventoryField {
     name: string;
     description?: string | null;
     state: InventoryFieldState;
-    type: InventoryFieldType;
+    type: InventoryFieldType | string;
 }
 
 export enum InventoryFieldType {
