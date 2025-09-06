@@ -1,5 +1,5 @@
 import { Reorder, useDragControls } from "motion/react";
-import { use, useContext, useEffect, useState } from "react";
+import { use, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { InventoryContext } from "../InventoryPage";
 import { Button, Col, Container, Form } from "react-bootstrap";
 import { MdAdd, MdClear, MdDelete, MdDeleteForever, MdDeleteOutline, MdDragIndicator } from "react-icons/md";
@@ -8,6 +8,7 @@ import { CustomIdType } from "api/app/app.types";
 import { useCreateCustomIdMutation, useDeleteCustomIdMutation, useGetCustomIdsQuery, useReorderCustomIdsMutation, useUpdateCustomIdMutation } from "api/custom_id/custom.id.api";
 import type { InventoryCustomId } from "api/custom_id/custom.id.types";
 import { motion } from 'framer-motion';
+import debounce from 'lodash.debounce';
 
 const getCustomIdTypeLabel = (type: CustomIdType): string => {
     switch (type) {
@@ -47,58 +48,63 @@ export default function CustomIdPage() {
     const [updateItem] = useUpdateCustomIdMutation();
     const [deleteItem] = useDeleteCustomIdMutation();
     const [reorderItems] = useReorderCustomIdsMutation();
-
-    const [items, setItems] = useState<Map<number, InventoryCustomId>>();
+    const items = useRef(new Map<number, InventoryCustomId>());
     const [ids, setIds] = useState<number[]>([]);
+    const debounceMap = useRef(new Map<number, any>());
 
     useEffect(() => {
         if (customIdsQuery) {
-            setItems(new Map(customIdsQuery.map(item => [item.id, item])));
+            items.current = new Map(customIdsQuery.map(item => [item.id, item]));
             setIds(customIdsQuery.map(item => item.id));
         }
-    }, [customIdsQuery, setItems]);
+    }, [customIdsQuery]);
 
     useEffect(() => {
         console.log(ids, items);
     }, [ids, items]);
+
+    const setItem = (newItem: InventoryCustomId) => {
+        items.current.set(newItem.id, newItem);
+        if (!ids.includes(newItem.id)) {
+            setIds([...ids, newItem.id]);
+        } else {
+            setIds([...ids]);
+        }
+    }
 
     const handleChangeIdType = (item: InventoryCustomId, type: string) => {
         updateItem({
             id: item.id,
             type: type,
             rule: item.rule,
-        }).unwrap().then((newItem) => {
-            const newItems = new Map(items);
-            newItems.set(newItem.id, newItem);
-            setItems(newItems);
-        });
+        }).unwrap().then(setItem);
     }
 
     const handleChangeIdRule = (item: InventoryCustomId, rule: string) => {
-        const newItems = new Map(items);
-        newItems.set(item.id, { ...item, rule });
-        setItems(newItems);
-        // schedule update
+        setItem({ ...item, rule });
+
+        debounceMap.current.get(item.id)?.cancel();
+        const d = debounce(() => {
+            const it = items.current?.get(item.id);
+            if (it) {
+                updateItem(it);
+            }
+        }, 1500);
+        debounceMap.current.set(item.id, d);
+        d();
     }
 
     const handleAddItemClick = () => {
         createItem({ inventoryId: inventory!.id, type: CustomIdType.SEQUENCE })
             .unwrap()
-            .then((item) => {
-                const newItems = new Map(items);
-                newItems.set(item.id, item);
-                setItems(newItems);
-                setIds([...ids, item.id]);
-            });
+            .then(setItem);
     }
 
     const handleDeleteItemClick = (item: InventoryCustomId) => {
         deleteItem(item.id)
             .unwrap()
             .then(() => {
-                const newItems = new Map(items);
-                newItems.delete(item.id);
-                setItems(newItems);
+                items.current?.delete(item.id);
                 setIds(ids.filter((id) => id !== item.id));
             });
     }
@@ -120,7 +126,7 @@ export default function CustomIdPage() {
                     className="custom-id-group">
 
                     {ids.map(id => {
-                        const item = items!.get(id)!;
+                        const item = items.current.get(id)!;
                         return <Reorder.Item
                             key={id}
                             value={id}
@@ -157,7 +163,7 @@ export default function CustomIdPage() {
                     })}
                 </Reorder.Group>
             </Form>
-            {(items?.size ?? 0) < MAX_ID_COUNT && (
+            {items.current.size < MAX_ID_COUNT && (
                 <Button
                     variant='outline-primary'
                     className='me-2'

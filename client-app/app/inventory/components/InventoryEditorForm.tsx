@@ -162,7 +162,6 @@ export default function InventoryEditorForm() {
             .catch(handleInventoryError);
     }, [inventory]);
 
-
     const onDeleteImageClick = useCallback(() => {
         showAlertDialog({
             message: t('inventory.editorForm.confirmDeleteImage'),
