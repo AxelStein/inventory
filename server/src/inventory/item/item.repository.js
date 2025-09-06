@@ -51,7 +51,15 @@ const repository = {
         return repository.getById(id, transaction);
     },
 
-    delete: (id) => Item.destroy({ where: { id } })
+    delete: (id) => Item.destroy({ where: { id } }),
+
+    deleteByIds: (inventoryId, ids, transaction) => Item.destroy({
+        where: {
+            inventoryId,
+            id: { [Op.in]: ids }
+        },
+        transaction
+    }),
 }
 
 export default repository;

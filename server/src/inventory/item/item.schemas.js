@@ -51,3 +51,12 @@ export const getItemListSchema = Joi.object({
 export const checkItemParamsSchema = Joi.object({
     id: Joi.number().integer().required(),
 }).required();
+
+export const deleteItemsByIdsSchema = Joi.object({
+    inventoryId: Joi.number().integer().required(),
+    ids: Joi.array().items(
+        Joi.number()
+            .min(1)
+            .integer()
+    ).required()
+});

@@ -1,10 +1,11 @@
 import { InventoryFieldType, type Inventory, type InventoryField } from "api/inventory/inventory.types";
-import { useCreateItemMutation, useUpdateItemMutation } from "api/item/item.api";
+import { useCreateItemMutation, useDeleteItemMutation, useUpdateItemMutation } from "api/item/item.api";
 import type { InventoryItem } from "api/item/item.types";
 import { t } from "i18next";
 import { useEffect, type ReactNode } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm, type UseFormRegister } from "react-hook-form";
+import { MdDeleteOutline } from "react-icons/md";
 
 interface ItemEditorModalProps {
     inventory: Inventory;
@@ -12,12 +13,13 @@ interface ItemEditorModalProps {
     editItem: InventoryItem | null;
     show: boolean;
     onHide: () => void;
-    setItem: (item: InventoryItem) => void;
+    setItem: (item: InventoryItem | null) => void;
 }
 
 export default function ItemEditorModal({ inventory, show, editItem, fields, onHide, setItem }: ItemEditorModalProps) {
     const [createItem] = useCreateItemMutation();
     const [updateItem] = useUpdateItemMutation();
+    const [deleteItem] = useDeleteItemMutation();
     const { register, handleSubmit, reset } = useForm<any>();
 
     useEffect(() => {
@@ -51,17 +53,34 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
         }
     }
 
+    const handleDelete = () => {
+        deleteItem(editItem!.id)
+            .unwrap()
+            .then(() => {
+                setItem(null);
+            })
+            .catch(err => console.log(err));
+    }
+
     return <Modal show={show} onHide={onHide}>
         <Modal.Header>{editItem != null ? 'Edit' : 'Add'} item</Modal.Header>
         <Modal.Body>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 {fields.map(field => createFormItem(field, register))}
 
-                <Button
-                    className="btn btn-primary"
-                    type='submit'>
-                    {editItem != null ? 'Save' : 'Add'}
-                </Button>
+                <div className="d-flex justify-content-between">
+                    {editItem != null ? (
+                        <Button variant='outline-danger' onClick={handleDelete}>
+                            <MdDeleteOutline />
+                        </Button>
+                    ) : (<span></span>)}
+
+                    <Button
+                        className="btn btn-primary"
+                        type='submit'>
+                        {editItem != null ? 'Save' : 'Add'}
+                    </Button>
+                </div>
             </Form>
         </Modal.Body>
     </Modal>;

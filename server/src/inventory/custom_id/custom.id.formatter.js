@@ -1,8 +1,8 @@
-import {trimString} from "../../util/string.util.js";
+import { trimString } from "../../util/string.util.js";
 import CustomIdType from "./custom.id.type.js";
 import crypto from "crypto";
-import {format} from "date-fns";
-import {generateRandomNumberForCustomId} from "./custom.id.random.number.generator.js";
+import { format } from "date-fns";
+import { generateRandomNumberForCustomId } from "./custom.id.random.number.generator.js";
 
 export const formatCustomId = (customId) => {
     const rule = trimString(customId.rule);
@@ -30,6 +30,7 @@ export const formatCustomId = (customId) => {
             const num = customId.nextSequence;
             if (!rule) return num.toString();
             return rule
+                .replace(' ', '')
                 .replace(padRegex, (match, n) => num.toString().padStart(n || 0, '0'))
                 .replace(regex, num.toString());
 

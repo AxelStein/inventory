@@ -8,7 +8,8 @@ import {
     getItemListSchema,
     createItemSchema,
     updateItemSchema,
-    checkItemParamsSchema
+    checkItemParamsSchema,
+    deleteItemsByIdsSchema
 } from '../../../inventory/item/item.schemas.js';
 
 const router = express.Router();
@@ -27,6 +28,13 @@ router.post(
     validateBody(updateItemSchema),
     checkItemAccess(AccessAction.UPDATE),  
     controller.update
+);
+
+router.post(
+    '/delete-by-ids',
+    validateBody(deleteItemsByIdsSchema),
+    checkItemAccess(AccessAction.DELETE),
+    controller.deleteByIds
 );
 
 router.delete('/:id',

@@ -1,5 +1,5 @@
 import { InventoryFieldState, InventoryFieldType, type InventoryField } from "api/inventory/inventory.types";
-import { useGetItemsQuery } from "api/item/item.api";
+import { useDeleteItemsByIdsMutation, useGetItemsQuery } from "api/item/item.api";
 import type { InventoryItem } from "api/item/item.types";
 import { useContext, useEffect, useState } from "react";
 import { Button, Col, FormCheck, Table } from "react-bootstrap";
@@ -13,14 +13,27 @@ import { useLikeItemMutation, useUnlikeItemMutation } from "api/item/item.like.a
 
 export default function ItemPage() {
     const { inventory } = useContext(InventoryContext);
+    const [page, setPage] = useState(1);
     const { data, isLoading, refetch } = useGetItemsQuery({
         inventoryId: inventory!.id,
         asGuest: isGuest(),
+        page: page,
         perPage: 20
     });
     const [modalVisible, setModalVisible] = useState(false);
     const [editItem, setEditItem] = useState<InventoryItem | null>(null);
-    const currentUser = useSelector((state: any) => state.auth.user);
+    const [checkedItems, setCheckedItems] = useState(new Set<number>());
+    const [deleteItemsByIds] = useDeleteItemsByIdsMutation();
+    const [items, setItems] = useState<InventoryItem[]>([]);
+
+    useEffect(() => {
+        if (!data) return;
+        if (page === 1) {
+            setItems(data.items);
+        } else {
+            setItems([...items, ...data.items]);
+        }
+    }, [data, page]);
 
     const handleOnAddClick = () => {
         setEditItem(null);
@@ -29,13 +42,38 @@ export default function ItemPage() {
     const handleHideModal = () => {
         setModalVisible(false);
     };
-    const handleSetItem = (item: InventoryItem) => {
-        refetch();
+    const handleSetItem = (item: InventoryItem | null) => {
+        setPage(1);
         setModalVisible(false);
     };
     const handleItemClick = (item: InventoryItem) => {
         setEditItem(item);
         setModalVisible(true);
+    }
+    const handleItemCheck = (item: InventoryItem) => {
+        const checked = new Set(checkedItems);
+        if (checked.has(item.id)) {
+            checked.delete(item.id);
+        } else {
+            checked.add(item.id);
+        }
+        setCheckedItems(checked);
+    }
+    const handleAllItemsCheck = () => {
+        if (checkedItems.size === items.length) {
+            setCheckedItems(new Set());
+        } else {
+            setCheckedItems(new Set(items.map(item => item.id)));
+        }
+    }
+    const handleDeleteItemsClick = () => {
+        deleteItemsByIds({
+            inventoryId: inventory!.id,
+            ids: [...checkedItems]
+        }).unwrap().then(() => {
+            setItems(items.filter((item) => !checkedItems.has(item.id)));
+            setCheckedItems(new Set());
+        });
     }
 
     if (!data || isLoading) {
@@ -57,12 +95,19 @@ export default function ItemPage() {
         {(canAdd || canDelete) && (
             <div className="mb-3">
                 {canAdd && (
-                    <Button variant='outline-primary' className='me-2' onClick={handleOnAddClick}>
+                    <Button
+                        variant='outline-primary'
+                        className='me-2'
+                        onClick={handleOnAddClick}>
                         <MdAdd /> Add
                     </Button>
                 )}
                 {canDelete && (
-                    <Button variant='outline-danger' className='me-2'>
+                    <Button
+                        variant='outline-danger'
+                        className='me-2'
+                        onClick={handleDeleteItemsClick}
+                        disabled={checkedItems.size === 0}>
                         <MdDeleteOutline />
                     </Button>
                 )}
@@ -71,7 +116,11 @@ export default function ItemPage() {
         <Table hover responsive>
             <thead>
                 <tr>
-                    <th><FormCheck /></th>
+                    <th>
+                        <FormCheck
+                            checked={checkedItems.size === items.length}
+                            onClick={handleAllItemsCheck} />
+                    </th>
                     {fields.map(createColumn)}
                     <th>Created at</th>
                     <th>Updated at</th>
@@ -79,7 +128,14 @@ export default function ItemPage() {
                 </tr>
             </thead>
             <tbody>
-                {data.items.map(item => <ItemRow item={item} fields={fields} onClick={handleItemClick} />)}
+                {items.map(item => (
+                    <ItemRow
+                        item={item}
+                        fields={fields}
+                        onClick={handleItemClick}
+                        isChecked={checkedItems.has(item.id)}
+                        toggleChecked={handleItemCheck} />
+                ))}
             </tbody>
         </Table>
         {inventory && (
@@ -100,12 +156,14 @@ function createColumn(field: InventoryField) {
 
 
 interface ItemRowProps {
-    item: InventoryItem,
-    fields: InventoryField[],
-    onClick: (item: InventoryItem) => void
+    item: InventoryItem;
+    fields: InventoryField[];
+    onClick: (item: InventoryItem) => void;
+    isChecked: boolean;
+    toggleChecked: (item: InventoryItem) => void;
 }
 
-function ItemRow({ item, fields, onClick }: ItemRowProps) {
+function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowProps) {
     const currentUser = useSelector((state: any) => state.auth.user);
     const [likeCount, setLikeCount] = useState<number>(0);
     const [ownLike, setOwnLike] = useState<boolean>(false);
@@ -135,7 +193,13 @@ function ItemRow({ item, fields, onClick }: ItemRowProps) {
     }
 
     return <tr onClick={handleClick}>
-        <td><FormCheck className="no-row-click" /></td>
+        <td>
+            <FormCheck
+                className="no-row-click"
+                checked={isChecked}
+                onChange={() => toggleChecked(item)}
+            />
+        </td>
         {
             fields.map(field => {
                 const value = (item as any)[field.uid];

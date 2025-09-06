@@ -1,7 +1,7 @@
 import CustomId from './custom.id.model.js';
 import db from '../../db/index.js';
 import {Transaction} from "sequelize";
-import {ConflictError, NotFoundError, ValidationError} from "../../error/index.js";
+import {ConflictError, NotFoundError} from "../../error/index.js";
 
 const reorderIds = async ({inventoryId, positions, transaction}) => {
     const ids = await repository.getList(inventoryId, transaction, Transaction.LOCK.UPDATE);
@@ -50,6 +50,9 @@ const repository = {
             { where: { id }, transaction, returning: true }
         );
         const item = rows[0];
+        if (!item) {
+            throw new NotFoundError(__('customId.error.notFound'));
+        }
         await reorderIds({ inventoryId: item.inventoryId, transaction });
         return item;
     }),

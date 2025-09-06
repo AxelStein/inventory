@@ -59,7 +59,8 @@
   },
   "item": {
     "error": {
-      "notFound": "Item not found"
+      "notFound": "Item not found",
+      "invalidIds": "Invalid ids"
     }
   },
   "customId": {

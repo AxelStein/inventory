@@ -2,10 +2,6 @@ import { DataTypes, Model } from 'sequelize';
 import db from '../../db/index.js';
 import Inventory from '../inventory.model.js';
 import CustomIdType from './custom.id.type.js';
-import {trimString} from "../../util/string.util.js";
-import {format} from "date-fns";
-import {generateRandomNumberForCustomId} from "./custom.id.random.number.generator.js";
-import crypto from "crypto";
 import {formatCustomId} from "./custom.id.formatter.js";
 
 class CustomId extends Model {

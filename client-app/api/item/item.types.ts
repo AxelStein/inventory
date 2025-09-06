@@ -50,3 +50,8 @@ export interface UpdateItemProps {
     version: number;
     body: any;
 }
+
+export interface DeleteItemsByIdsProps {
+    inventoryId: number;
+    ids: number[];
+}

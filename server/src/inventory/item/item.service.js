@@ -2,7 +2,7 @@ import repository from './item.repository.js';
 import db from '../../db/index.js';
 import { generateCustomId } from '../custom_id/custom.id.generator.js';
 import inventoryService from './../inventory.service.js';
-import { ConflictError } from '../../error/index.js';
+import { ConflictError, ValidationError } from '../../error/index.js';
 
 const checkInventoryVersion = async (data, transaction) => {
     const inventory = await inventoryService.getById({ id: data.inventoryId, transaction });
@@ -31,7 +31,14 @@ const service = {
         return repository.update(id, data, transaction);
     }),
 
-    delete: (id) => repository.delete(id)
+    delete: (id) => repository.delete(id),
+
+    deleteByIds: ({ inventoryId, ids }) => db.transaction(async (transaction) => {
+        const count = await repository.deleteByIds(inventoryId, ids, transaction);
+        if (count !== ids.length) {
+            throw new ValidationError(__('item.error.invalidIds'));
+        }
+    })
 }
 
 export default service;

@@ -19,6 +19,11 @@ const controller = {
         await service.delete(req.params.id);
         res.sendStatus(200);
     },
+
+    deleteByIds: async (req, res) => {
+        await service.deleteByIds(req.body);
+        res.sendStatus(200);
+    }
 }
 
 export default controller;
