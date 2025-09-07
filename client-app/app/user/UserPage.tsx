@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router";
-import { Alert, Button, Col, Container } from "react-bootstrap";
+import { Alert, Button, Col, Container, Pagination } from "react-bootstrap";
 import UserInfo from "~/user/components/UserInfo";
 import { useDeleteAccountMutation, useGetUserAccountByIdQuery } from "api/user/user.api";
 import { useErrorFormatter } from "~/components/error.formatter";
@@ -11,10 +11,33 @@ import { useTranslation } from "react-i18next";
 import { InventoryTable } from "~/inventory/components/InventoryTable";
 import { useAlertDialog } from "~/components/AlertDialogContext";
 import { MdAdd } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import CreateInventoryModal from "~/inventory/components/CreateInventoryModal";
 import { toast } from 'react-toastify';
 import { logout } from "api/slice/auth.slice";
+import { usePagingListState } from "~/components/paging.list.state";
+import type { PagingList } from "api/types";
+import type { Inventory } from "api/inventory/inventory.types";
+
+const createPagingItems = (
+    list: PagingList<Inventory> | undefined,
+    currentPage: number,
+    onPageClick: (page: number) => void,
+) => {
+    let items = [];
+    const pageCount = list?.pageCount ?? 0;
+    for (let page = 1; pageCount > 1 && page <= pageCount; page++) {
+        items.push(
+            <Pagination.Item
+                key={page}
+                active={page === currentPage}
+                onClick={() => onPageClick(page)}>
+                {page}
+            </Pagination.Item>,
+        );
+    }
+    return items;
+}
 
 export default function UserPage() {
     const { t } = useTranslation();
@@ -31,16 +54,36 @@ export default function UserPage() {
     const [deleteAccount] = useDeleteAccountMutation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { page: ownPage, setPage: setOwnPage } = usePagingListState();
+    const { page: writeAccessPage, setPage: setWriteAccessPage } = usePagingListState();
 
     const { data: ownInventories } = useGetInventoriesQuery({
         filter: 'own',
         userId: Number.isInteger(userId) ? userId : undefined,
+        page: ownPage,
     });
+    const [ownPagingItems, setOwnPagingItems] = useState<JSX.Element[]>();
+
+    useEffect(() => {
+        setOwnPagingItems(
+            createPagingItems(ownInventories, ownPage, setOwnPage)
+        );
+    }, [ownInventories, ownPage]);
 
     const { data: writeAccessInventories } = useGetInventoriesQuery({
         filter: 'writeAccess',
         userId: Number.isInteger(userId) ? userId : undefined,
+        page: writeAccessPage
     });
+
+    const [writeAccessPagingItems, setwriteAccessPagingItems] = useState<JSX.Element[]>();
+    useEffect(() => {
+        setwriteAccessPagingItems(
+            createPagingItems(writeAccessInventories, writeAccessPage, setWriteAccessPage)
+        );
+    }, [writeAccessInventories, writeAccessPage]);
+
+
     const handleDeleteAccountClick = () => {
         showAlertDialog({
             message: t('account.confirmDeleteDialog.msg'),
@@ -69,6 +112,7 @@ export default function UserPage() {
     if (!userAccount) {
         return <Loader />
     }
+
     return <Col>
         <Container>
             <UserInfo
@@ -85,13 +129,20 @@ export default function UserPage() {
                     <MdAdd /> {t('actions.add')}
                 </Button>
             )}
-
             <InventoryTable
                 inventories={ownInventories?.items} />
+
+            {ownPagingItems && ownPagingItems?.length !== 0 && (
+                <Pagination>{ownPagingItems}</Pagination>
+            )}
 
             <h4 className="mt-3">{t('dashboard.title.writeAccessInventories')}</h4>
             <InventoryTable
                 inventories={writeAccessInventories?.items} />
+
+            {writeAccessPagingItems && writeAccessPagingItems?.length !== 0 && (
+                <Pagination>{writeAccessPagingItems}</Pagination>
+            )}
         </Container>
 
         <CreateInventoryModal

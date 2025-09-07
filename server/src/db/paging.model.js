@@ -13,6 +13,9 @@ export class PagingModel extends Model {
             totalCount: count,
             hasMore: page * perPage < count,
             items: rows,
+            page,
+            perPage,
+            pageCount: Math.ceil(count / perPage)
         };
     }
 }

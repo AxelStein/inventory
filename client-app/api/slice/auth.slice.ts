@@ -1,3 +1,4 @@
+import { googleLogout } from '@react-oauth/google';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { User, UserSettings } from 'api/user/user.types';
 
@@ -44,6 +45,7 @@ const authSlice = createSlice({
             state.user = null;
             state.settings = null;
             clearStorage();
+            googleLogout();
         },
     },
 });

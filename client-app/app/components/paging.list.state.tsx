@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MdArrowDownward, MdArrowUpward } from "react-icons/md";
 
-export const usePagingListState = (initSortBy: string, initSortAsc: boolean = true) => {
+export const usePagingListState = (initSortBy: string = '', initSortAsc: boolean = true) => {
     const [page, setPage] = useState(1);
     const [sortBy, setSortBy] = useState(initSortBy);
     const [sortAsc, setSortAsc] = useState(initSortAsc);

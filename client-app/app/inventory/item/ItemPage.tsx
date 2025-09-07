@@ -36,7 +36,7 @@ export default function ItemPage() {
         sortAsc: sortAsc,
         page: page,
         perPage: 20
-    });
+    }, { skip: inventory == null || inventory == undefined });
     const [modalVisible, setModalVisible] = useState(false);
     const [editItem, setEditItem] = useState<InventoryItem | null>(null);
     const [checkedItems, setCheckedItems] = useState(new Set<number>());
