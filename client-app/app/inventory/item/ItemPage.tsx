@@ -260,6 +260,9 @@ function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowPro
                             {ownLike ? (<MdFavorite color="#c44512" />) : (<MdFavoriteBorder />)} {likeCount}
                         </td>
                 }
+                if (field.type === InventoryFieldType.link) {
+                    return <td className="no-row-click"><a href={value} target="_blank">{value}</a></td>;
+                }
                 return <td>{value}</td>;
             })
         }
