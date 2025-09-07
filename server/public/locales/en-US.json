@@ -123,5 +123,9 @@
     },
     "lastSeen": "Last seen",
     "forbiddenSignIn": "You have to <1>sign in</1> to view this page"
+  },
+  "admin": {
+    "btnBlock": "Block",
+    "btnRole": "Change role"
   }
 }

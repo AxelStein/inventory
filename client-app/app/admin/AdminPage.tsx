@@ -9,6 +9,7 @@ import Loader from "~/components/Loader";
 import { usePagingListState } from "~/components/paging.list.state";
 import TableDateData from "~/components/TableDateData";
 import { toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 
 export default function AdminPage() {
     const {
@@ -27,6 +28,8 @@ export default function AdminPage() {
         sortBy,
         sortAsc
     });
+
+    const { t } = useTranslation();
 
     const [deleteUsers] = useDeleteUsersByIdsMutation();
     const [blockUsers] = useBlockUsersByIdsMutation();
@@ -110,7 +113,7 @@ export default function AdminPage() {
                     className='me-2'
                     disabled={checkedIds.size === 0}
                     onClick={handleChangeRoleClick}>
-                    <MdAdminPanelSettings /> Role
+                    <MdAdminPanelSettings /> {t('admin.btnRole')}
                 </Button>
 
                 <Button
@@ -118,7 +121,7 @@ export default function AdminPage() {
                     className='me-2'
                     disabled={checkedIds.size === 0}
                     onClick={() => handleBlockUsers(true)}>
-                    <MdLock /> Block
+                    <MdLock /> {t('admin.btnBlock')}
                 </Button>
 
                 <Button
