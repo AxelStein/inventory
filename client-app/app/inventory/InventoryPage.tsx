@@ -48,21 +48,21 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
         <Col>
             <h2 className="mb-4">{inventory.title}</h2>
             <Tabs className="mb-3" fill>
-                <Tab eventKey="items" title="Items">
+                <Tab eventKey="items" title={t('inventory.tabs.items')}>
                     <ItemPage />
                 </Tab>
                 {canEditInventory && [
-                    <Tab eventKey="settings" title="Settings">
+                    <Tab eventKey="settings" title={t('inventory.tabs.settings')}>
                         <Container className="d-flex justify-content-center">
                             <Col md={6}>
                                 <InventoryEditorForm />
                             </Col>
                         </Container>
                     </Tab>,
-                    <Tab eventKey="customId" title="Custom ID">
+                    <Tab eventKey="customId" title={t('inventory.tabs.customId')}>
                         <CustomIdPage />
                     </Tab>,
-                    <Tab eventKey="fields" title="Fields">
+                    <Tab eventKey="fields" title={t('inventory.tabs.fields')}>
                         <FieldsPage />
                     </Tab>
                 ]}

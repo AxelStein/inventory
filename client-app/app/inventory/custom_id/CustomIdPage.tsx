@@ -12,32 +12,33 @@ import { toast } from 'react-toastify';
 import AppToastContainer from "~/components/AppToastContainer";
 import { useTranslation } from "react-i18next";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import type { TFunction } from "i18next";
 
-const getCustomIdTypeLabel = (type: CustomIdType): string => {
+const getCustomIdTypeLabel = (type: CustomIdType, t: TFunction): string => {
     switch (type) {
         case CustomIdType.FIXED:
-            return "Fixed";
+            return t('customId.labels.fixed');
 
         case CustomIdType.RND_20_BIT:
-            return "Random 20-bit";
+            return t('customId.labels.rnd20bit');
 
         case CustomIdType.RND_32_BIT:
-            return "Random 32-bit";
+            return t('customId.labels.rnd32bit');
 
         case CustomIdType.RND_6_DIGIT:
-            return "Random 6-digit";
+            return t('customId.labels.rnd6digit');
 
         case CustomIdType.RND_9_DIGIT:
-            return "Random 9-digit";
+            return t('customId.labels.rnd9digit');
 
         case CustomIdType.GUID:
-            return "GUID";
+            return t('customId.labels.guid');
 
         case CustomIdType.DATE_TIME:
-            return "Date / time";
+            return t('customId.labels.dateTime');
 
         case CustomIdType.SEQUENCE:
-            return "Sequence";
+            return t('customId.labels.sequence');
     }
 }
 
@@ -125,28 +126,28 @@ export default function CustomIdPage() {
     const createTooltip = (item: InventoryCustomId) => {
         switch (item.type) {
             case CustomIdType.FIXED:
-                return 'Piece of unchanging text';
+                return t('customId.tooltips.fixed');
 
             case CustomIdType.SEQUENCE:
-                return 'Sequenctial index. You can format it with leading zeros {num, 3} or without them {num}';
+                return t('customId.tooltips.sequence');
 
             case CustomIdType.DATE_TIME:
-                return 'Item creation date and time. You can format it like date, for example "dd.MM.yyyy" or time "HH:mm"';
+                return t('customId.tooltips.dateTime');
 
             case CustomIdType.GUID:
-                return 'Globally unique id. You can format it with template {uid}'
+                return t('customId.tooltips.guid');
 
             case CustomIdType.RND_6_DIGIT:
-                return 'Random 6-digit value. You can format it as decimal {num} or hexadecimal {hex}';
+                return t('customId.tooltips.rnd6digit');
 
             case CustomIdType.RND_9_DIGIT:
-                return 'Random 9-digit value. You can format it as decimal {num} or hexadecimal {hex}';
+                return t('customId.tooltips.rnd9digit');
 
             case CustomIdType.RND_20_BIT:
-                return 'Random 20-bit value. You can format it as decimal {num} or hexadecimal {hex}';
+                return t('customId.tooltips.rnd20bit');
 
             case CustomIdType.RND_32_BIT:
-                return 'Random 32-bit value. You can format it as decimal {num} or hexadecimal {hex}';
+                return t('customId.tooltips.rnd32bit');
         }
     }
 
@@ -179,7 +180,7 @@ export default function CustomIdPage() {
                                     value={item.type}
                                     onChange={(event) => handleChangeIdType(item, event.target.value)}>
                                     {appConfig?.inventory?.customIdTypes?.map(type => (
-                                        <option value={type}>{getCustomIdTypeLabel(type)}</option>
+                                        <option value={type}>{getCustomIdTypeLabel(type, t)}</option>
                                     ))}
                                 </Form.Select>
 
@@ -212,7 +213,7 @@ export default function CustomIdPage() {
                     variant='outline-primary'
                     className='me-2'
                     onClick={handleAddItemClick}>
-                    <MdAdd /> Add ID
+                    <MdAdd /> {t('customId.btnAdd')}
                 </Button>
             )}
             <AppToastContainer />

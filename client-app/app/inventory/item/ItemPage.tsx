@@ -13,8 +13,10 @@ import { useLikeItemMutation, useUnlikeItemMutation } from "api/item/item.like.a
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { format } from "date-fns";
 import TableDateData from "~/components/TableDateData";
+import { useTranslation } from "react-i18next";
 
 export default function ItemPage() {
+    const { t } = useTranslation();
     const { inventory } = useContext(InventoryContext);
     const [page, setPage] = useState(1);
     const [sortBy, setSortBy] = useState('customId');
@@ -153,7 +155,7 @@ export default function ItemPage() {
                             variant='outline-primary'
                             className='me-2'
                             onClick={handleOnAddClick}>
-                            <MdAdd /> Add
+                            <MdAdd /> {t('general.btnAdd')}
                         </Button>
                     )}
                     {canDelete && (

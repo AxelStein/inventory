@@ -45,7 +45,12 @@
       "labelImage": "Image",
       "labelTags": "Tags",
       "btnUploadImage": "Upload",
-      "confirmDeleteImage": "Are you sure you want to delete the image?"
+      "confirmDeleteImage": "Are you sure you want to delete the image?",
+      "btnDeleteInventory": "Delete inventory",
+      "confirmDeleteDialog": {
+        "msg": "Are you sure you want to delete this inventory? This action cannot be undone.",
+        "btnConfirm": "Delete"
+      }
     },
     "tableColumns": {
       "title": "Title",
@@ -56,6 +61,12 @@
       "itemCount": "Item count",
       "createdAt": "Created at",
       "updatedAt": "Updated at"
+    },
+    "tabs": {
+      "items": "Items",
+      "settings": "Settings",
+      "customId": "Custom ID",
+      "fields": "Fields"
     },
     "noData": "No inventories"
   },
@@ -74,5 +85,31 @@
   "tag": {
     "noData": "No tags"
   },
-  "networkError": "Network error. Check your internet connection"
+  "networkError": "Network error. Check your internet connection",
+  "customId": {
+    "tooltips": {
+      "fixed": "Piece of unchanging text",
+      "sequence": "Sequenctial index. You can format it with leading zeros {num, 3} or without them {num}",
+      "dateTime": "Item creation date and time. You can format it like date, for example \"dd.MM.yyyy\" or time \"HH:mm\"",
+      "guid": "Globally unique id. You can format it with template {uid}",
+      "rnd6digit": "Random 6-digit value. You can format it as decimal {num} or hexadecimal {hex}",
+      "rnd9digit": "Random 9-digit value. You can format it as decimal {num} or hexadecimal {hex}",
+      "rnd20bit": "Random 20-bit value. You can format it as decimal {num} or hexadecimal {hex}",
+      "rnd32bit": "Random 32-bit value. You can format it as decimal {num} or hexadecimal {hex}"
+    },
+    "labels": {
+      "fixed": "Fixed",
+      "rnd20bit": "Random 20-bit",
+      "rnd32bit": "Random 32-bit",
+      "rnd6digit": "Random 6-digit",
+      "rnd9digit": "Random 9-digit",
+      "guid": "GUID",
+      "dateTime": "Date / time",
+      "sequence": "Sequence"
+    },
+    "btnAdd": "Add ID"
+  },
+  "general": {
+    "btnAdd": "Add"
+  }
 }

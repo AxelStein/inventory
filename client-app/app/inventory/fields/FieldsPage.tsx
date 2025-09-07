@@ -4,8 +4,10 @@ import { InventoryContext } from "../InventoryPage";
 import { MdAdd, MdDeleteOutline } from "react-icons/md";
 import FieldEditorModal from "./FieldEditorModal";
 import type { InventoryField } from "api/inventory/inventory.types";
+import { useTranslation } from "react-i18next";
 
 export default function FieldsPage() {
+    const { t } = useTranslation();
     const { inventory } = useContext(InventoryContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [editField, setEditField] = useState<InventoryField | null>(null);
@@ -35,7 +37,7 @@ export default function FieldsPage() {
                 variant='outline-primary'
                 className='me-2'
                 onClick={handleOnAddClick}>
-                <MdAdd /> Add
+                <MdAdd /> {t('general.btnAdd')}
             </Button>
         </div>
         <Table hover responsive>

@@ -183,8 +183,8 @@ export default function InventoryEditorForm() {
 
     const handleDeleteInventoryClick = useCallback(() => {
         showAlertDialog({
-            message: 'Are you sure you want to delete this inventory? This action cannot be undone.',
-            confirmLabel: 'Delete',
+            message: t('inventory.editorForm.confirmDeleteDialog.msg'),
+            confirmLabel: t('inventory.editorForm.confirmDeleteDialog.btnConfirm'),
             onConfirm: () => {
                 deleteInventory(inventory!.id)
                     .unwrap()
@@ -303,7 +303,7 @@ export default function InventoryEditorForm() {
                 className="btn btn-danger mb-3"
                 onClick={handleDeleteInventoryClick}
                 disabled={isDeletingInventory}>
-                Delete inventory
+                {t('inventory.editorForm.btnDeleteInventory')}
             </Button>
         )}
     </>;
