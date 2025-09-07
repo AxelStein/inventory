@@ -6,7 +6,7 @@ const repository = {
 
     getVerified: (where, transaction = null, lock = null) => User.findOne({
         where: { ...where, isBlocked: false, verified: true },
-        include: [{ association: 'settings' }],
+        include: [{ association: 'settings', required: true }],
         transaction,
         lock
     }),
