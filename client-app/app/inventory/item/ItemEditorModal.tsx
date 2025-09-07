@@ -12,11 +12,12 @@ interface ItemEditorModalProps {
     fields: InventoryField[];
     editItem: InventoryItem | null;
     show: boolean;
+    canDelete: boolean;
     onHide: () => void;
     setItem: (item: InventoryItem | null) => void;
 }
 
-export default function ItemEditorModal({ inventory, show, editItem, fields, onHide, setItem }: ItemEditorModalProps) {
+export default function ItemEditorModal({ inventory, show, editItem, fields, canDelete, onHide, setItem }: ItemEditorModalProps) {
     const [createItem] = useCreateItemMutation();
     const [updateItem] = useUpdateItemMutation();
     const [deleteItem] = useDeleteItemMutation();
@@ -105,11 +106,11 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
                 <div className="validation-error-message">{errorMessage}</div>
 
                 <div className="d-flex justify-content-between">
-                    {editItem != null ? (
+                    {editItem != null && canDelete ? (
                         <Button variant='outline-danger' onClick={handleDelete}>
                             <MdDeleteOutline />
                         </Button>
-                    ) : (<span></span>)}
+                    ) : (<span />)}
 
                     <Button
                         className="btn btn-primary"

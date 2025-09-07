@@ -72,7 +72,6 @@ export default function CustomIdPage() {
     }
 
     const updateItemCallback = (newItem: InventoryCustomId) => {
-        console.log('refreshPreview');
         resetItem(newItem);
         refreshPreview();
     }

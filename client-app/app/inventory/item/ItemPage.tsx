@@ -43,6 +43,10 @@ export default function ItemPage() {
     const [deleteItemsByIds] = useDeleteItemsByIdsMutation();
     const [items, setItems] = useState<InventoryItem[]>([]);
 
+    const canAdd = inventory?.permissions?.item?.create == true;
+    const canDelete = inventory?.permissions?.item?.delete == true;
+    const canEdit = inventory?.permissions?.item?.update == true;
+
     useEffect(() => {
         if (!data) return;
         if (page === 1) {
@@ -70,8 +74,10 @@ export default function ItemPage() {
         refreshData();
     };
     const handleItemClick = (item: InventoryItem) => {
-        setEditItem(item);
-        setModalVisible(true);
+        if (canEdit) {
+            setEditItem(item);
+            setModalVisible(true);
+        }
     }
     const handleItemCheck = (item: InventoryItem) => {
         const checked = new Set(checkedItems);
@@ -96,7 +102,7 @@ export default function ItemPage() {
         }).unwrap().then(refreshData);
     }
 
-    if (!data || isLoading) {
+    if (!data || isLoading || !inventory) {
         return <Loader />;
     }
 
@@ -127,9 +133,6 @@ export default function ItemPage() {
         state: InventoryFieldState.visible,
         type: InventoryFieldType.customId
     });
-
-    const canAdd = inventory!.permissions?.item?.create == true;
-    const canDelete = inventory!.permissions?.item?.delete == true;
 
     return <InfiniteScroll
         hasMore={data.hasMore}
@@ -184,6 +187,7 @@ export default function ItemPage() {
             </Table>
             {inventory && (
                 <ItemEditorModal
+                    canDelete={canDelete}
                     inventory={inventory}
                     show={modalVisible}
                     editItem={editItem}
@@ -223,6 +227,7 @@ function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowPro
     }
 
     const handleFavoriteClick = () => {
+        if (isGuest()) return;
         (ownLike ? unlikeItem(item.id) : likeItem(item.id))
             .unwrap()
             .then(() => {
