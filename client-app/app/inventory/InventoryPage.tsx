@@ -7,6 +7,9 @@ import { type Inventory } from "api/inventory/inventory.types";
 import FieldsPage from "./fields/FieldsPage";
 import { isGuest } from "~/auth/auth.check.guest";
 import CustomIdPage from "./custom_id/CustomIdPage";
+import { toast } from 'react-toastify';
+import AppToastContainer from "~/components/AppToastContainer";
+import { useTranslation } from "react-i18next";
 
 export const InventoryContext = React.createContext<InventoryContextData>({});
 
@@ -23,10 +26,13 @@ interface InventoryPageProps {
 export default function InventoryPage({ inventoryId }: InventoryPageProps) {
     const { data, refetch, isLoading } = useGetInventoryByIdQuery({ id: inventoryId, asGuest: isGuest() });
     const [inventory, setInventory] = useState<Inventory | undefined>();
+    const { t } = useTranslation();
 
     const handleInventoryError = (err: any) => {
         if (err.status === 409) {
             refetch();
+        } else {
+            toast.error(err.data ? err.data.message : t('networkError'));
         }
     }
 
@@ -54,13 +60,14 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
                         </Container>
                     </Tab>,
                     <Tab eventKey="customId" title="Custom ID">
-                        <CustomIdPage/>
+                        <CustomIdPage />
                     </Tab>,
                     <Tab eventKey="fields" title="Fields">
                         <FieldsPage />
                     </Tab>
                 ]}
             </Tabs>
+            <AppToastContainer />
         </Col>
     </InventoryContext.Provider>;
 }

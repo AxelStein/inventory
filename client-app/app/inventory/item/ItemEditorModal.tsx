@@ -1,11 +1,10 @@
 import { InventoryFieldType, type Inventory, type InventoryField } from "api/inventory/inventory.types";
 import { useCreateItemMutation, useDeleteItemMutation, useUpdateItemMutation } from "api/item/item.api";
 import type { InventoryItem } from "api/item/item.types";
-import { t } from "i18next";
 import { useEffect, useState, type ReactNode } from "react";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
-import type { AsProp } from "react-bootstrap/esm/helpers";
+import { Button, Form, Modal } from "react-bootstrap";
 import { useForm, type FormState, type RegisterOptions, type UseFormRegister } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { MdDeleteOutline } from "react-icons/md";
 
 interface ItemEditorModalProps {
@@ -29,6 +28,7 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
         setError: setFormError
     } = useForm<any>();
     const [errorMessage, setErrorMessage] = useState<string>();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const form: Record<string, any> = {};
@@ -44,7 +44,7 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
 
     const handleError = (err: any) => {
         if (!err.data) {
-            setErrorMessage('Network error');
+            setErrorMessage(t('networkError'));
             return;
         }
         const details = err.data?.details;
@@ -86,7 +86,7 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
             .then(() => {
                 setItem(null);
             })
-            .catch(err => console.log(err));
+            .catch(handleError);
     }
 
     return <Modal show={show} onHide={onHide}>

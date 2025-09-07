@@ -1,14 +1,16 @@
-import { Reorder, useDragControls } from "motion/react";
-import { use, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { Reorder } from "motion/react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { InventoryContext } from "../InventoryPage";
 import { Button, Col, Container, Form } from "react-bootstrap";
-import { MdAdd, MdClear, MdDelete, MdDeleteForever, MdDeleteOutline, MdDragIndicator } from "react-icons/md";
+import { MdAdd, MdDeleteOutline, MdDragIndicator } from "react-icons/md";
 import { useGetAppConfigQuery } from "api/app/app.api";
 import { CustomIdType } from "api/app/app.types";
 import { useCreateCustomIdMutation, useDeleteCustomIdMutation, useGetCustomIdsQuery, useReorderCustomIdsMutation, useUpdateCustomIdMutation } from "api/custom_id/custom.id.api";
 import type { InventoryCustomId } from "api/custom_id/custom.id.types";
-import { motion } from 'framer-motion';
 import debounce from 'lodash.debounce';
+import { toast } from 'react-toastify';
+import AppToastContainer from "~/components/AppToastContainer";
+import { useTranslation } from "react-i18next";
 
 const getCustomIdTypeLabel = (type: CustomIdType): string => {
     switch (type) {
@@ -48,6 +50,7 @@ export default function CustomIdPage() {
     const [updateItem] = useUpdateCustomIdMutation();
     const [deleteItem] = useDeleteCustomIdMutation();
     const [reorderItems] = useReorderCustomIdsMutation();
+    const { t } = useTranslation();
     const items = useRef(new Map<number, InventoryCustomId>());
     const [ids, setIds] = useState<number[]>([]);
     const debounceMap = useRef(new Map<number, any>());
@@ -58,6 +61,10 @@ export default function CustomIdPage() {
             setIds(customIdsQuery.map(item => item.id));
         }
     }, [customIdsQuery]);
+
+    const handleError = (err: any) => {
+        toast.error(err.data ? err.data.message : t('networkError'));
+    }
 
     const setItem = (newItem: InventoryCustomId) => {
         items.current.set(newItem.id, newItem);
@@ -93,7 +100,8 @@ export default function CustomIdPage() {
     const handleAddItemClick = () => {
         createItem({ inventoryId: inventory!.id, type: CustomIdType.SEQUENCE })
             .unwrap()
-            .then(setItem);
+            .then(setItem)
+            .catch(handleError);
     }
 
     const handleDeleteItemClick = (item: InventoryCustomId) => {
@@ -102,14 +110,15 @@ export default function CustomIdPage() {
             .then(() => {
                 items.current?.delete(item.id);
                 setIds(ids.filter((id) => id !== item.id));
-            });
+            })
+            .catch(handleError);
     }
 
     const handleDragEnd = () => {
         reorderItems({
             inventoryId: inventory!.id,
             customIds: ids,
-        });
+        }).unwrap().catch(handleError);
     }
 
     return <Container className="d-flex justify-content-center">
@@ -167,7 +176,7 @@ export default function CustomIdPage() {
                     <MdAdd /> Add ID
                 </Button>
             )}
-
+            <AppToastContainer />
         </Col>
     </Container>
 }

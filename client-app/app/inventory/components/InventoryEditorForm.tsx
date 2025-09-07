@@ -15,6 +15,7 @@ import debounce from 'lodash.debounce';
 import { InventoryContext } from "../InventoryPage";
 import type { InventoryTag } from "api/tag/tag.types";
 import { useNavigate } from "react-router";
+import { toast } from 'react-toastify';
 
 interface InventoryForm {
     title: string;
@@ -62,6 +63,10 @@ export default function InventoryEditorForm() {
         setTagInput(text);
     };
 
+    const handleError = (err: any) => {
+        toast.error(err.data ? err.data.message : t('networkError'));
+    }
+
     const handleTagFilter = (option: any) => !selectedTags.some(tag => tag.id === option.id);
 
     const handleTagsChange = (newTags: any[]) => {
@@ -82,7 +87,7 @@ export default function InventoryEditorForm() {
                         setAvailableTags([...availableTags, newTag]);
                     }
                 })
-                .catch((err) => console.log(err));
+                .catch(handleError);
         }
         if (removed.length !== 0) {
             const removedId = removed[0].id;
@@ -91,7 +96,7 @@ export default function InventoryEditorForm() {
                 tagId: removedId
             }).unwrap()
                 .then(() => setSelectedTags(selectedTags.filter(tag => tag.id !== removedId)))
-                .catch((err) => console.log(err));
+                .catch(handleError);
         }
     }
 
@@ -184,7 +189,7 @@ export default function InventoryEditorForm() {
                 deleteInventory(inventory!.id)
                     .unwrap()
                     .then(() => navigate('/'))
-                    .catch(err => console.log(err));
+                    .catch(handleError);
             }
         });
     }, [inventory]);
