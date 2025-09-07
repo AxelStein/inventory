@@ -1,7 +1,6 @@
 import { type RouteConfig, layout, route } from "@react-router/dev/routes";
 
 export default [
-
     layout('MainLayout.tsx', [
         route('/auth', 'auth/AuthLayout.tsx', [
             route('sign-in', 'auth/routes/sign-in.tsx'),
@@ -17,6 +16,7 @@ export default [
             route(':id', 'inventory/routes/[id].tsx')
         ]),
         route('/inventory-list', 'inventory_list/routes/index.tsx'),
+        route('/privacy', 'privacy_policy/routes/index.tsx')
     ]),
 
 ] satisfies RouteConfig;
