@@ -1,3 +1,5 @@
+import type { PagingListProps } from "api/types";
+
 export interface User {
     id: number;
     name: string;
@@ -11,4 +13,20 @@ export interface User {
 export interface UserSettings {
     theme: string;
     locale: string;
+}
+
+export interface GetUsersProps extends PagingListProps { }
+
+export interface BlockUsersByIdsProps {
+    ids: number[];
+    block: boolean;
+}
+
+export interface DeleteUsersByIdsProps {
+    ids: number[];
+}
+
+export interface ChangeUsersRolesByIdsProps {
+    ids: number[];
+    role: string;
 }

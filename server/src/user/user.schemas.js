@@ -11,7 +11,7 @@ const idsSchema = Joi.array()
     .required();
 
 const userListBaseSchema = {
-    sortBy: Joi.string().valid('lastSeen', 'name', 'email').default('name'),
+    sortBy: Joi.string().valid('lastSeen', 'name', 'email', 'role').default('name'),
     sortAsc: Joi.bool().default(true),
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(10).max(50).default(10),

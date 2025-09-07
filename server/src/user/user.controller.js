@@ -1,5 +1,13 @@
 import service from "./user.service.js";
 
+const ensureHasAuth = async (req, res) => {
+    try {
+        await service.getById(req.user.id);
+    } catch (e) {
+        res.clearCookie('token', { sameSite: 'none', secure: true, httpOnly: true });
+    }
+}
+
 const controller = {
 
     search: async (req, res) => {
@@ -27,6 +35,7 @@ const controller = {
     blockByIds: async (req, res) => {
         const { ids, block } = req.body;
         await service.blockByIds(ids, block);
+        await ensureHasAuth(req, res);
         res.sendStatus(200);
     },
 
@@ -39,6 +48,7 @@ const controller = {
     deleteByIds: async (req, res) => {
         const { ids } = req.body;
         await service.deleteByIds(ids);
+        await ensureHasAuth(req, res);
         res.sendStatus(200);
     },
 }

@@ -11,6 +11,7 @@ import authReducer from 'api/slice/auth.slice';
 import { itemLikeApi } from "./item/item.like.api";
 import { customIdApi } from "./custom_id/custom.id.api";
 import { userApi } from "./user/user.api";
+import { userAdminApi } from "./user/user.admin.api";
 
 export const store = configureStore({
     reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
         [itemLikeApi.reducerPath]: itemLikeApi.reducer,
         [customIdApi.reducerPath]: customIdApi.reducer,
         [userApi.reducerPath]: userApi.reducer,
+        [userAdminApi.reducerPath]: userAdminApi.reducer,
         auth: authReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
@@ -36,7 +38,8 @@ export const store = configureStore({
         localeApi.middleware,
         itemLikeApi.middleware,
         customIdApi.middleware,
-        userApi.middleware
+        userApi.middleware,
+        userAdminApi.middleware,
     ),
 });
 

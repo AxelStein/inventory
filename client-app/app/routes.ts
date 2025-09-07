@@ -19,7 +19,8 @@ export default [
         route('/privacy', 'privacy_policy/PrivacyLayout.tsx', [
             route('', 'privacy_policy/routes/index.tsx'),
             route('data-deletion', 'privacy_policy/routes/data-deletion.tsx')
-        ])
+        ]),
+        route('/admin', 'admin/routes/index.tsx'),
     ]),
 
 ] satisfies RouteConfig;

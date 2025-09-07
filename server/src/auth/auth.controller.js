@@ -20,7 +20,7 @@ const controller = {
     },
 
     signOut: (req, res) => {
-        res.clearCookie('token');
+        res.clearCookie('token', { sameSite: 'none', secure: true, httpOnly: true });
         res.sendStatus(200);
     },
 
