@@ -127,7 +127,7 @@ export default function AdminPage() {
 
     return <Container >
         <Col>
-            <h4>Admin panel</h4>
+            <h4>{t('admin.title')}</h4>
             <div className="mb-3">
                 <Button
                     variant='outline-primary'

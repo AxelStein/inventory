@@ -118,7 +118,9 @@ export default function UserPage() {
             <UserInfo
                 user={userAccount}
                 onDeleteAccountClick={handleDeleteAccountClick}
-                canDelete={userAccount?.id === currentUser?.id} />
+                canDelete={userAccount?.id === currentUser?.id}
+                isAdmin={isOwn === true && userAccount.role === 'admin'}
+                onAdminClick={() => navigate('/admin')} />
 
             <h4>{t('dashboard.title.ownInventories')}</h4>
             {isOwn && (
