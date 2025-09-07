@@ -47,6 +47,10 @@ export default function ItemEditorModal({ inventory, show, editItem, fields, onH
             setErrorMessage(t('networkError'));
             return;
         }
+        if (err.status === 409) {
+            setItem(null);
+            return;
+        }
         const details = err.data?.details;
         if (!details) {
             setErrorMessage(err.data?.message);
