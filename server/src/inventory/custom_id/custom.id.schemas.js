@@ -5,11 +5,15 @@ export const getCustomIdsSchema = Joi.object({
     inventoryId: Joi.number().integer().required(),
 }).required();
 
-export  const createCustomIdSchema = Joi.object({
+export const createCustomIdSchema = Joi.object({
     inventoryId: Joi.number().integer().required(),
     type: Joi.string().valid(...Object.values(CustomIdType)).required(),
     rule: Joi.string().trim().allow('').allow(null),
 }).required();
+
+export const previewCustomIdSchema = Joi.object({
+    inventoryId: Joi.number().integer().required(),
+}).required()
 
 export const checkCustomIdParamsSchema = Joi.object({
     id: Joi.number().integer().required(),

@@ -5,7 +5,7 @@ import { Button, Col, Container, Form, Tooltip } from "react-bootstrap";
 import { MdAdd, MdDeleteOutline, MdDragIndicator, MdHelpOutline } from "react-icons/md";
 import { useGetAppConfigQuery } from "api/app/app.api";
 import { CustomIdType } from "api/app/app.types";
-import { useCreateCustomIdMutation, useDeleteCustomIdMutation, useGetCustomIdsQuery, useReorderCustomIdsMutation, useUpdateCustomIdMutation } from "api/custom_id/custom.id.api";
+import { useCreateCustomIdMutation, useDeleteCustomIdMutation, useGetCustomIdsQuery, usePreviewCustomIdQuery, useReorderCustomIdsMutation, useUpdateCustomIdMutation } from "api/custom_id/custom.id.api";
 import type { InventoryCustomId } from "api/custom_id/custom.id.types";
 import debounce from 'lodash.debounce';
 import { toast } from 'react-toastify';
@@ -54,6 +54,7 @@ export default function CustomIdPage() {
     const [updateItem] = useUpdateCustomIdMutation();
     const [deleteItem] = useDeleteCustomIdMutation();
     const [reorderItems] = useReorderCustomIdsMutation();
+    const { data: preview, refetch: refreshPreview } = usePreviewCustomIdQuery(inventory?.id ?? 0, { skip: !inventory });
     const { t } = useTranslation();
     const items = useRef(new Map<number, InventoryCustomId>());
     const [ids, setIds] = useState<number[]>([]);
@@ -70,7 +71,13 @@ export default function CustomIdPage() {
         toast.error(formatError(err));
     }
 
-    const setItem = (newItem: InventoryCustomId) => {
+    const updateItemCallback = (newItem: InventoryCustomId) => {
+        console.log('refreshPreview');
+        resetItem(newItem);
+        refreshPreview();
+    }
+
+    const resetItem = (newItem: InventoryCustomId) => {
         items.current.set(newItem.id, newItem);
         if (!ids.includes(newItem.id)) {
             setIds([...ids, newItem.id]);
@@ -84,17 +91,17 @@ export default function CustomIdPage() {
             id: item.id,
             type: type,
             rule: item.rule,
-        }).unwrap().then(setItem);
+        }).unwrap().then(updateItemCallback);
     }
 
     const handleChangeIdRule = (item: InventoryCustomId, rule: string) => {
-        setItem({ ...item, rule });
+        resetItem({ ...item, rule });
 
         debounceMap.current.get(item.id)?.cancel();
         const d = debounce(() => {
             const it = items.current?.get(item.id);
             if (it) {
-                updateItem(it);
+                updateItem(it).unwrap().then(updateItemCallback);
             }
         }, 1500);
         debounceMap.current.set(item.id, d);
@@ -104,7 +111,7 @@ export default function CustomIdPage() {
     const handleAddItemClick = () => {
         createItem({ inventoryId: inventory!.id, type: CustomIdType.SEQUENCE })
             .unwrap()
-            .then(setItem)
+            .then(updateItemCallback)
             .catch(handleError);
     }
 
@@ -114,6 +121,7 @@ export default function CustomIdPage() {
             .then(() => {
                 items.current?.delete(item.id);
                 setIds(ids.filter((id) => id !== item.id));
+                refreshPreview();
             })
             .catch(handleError);
     }
@@ -155,6 +163,7 @@ export default function CustomIdPage() {
 
     return <Container className="d-flex justify-content-center">
         <Col md={6}>
+            {preview && (<h5 className="mb-3">{t('customId.example')} {preview}</h5>)}
             <Form>
                 <Reorder.Group
                     axis="y"

@@ -110,7 +110,8 @@
       "dateTime": "Date / time",
       "sequence": "Sequence"
     },
-    "btnAdd": "Add ID"
+    "btnAdd": "Add ID",
+    "example": "Example:"
   },
   "inventoryList": {
     "titleByTag": "Inventories with tag #{{tagName}}"

@@ -2,17 +2,21 @@ import CustomIdType from './custom.id.type.js';
 import itemSequenceRepository from "./sequence/item.sequence.repository.js";
 import { Transaction } from "sequelize";
 import customIdService from "./custom.id.service.js";
-import {formatCustomId} from "./custom.id.formatter.js";
+import { formatCustomId } from "./custom.id.formatter.js";
 
 const getNextSequence = (inventoryId, transaction) => itemSequenceRepository.increment(inventoryId, transaction)
 
-const setCustomIdPartsNextSequence = async (customIdParts, inventoryId, transaction) => {
+const setCustomIdPartsNextSequence = async (customIdParts, inventoryId, isPreview, transaction) => {
     let nextSequence = 0;
     for (const part of customIdParts) {
         if (part.type !== CustomIdType.SEQUENCE) continue;
 
         if (nextSequence === 0) {
-            nextSequence = await getNextSequence(inventoryId, transaction);
+            if (isPreview) {
+                nextSequence = 1;
+            } else {
+                nextSequence = await getNextSequence(inventoryId, transaction);
+            }
         }
         part.nextSequence = nextSequence;
     }
@@ -33,10 +37,13 @@ export const generateCustomId = async ({ inventoryId, transaction, parts }) => {
         transaction,
         transaction ? Transaction.LOCK.UPDATE : null
     );
+    const isPreview = parts != null && parts != undefined;
+    if (isPreview && parts.length === 0) {
+        return '';
+    }
     if (customIdParts.length === 0) {
         customIdParts = [createDefaultSequenceIdPart()];
     }
-
-    await setCustomIdPartsNextSequence(customIdParts, inventoryId, transaction);
+    await setCustomIdPartsNextSequence(customIdParts, inventoryId, isPreview, transaction);
     return customIdParts.join('');
 }

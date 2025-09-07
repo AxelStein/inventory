@@ -2,11 +2,12 @@ import express from 'express';
 import controller from '../../../inventory/custom_id/custom.id.controller.js';
 import { checkCustomIdAccess } from '../../../middleware/check.access.js';
 import AccessAction from '../../../inventory/access/access.action.js';
-import {validateBody, validateParams, validateQuery} from "../../../middleware/request.validator.js";
+import { validateBody, validateParams, validateQuery } from "../../../middleware/request.validator.js";
 import {
     checkCustomIdParamsSchema,
     createCustomIdSchema,
-    getCustomIdsSchema
+    getCustomIdsSchema,
+    previewCustomIdSchema
 } from "../../../inventory/custom_id/custom.id.schemas.js";
 
 const router = express.Router();
@@ -17,6 +18,12 @@ router.post(
     checkCustomIdAccess(AccessAction.CREATE),
     controller.create
 );
+
+router.get(
+    '/preview',
+    validateQuery(previewCustomIdSchema),
+    controller.preview
+)
 
 router.post(
     '/:id/update',

@@ -1,3 +1,4 @@
+import { generateCustomId } from "./custom.id.generator.js";
 import service from "./custom.id.service.js";
 
 const controller = {
@@ -8,6 +9,10 @@ const controller = {
 
     create: async (req, res) => {
         res.send(await service.create(req.body));
+    },
+
+    preview: async (req, res) => {
+        res.send(await service.preview(req.validatedQuery.inventoryId));
     },
 
     update: async (req, res) => {

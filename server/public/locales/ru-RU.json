@@ -110,7 +110,8 @@
       "dateTime": "Дата / время",
       "sequence": "Последовательность"
     },
-    "btnAdd": "Добавить ID"
+    "btnAdd": "Добавить ID",
+    "example": "Пример:"
   },
   "inventoryList": {
     "titleByTag": "Инвентари с тегом #{{tagName}}"

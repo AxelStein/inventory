@@ -9,9 +9,6 @@ export const formatCustomId = (customId) => {
 
     switch (customId.type) {
         case CustomIdType.FIXED:
-            if (rule.length === 0) {
-                throw new Error(__('customId.error.fixedEmpty'));
-            }
             return rule;
 
         case CustomIdType.GUID:

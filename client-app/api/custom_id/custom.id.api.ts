@@ -41,6 +41,14 @@ export const customIdApi = createApi({
             }),
             keepUnusedDataFor: 0
         }),
+        previewCustomId: builder.query<string, number>({
+            query: (inventoryId) => ({
+                url: '/preview',
+                params: { inventoryId },
+                responseHandler: 'text'
+            }),
+            keepUnusedDataFor: 0
+        }),
     }),
 });
 
@@ -49,5 +57,6 @@ export const {
     useUpdateCustomIdMutation,
     useDeleteCustomIdMutation,
     useGetCustomIdsQuery,
-    useReorderCustomIdsMutation
+    useReorderCustomIdsMutation,
+    usePreviewCustomIdQuery
 } = customIdApi;
