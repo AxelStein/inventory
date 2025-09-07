@@ -5,13 +5,7 @@ const controller = {
     getList: async (req, res) => {
         const params = req.validatedQuery || {};
         params.userId = req.user?.id;
-        res.send(await service.getList(params));
-    },
-
-    getListByTag: async (req, res) => {
-        const params = req.validatedQuery || {};
-        params.tagId = req.params.tagId;
-        res.send(await service.getListByTag(params));
+        res.send(params.tagId ? await service.getListByTag(params) : await service.getList(params));
     },
 
     search: async (req, res) => {

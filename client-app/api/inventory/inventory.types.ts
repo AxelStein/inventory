@@ -42,6 +42,7 @@ export interface InventoryPermissions {
 
 export interface GetInventoriesProps extends PagingListProps {
     filter?: string;
+    tagId?: string;
     asGuest?: boolean;
 }
 

@@ -49,12 +49,9 @@ export const searchInventorySchema = Joi.object({
     ...inventoryListBaseSchema,
 }).required();
 
-export const getInventoryListByTagSchema = Joi.object({
-    tagId: Joi.number().integer().required(),
-}).required();
-
 export const getInventoryListSchema = Joi.object({
     filter: Joi.string().valid(...Object.values(InventoryListFilters)),
+    tagId: Joi.number().integer(),
     ...inventoryListBaseSchema,
 }).required();
 

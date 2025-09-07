@@ -6,6 +6,7 @@ import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
 import { InventoryContext } from "../InventoryPage";
+import Loader from "~/components/Loader";
 
 interface FieldEditorModalProps {
     inventory: Inventory;
@@ -71,7 +72,7 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
     }
 
     if (!appConfig) {
-        return <div className="spinner" />;
+        return <Loader />;
     }
     return <Modal show={show} onHide={onHide}>
         <Modal.Header>{editField != null ? 'Edit' : 'Add'} field</Modal.Header>

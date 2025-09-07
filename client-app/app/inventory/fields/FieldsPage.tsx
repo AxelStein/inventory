@@ -37,7 +37,7 @@ export default function FieldsPage() {
                 variant='outline-primary'
                 className='me-2'
                 onClick={handleOnAddClick}>
-                <MdAdd /> {t('general.btnAdd')}
+                <MdAdd /> {t('actions.add')}
             </Button>
         </div>
         <Table hover responsive>

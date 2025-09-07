@@ -8,12 +8,15 @@ import customIdRouter from './custom.id.router.js';
 import controller from '../../../inventory/inventory.controller.js';
 import { checkInventoryAccess } from '../../../middleware/check.access.js';
 import AccessAction from '../../../inventory/access/access.action.js';
-import {validateBody, validateParams, validateQuery} from '../../../middleware/request.validator.js';
+import { validateBody, validateParams, validateQuery } from '../../../middleware/request.validator.js';
 import {
     checkInventoryParamsSchema,
     createInventorySchema,
     deleteImageSchema,
-    getInventoryListByTagSchema, getInventoryListSchema, searchInventorySchema, updateInventorySchema, uploadImageSchema
+    getInventoryListSchema, 
+    searchInventorySchema, 
+    updateInventorySchema, 
+    uploadImageSchema
 } from '../../../inventory/inventory.schemas.js';
 import customFieldValidator from '../../../middleware/custom.field.validator.js';
 import inventoryImageUploader from '../../../middleware/inventory.image.uploader.js';
@@ -34,22 +37,15 @@ router.get(
 );
 
 router.get(
-    '/list-by-tag/:tagId',
-    validateParams(getInventoryListByTagSchema),
-    validateQuery(getInventoryListSchema),
-    controller.getListByTag
-)
-
-router.get(
     '/by-id/:inventoryId',
     validateParams(checkInventoryParamsSchema),
     controller.getById
 );
 
 router.post(
-    '/create', 
-    validateBody(createInventorySchema), 
-    customFieldValidator, 
+    '/create',
+    validateBody(createInventorySchema),
+    customFieldValidator,
     controller.create
 );
 
@@ -58,7 +54,7 @@ router.post(
     validateParams(checkInventoryParamsSchema),
     validateBody(updateInventorySchema),
     customFieldValidator,
-    checkInventoryAccess(AccessAction.UPDATE), 
+    checkInventoryAccess(AccessAction.UPDATE),
     controller.update
 );
 
@@ -66,7 +62,7 @@ router.post(
     '/:inventoryId/upload-image',
     validateParams(checkInventoryParamsSchema),
     validateQuery(uploadImageSchema),
-    checkInventoryAccess(AccessAction.UPDATE), 
+    checkInventoryAccess(AccessAction.UPDATE),
     inventoryImageUploader,
     validateImageUpload,
     controller.uploadImage

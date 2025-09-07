@@ -58,7 +58,7 @@
       "description": "Описание",
       "category": "Категория",
       "author": "Автор",
-      "itemCount": "Количество элементов",
+      "itemCount": "Элементы",
       "createdAt": "Создан",
       "updatedAt": "Обновлен"
     },
@@ -77,10 +77,12 @@
       "tags": "Теги",
       "ownInventories": "Собственные инвентари",
       "writeAccessInventories": "Инвентари с доступом записи"
-    }
+    },
+    "btnShowMore": "Показать больше"
   },
   "actions": {
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "add": "Добавить"
   },
   "tag": {
     "noData": "Нет тегов"
@@ -109,7 +111,7 @@
     },
     "btnAdd": "Добавить ID"
   },
-  "general": {
-    "btnAdd": "Добавить"
+  "inventoryList": {
+    "titleByTag": "Инвентари с тегом #{{tagName}}"
   }
 }

@@ -14,13 +14,21 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { format } from "date-fns";
 import TableDateData from "~/components/TableDateData";
 import { useTranslation } from "react-i18next";
+import Loader from "~/components/Loader";
+import { usePagingListState } from "~/components/paging.list.state";
 
 export default function ItemPage() {
     const { t } = useTranslation();
     const { inventory } = useContext(InventoryContext);
-    const [page, setPage] = useState(1);
-    const [sortBy, setSortBy] = useState('customId');
-    const [sortAsc, setSortAsc] = useState(true);
+    const {
+        sortBy,
+        sortAsc,
+        page,
+        handleColumnClick,
+        fetchNextPage,
+        renderSortIndicator,
+        setPage
+    } = usePagingListState('customId');
     const { data, isLoading, refetch } = useGetItemsQuery({
         inventoryId: inventory!.id,
         asGuest: isGuest(),
@@ -87,26 +95,9 @@ export default function ItemPage() {
             ids: [...checkedItems]
         }).unwrap().then(refreshData);
     }
-    const renderSortIndicator = (column: string) => {
-        if (column === sortBy) {
-            return sortAsc ? <MdArrowUpward /> : <MdArrowDownward />;
-        }
-        return null;
-    }
-    const handleColumnClick = (column: string) => {
-        setPage(1);
-        if (column === sortBy) {
-            setSortAsc(!sortAsc);
-        } else {
-            setSortBy(column);
-        }
-    }
-    const fetchNextPage = () => {
-        setPage(page + 1);
-    }
 
     if (!data || isLoading) {
-        return <div className="spinner" />;
+        return <Loader />;
     }
 
     const fields = inventory!.fields?.filter(f => f.state == 'visible') || [];
@@ -144,9 +135,7 @@ export default function ItemPage() {
         hasMore={data.hasMore}
         dataLength={items.length}
         next={fetchNextPage}
-        loader={(
-            <div className="spinner" />
-        )}>
+        loader={(<Loader />)}>
         <Col>
             {(canAdd || canDelete) && (
                 <div className="mb-3">
@@ -155,7 +144,7 @@ export default function ItemPage() {
                             variant='outline-primary'
                             className='me-2'
                             onClick={handleOnAddClick}>
-                            <MdAdd /> {t('general.btnAdd')}
+                            <MdAdd /> {t('actions.add')}
                         </Button>
                     )}
                     {canDelete && (

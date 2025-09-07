@@ -58,7 +58,7 @@
       "description": "Description",
       "category": "Category",
       "author": "Author",
-      "itemCount": "Item count",
+      "itemCount": "Items",
       "createdAt": "Created at",
       "updatedAt": "Updated at"
     },
@@ -77,10 +77,12 @@
       "tags": "Tags",
       "ownInventories": "Own inventories",
       "writeAccessInventories": "Inventories with write access"
-    }
+    },
+    "btnShowMore": "Show more"
   },
   "actions": {
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "add": "Add"
   },
   "tag": {
     "noData": "No tags"
@@ -109,7 +111,7 @@
     },
     "btnAdd": "Add ID"
   },
-  "general": {
-    "btnAdd": "Add"
+  "inventoryList": {
+    "titleByTag": "Inventories with tag #{{tagName}}"
   }
 }

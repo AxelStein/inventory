@@ -13,6 +13,7 @@ import { store } from "../api/store";
 import './app.css';
 import '~/translation/init.translate';
 import { AlertDialogProvider } from "./components/AlertDialogContext";
+import Loader from "./components/Loader";
 
 export function Layout({ children }: { children: React.ReactNode }) {
     //  data-bs-theme="dark"
@@ -63,7 +64,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 }
 
 export function HydrateFallback() {
-    return <div className="spinner" />;
+    return <Loader/>;
 }
 
 export default function App() {

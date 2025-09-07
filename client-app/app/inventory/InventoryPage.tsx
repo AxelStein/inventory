@@ -10,6 +10,7 @@ import CustomIdPage from "./custom_id/CustomIdPage";
 import { toast } from 'react-toastify';
 import AppToastContainer from "~/components/AppToastContainer";
 import { useTranslation } from "react-i18next";
+import Loader from "~/components/Loader";
 
 export const InventoryContext = React.createContext<InventoryContextData>({});
 
@@ -39,7 +40,7 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
     useEffect(() => setInventory(data), [data]);
 
     if (isLoading || !inventory) {
-        return <div className="spinner" />;
+        return <Loader/>;
     }
 
     const canEditInventory = inventory.permissions?.inventory?.update == true;

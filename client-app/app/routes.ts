@@ -16,6 +16,7 @@ export default [
         route('/inventory', 'inventory/components/InventoryLayout.tsx', [
             route(':id', 'inventory/routes/[id].tsx')
         ]),
+        route('/inventory-list', 'inventory_list/routes/index.tsx'),
     ]),
 
 ] satisfies RouteConfig;

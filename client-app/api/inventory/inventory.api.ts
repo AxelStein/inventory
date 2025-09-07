@@ -9,9 +9,9 @@ export const inventoryApi = createApi({
     baseQuery: createBaseQuery(''),
     endpoints: (builder) => ({
         getInventories: builder.query<PagingList<Inventory>, GetInventoriesProps>({
-            query: (props) => ({
-                url: makeApiPath('inventory/list', props.asGuest),
-                params: { ...props, asGuest: undefined },
+            query: ({ asGuest, ...params }) => ({
+                url: makeApiPath('inventory/list', asGuest),
+                params,
             }),
             keepUnusedDataFor: 0
         }),

@@ -7,10 +7,13 @@ import { useTranslation } from "react-i18next";
 import { ru, enUS } from 'date-fns/locale';
 import ReactMarkdown from 'react-markdown';
 import TableDateData from "~/components/TableDateData";
+import type { TFunction } from "i18next";
 
 interface InventoryTableProps {
-    title?: string;
+    title?: string | null;
     inventories?: Inventory[];
+    handleColumnClick?: (column: string) => void;
+    renderSortIndicator?: (column: string) => void;
 }
 
 export enum InventoryTableColumn {
@@ -25,13 +28,22 @@ export enum InventoryTableColumn {
     UPDATED_AT
 }
 
-function createColumn(t: (s: string) => string, column: InventoryTableColumn) {
+function createColumn(
+    t: TFunction,
+    column: InventoryTableColumn,
+    handleColumnClick?: (column: string) => void,
+    renderSortIndicator?: (column: string) => void,
+) {
     switch (column) {
         case InventoryTableColumn.CHECKBOX:
             return <th key={column}><Form.Check /></th>;
 
         case InventoryTableColumn.TITLE:
-            return <th key={column}>{t('inventory.tableColumns.title')}</th>;
+            return <th
+                key={column}
+                onClick={() => handleColumnClick?.('title')}>
+                {t('inventory.tableColumns.title')} {renderSortIndicator?.('title') ?? ''}
+            </th>;
 
         case InventoryTableColumn.IMAGE:
             return <th key={column}>{t('inventory.tableColumns.image')}</th>;
@@ -40,19 +52,35 @@ function createColumn(t: (s: string) => string, column: InventoryTableColumn) {
             return <th key={column}>{t('inventory.tableColumns.description')}</th>;
 
         case InventoryTableColumn.CATEGORY:
-            return <th key={column}>{t('inventory.tableColumns.category')}</th>;
+            return <th
+                key={column}
+                onClick={() => handleColumnClick?.('categoryId')}>
+                {t('inventory.tableColumns.category')} {renderSortIndicator?.('categoryId') ?? ''}
+            </th>;
 
         case InventoryTableColumn.AUTHOR:
             return <th key={column}>{t('inventory.tableColumns.author')}</th>;
 
         case InventoryTableColumn.ITEM_COUNT:
-            return <th key={column}>{t('inventory.tableColumns.itemCount')}</th>;
+            return <th
+                key={column}
+                onClick={() => handleColumnClick?.('itemCount')}>
+                {t('inventory.tableColumns.itemCount')} {renderSortIndicator?.('itemCount') ?? ''}
+            </th>;
 
         case InventoryTableColumn.CREATED_AT:
-            return <th key={column}>{t('inventory.tableColumns.createdAt')}</th>;
+            return <th
+                key={column}
+                onClick={() => handleColumnClick?.('createdAt')}>
+                {t('inventory.tableColumns.createdAt')} {renderSortIndicator?.('createdAt') ?? ''}
+            </th>;
 
         case InventoryTableColumn.UPDATED_AT:
-            return <th key={column}>{t('inventory.tableColumns.updatedAt')}</th>;
+            return <th
+                key={column}
+                onClick={() => handleColumnClick?.('updatedAt')}>
+                {t('inventory.tableColumns.updatedAt')} {renderSortIndicator?.('updatedAt') ?? ''}
+            </th>;
     }
 }
 
@@ -129,7 +157,7 @@ const columns = [
     InventoryTableColumn.CREATED_AT
 ];
 
-export function InventoryTable({ title, inventories }: InventoryTableProps) {
+export function InventoryTable({ title, inventories, handleColumnClick, renderSortIndicator }: InventoryTableProps) {
     const { t } = useTranslation();
     const navigate = useNavigate();
     return <Col>
@@ -141,7 +169,7 @@ export function InventoryTable({ title, inventories }: InventoryTableProps) {
             <Table hover responsive>
                 <thead>
                     <tr>
-                        {columns && columns.map(col => createColumn(t, col))}
+                        {columns && columns.map(col => createColumn(t, col, handleColumnClick, renderSortIndicator))}
                     </tr>
                 </thead>
                 <tbody>

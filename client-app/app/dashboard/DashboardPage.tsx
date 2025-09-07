@@ -5,9 +5,11 @@ import { useTranslation } from "react-i18next";
 import { isGuest } from "~/auth/auth.check.guest";
 import { useGetTagsQuery } from "api/tag/tag.api";
 import { TagCloud } from 'react-tagcloud';
+import { Link, useNavigate } from "react-router";
 
 export default function DashboardPage() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     const { data: popular, error: popularError, isLoading: popularLoading } = useGetInventoriesQuery({
         page: 1,
@@ -38,14 +40,22 @@ export default function DashboardPage() {
         <Col>
             <InventoryTable title={t('dashboard.title.latestInventories')} inventories={latest?.items} />
 
+            {latest?.hasMore == true && (<div className="mb-3">
+                <Link to='/inventory-list?sortBy=createdAt&sortAsc=false'>{t('dashboard.btnShowMore')}</Link>
+            </div>)}
+
             <InventoryTable title={t('dashboard.title.popularInventories')} inventories={popular?.items} />
+
+            {popular?.hasMore == true && (<div className="mb-3">
+                <Link to='/inventory-list?sortBy=itemCount&sortAsc=false'>{t('dashboard.btnShowMore')}</Link>
+            </div>)}
 
             <h4>{t('dashboard.title.tags')}</h4>
             <TagCloud
                 maxSize={50}
                 minSize={12}
                 tags={cloudTags}
-                onClick={() => { }} />
+                onClick={(tag) => navigate(`/inventory-list?tagId=${tag.key}&&tagName=${tag.value}`)} />
             {cloudTags.length === 0 && (
                 <p className="no-data">{t('tag.noData')}</p>
             )}
