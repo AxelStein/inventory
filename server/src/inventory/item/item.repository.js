@@ -33,8 +33,19 @@ const repository = {
                 }],
                 attributes: ['createdAt']
             }],
+            attributes: {
+                include: [
+                    Sequelize.literal(`(
+                        SELECT COUNT(*) FROM inventory_item_likes 
+                        WHERE "inventory_item_likes"."itemId" = "InventoryItem"."id") 
+                        AS "likeCount"
+                    `)
+                ]
+            },
             where,
-            order: createSortOrder(sortBy, sortAsc),
+            order: sortBy === 'likeCount' ?
+                Sequelize.literal(`"likeCount" ${sortAsc ? 'ASC' : 'DESC'}`) :
+                createSortOrder(sortBy, sortAsc),
         });
     },
 

@@ -3,8 +3,8 @@ import { Model } from "sequelize";
 export class PagingModel extends Model {
 
     static async getPage(page, perPage, options) {
-
-        const { count, rows } = await this.findAndCountAll({
+        const count = await this.count({...options});
+        const rows = await this.findAll({
             ...options,
             limit: perPage,
             offset: (page - 1) * perPage,

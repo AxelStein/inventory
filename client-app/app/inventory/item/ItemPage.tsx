@@ -131,7 +131,7 @@ export default function ItemPage() {
         type: InventoryFieldType.customId
     });
     tableFields.push({
-        uid: 'likes',
+        uid: 'likeCount',
         name: 'Likes',
         state: InventoryFieldState.visible,
         type: InventoryFieldType.customId
@@ -264,7 +264,7 @@ function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowPro
                     case 'updatedAt':
                         return <td><TableDateData date={item.updatedAt} /></td>;
 
-                    case 'likes':
+                    case 'likeCount':
                         return <td
                             className="no-row-click"
                             onClick={handleFavoriteClick}>
