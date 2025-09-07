@@ -6,6 +6,7 @@ import type { Inventory } from "api/inventory/inventory.types";
 import { useTranslation } from "react-i18next";
 import { ru, enUS } from 'date-fns/locale';
 import ReactMarkdown from 'react-markdown';
+import TableDateData from "~/components/TableDateData";
 
 interface InventoryTableProps {
     title?: string;
@@ -109,10 +110,10 @@ function createRow(
                         return <td key={column}>{inventory.itemCount}</td>
 
                     case InventoryTableColumn.CREATED_AT:
-                        return <td key={column}>{formatRelative(inventory.createdAt, new Date())}</td>
+                        return <td key={column}><TableDateData date={inventory.createdAt} /></td>
 
                     case InventoryTableColumn.UPDATED_AT:
-                        return <td key={column}>{formatRelative(inventory.updatedAt, new Date())}</td>
+                        return <td key={column}><TableDateData date={inventory.updatedAt} /></td>
                 }
             })
         }</tr>

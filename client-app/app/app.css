@@ -107,6 +107,11 @@
   padding: 10px;
 }
 
+.custom-id-btn-help {
+  display: flex;
+  padding: 10px;
+}
+
 .custom-id-drag-indicator {
   user-select: none;
   -webkit-user-select: none;

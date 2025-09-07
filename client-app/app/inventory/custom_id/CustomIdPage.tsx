@@ -1,8 +1,8 @@
 import { Reorder } from "motion/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { InventoryContext } from "../InventoryPage";
-import { Button, Col, Container, Form } from "react-bootstrap";
-import { MdAdd, MdDeleteOutline, MdDragIndicator } from "react-icons/md";
+import { Button, Col, Container, Form, Tooltip } from "react-bootstrap";
+import { MdAdd, MdDeleteOutline, MdDragIndicator, MdHelpOutline } from "react-icons/md";
 import { useGetAppConfigQuery } from "api/app/app.api";
 import { CustomIdType } from "api/app/app.types";
 import { useCreateCustomIdMutation, useDeleteCustomIdMutation, useGetCustomIdsQuery, useReorderCustomIdsMutation, useUpdateCustomIdMutation } from "api/custom_id/custom.id.api";
@@ -11,6 +11,7 @@ import debounce from 'lodash.debounce';
 import { toast } from 'react-toastify';
 import AppToastContainer from "~/components/AppToastContainer";
 import { useTranslation } from "react-i18next";
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 const getCustomIdTypeLabel = (type: CustomIdType): string => {
     switch (type) {
@@ -121,6 +122,34 @@ export default function CustomIdPage() {
         }).unwrap().catch(handleError);
     }
 
+    const createTooltip = (item: InventoryCustomId) => {
+        switch (item.type) {
+            case CustomIdType.FIXED:
+                return 'Piece of unchanging text';
+
+            case CustomIdType.SEQUENCE:
+                return 'Sequenctial index. You can format it with leading zeros {num, 3} or without them {num}';
+
+            case CustomIdType.DATE_TIME:
+                return 'Item creation date and time. You can format it like date, for example "dd.MM.yyyy" or time "HH:mm"';
+
+            case CustomIdType.GUID:
+                return 'Globally unique id. You can format it with template {uid}'
+
+            case CustomIdType.RND_6_DIGIT:
+                return 'Random 6-digit value. You can format it as decimal {num} or hexadecimal {hex}';
+
+            case CustomIdType.RND_9_DIGIT:
+                return 'Random 9-digit value. You can format it as decimal {num} or hexadecimal {hex}';
+
+            case CustomIdType.RND_20_BIT:
+                return 'Random 20-bit value. You can format it as decimal {num} or hexadecimal {hex}';
+
+            case CustomIdType.RND_32_BIT:
+                return 'Random 32-bit value. You can format it as decimal {num} or hexadecimal {hex}';
+        }
+    }
+
     return <Container className="d-flex justify-content-center">
         <Col md={6}>
             <Form>
@@ -158,6 +187,16 @@ export default function CustomIdPage() {
                                     className="me-1"
                                     value={item.rule ?? ''}
                                     onChange={(event) => handleChangeIdRule(item, event.target.value)} />
+
+                                <OverlayTrigger
+                                    placement="top"
+                                    container={document.body}
+                                    overlay={<Tooltip>{createTooltip(item)}</Tooltip>}>
+                                    <div className="custom-id-btn-help">
+                                        <MdHelpOutline size='24px' />
+                                    </div>
+                                </OverlayTrigger>
+
 
                                 <div className="custom-id-btn-delete" onClick={() => handleDeleteItemClick(item)}>
                                     <MdDeleteOutline size='24px' color="#c44512" />

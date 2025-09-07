@@ -2,7 +2,7 @@ import { InventoryFieldState, InventoryFieldType, type InventoryField } from "ap
 import { useDeleteItemsByIdsMutation, useGetItemsQuery } from "api/item/item.api";
 import type { InventoryItem } from "api/item/item.types";
 import { useContext, useEffect, useState } from "react";
-import { Button, Col, FormCheck, Table } from "react-bootstrap";
+import { Button, Col, FormCheck, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
 import { InventoryContext } from "../InventoryPage";
 import { MdAdd, MdArrowDownward, MdArrowDropDown, MdArrowUpward, MdCheckBox, MdCheckBoxOutlineBlank, MdDelete, MdDeleteOutline, MdFavorite, MdFavoriteBorder, MdHeartBroken } from "react-icons/md";
 import ItemEditorModal from "./ItemEditorModal";
@@ -11,6 +11,8 @@ import { formatRelative } from "date-fns/formatRelative";
 import { useSelector } from "react-redux";
 import { useLikeItemMutation, useUnlikeItemMutation } from "api/item/item.like.api";
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { format } from "date-fns";
+import TableDateData from "~/components/TableDateData";
 
 export default function ItemPage() {
     const { inventory } = useContext(InventoryContext);
@@ -255,10 +257,10 @@ function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowPro
                 }
                 switch (field.uid) {
                     case 'createdAt':
-                        return <td>{formatRelative(item.createdAt, new Date())}</td>;
+                        return <td><TableDateData date={item.createdAt} /></td>;
 
                     case 'updatedAt':
-                        return <td>{formatRelative(item.updatedAt, new Date())}</td>;
+                        return <td><TableDateData date={item.updatedAt} /></td>;
 
                     case 'likes':
                         return <td
