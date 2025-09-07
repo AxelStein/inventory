@@ -2,6 +2,7 @@
   "auth": {
     "btnSignIn": "Sign in",
     "btnSignUp": "Sign up",
+    "btnSignOut": "Sign out",
     "inputName": "Name",
     "inputEmail": "Email",
     "inputPassword": "Password",
@@ -120,6 +121,7 @@
       "msg": "Are you sure you want to delete your account? This action cannot be undone.",
       "btnConfirm": "Delete"
     },
-    "lastSeen": "Last seen"
+    "lastSeen": "Last seen",
+    "forbiddenSignIn": "You have to <1>sign in</1> to view this page"
   }
 }

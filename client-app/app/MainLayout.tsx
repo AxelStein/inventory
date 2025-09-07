@@ -9,6 +9,7 @@ import { logout } from "api/slice/auth.slice";
 import AppToastContainer from "./components/AppToastContainer";
 import { toast } from 'react-toastify';
 import { useErrorFormatter } from "./components/error.formatter";
+import { useTranslation } from "react-i18next";
 
 export default function AuthLayout() {
     const [isDarkMode, setDarkMode] = useState(false);
@@ -17,6 +18,7 @@ export default function AuthLayout() {
     const dispatch = useDispatch();
     const [signOut] = useSignOutMutation();
     const { formatError } = useErrorFormatter();
+    const { t } = useTranslation();
 
     useEffect(() => {
         document.documentElement.setAttribute('data-bs-theme', isDarkMode ? 'dark' : 'light')
@@ -59,7 +61,7 @@ export default function AuthLayout() {
                         <Dropdown.Item onClick={handleSignOutClick}>Sign out</Dropdown.Item>
                     </SplitButton>
                 ) : (
-                    <Link to="/auth/sign-in">Sign in</Link>
+                    <Link to="/auth/sign-in">{t('auth.btnSignIn')}</Link>
                 )}
             </div>
         </div>

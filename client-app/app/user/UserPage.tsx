@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { Alert, Button, Col, Container, Pagination } from "react-bootstrap";
 import UserInfo from "~/user/components/UserInfo";
 import { useDeleteAccountMutation, useGetUserAccountByIdQuery } from "api/user/user.api";
@@ -7,7 +7,7 @@ import { isGuest } from "~/auth/auth.check.guest";
 import Loader from "~/components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetInventoriesQuery } from "api/inventory/inventory.api";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { InventoryTable } from "~/inventory/components/InventoryTable";
 import { useAlertDialog } from "~/components/AlertDialogContext";
 import { MdAdd } from "react-icons/md";
@@ -104,7 +104,7 @@ export default function UserPage() {
     }
 
     if (guest) {
-        return <Alert variant="danger"></Alert>
+        return <Alert variant="danger"><Trans i18nKey='account.forbiddenSignIn'>You have to <Link to='/auth/sign-in'>Sign in</Link> to view this page</Trans></Alert>
     }
     if (error) {
         return <Alert variant="danger">{formatError(error)}</Alert>

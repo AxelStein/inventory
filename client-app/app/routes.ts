@@ -16,7 +16,10 @@ export default [
             route(':id', 'inventory/routes/[id].tsx')
         ]),
         route('/inventory-list', 'inventory_list/routes/index.tsx'),
-        route('/privacy', 'privacy_policy/routes/index.tsx')
+        route('/privacy', 'privacy_policy/PrivacyLayout.tsx', [
+            route('', 'privacy_policy/routes/index.tsx'),
+            route('data-deletion', 'privacy_policy/routes/data-deletion.tsx')
+        ])
     ]),
 
 ] satisfies RouteConfig;
