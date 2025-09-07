@@ -126,6 +126,7 @@
   },
   "admin": {
     "btnBlock": "Block",
-    "btnRole": "Change role"
+    "btnRole": "Change role",
+    "btnChange": "Change"
   }
 }

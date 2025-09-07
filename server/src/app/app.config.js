@@ -1,5 +1,6 @@
 import { CustomFieldState, CustomFieldType } from "../inventory/inventory.custom.field.js";
 import CustomIdType from "../inventory/custom_id/custom.id.type.js";
+import UserRole from '../user/user.role.js';
 
 export const appConfig = {
     inventory: {
@@ -33,4 +34,5 @@ export const appConfig = {
         'light',
         'dark'
     ],
+    userRoles: Object.values(UserRole)
 }

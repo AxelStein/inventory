@@ -2,6 +2,7 @@ export interface AppConfig {
     inventory: InventoryConfig;
     themes: string[];
     languages: AppLanguage[];
+    userRoles: string[];
 }
 
 export interface AppLanguage {

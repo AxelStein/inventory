@@ -1,7 +1,7 @@
 import { useBlockUsersByIdsMutation, useChangeUserRoleByIdsMutation, useDeleteUsersByIdsMutation, useGetUsersQuery } from "api/user/user.admin.api";
 import type { User } from "api/user/user.types";
-import { useEffect, useState } from "react";
-import { Alert, Button, Col, Container, Form, OverlayTrigger, Table } from "react-bootstrap";
+import { useEffect, useState, type FormEvent, type FormEventHandler } from "react";
+import { Alert, Button, Col, Container, Form, Modal, OverlayTrigger, Table } from "react-bootstrap";
 import { MdAdminPanelSettings, MdBlock, MdDeleteOutline, MdLock, MdOutlineLockOpen } from "react-icons/md";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useErrorFormatter } from "~/components/error.formatter";
@@ -10,6 +10,7 @@ import { usePagingListState } from "~/components/paging.list.state";
 import TableDateData from "~/components/TableDateData";
 import { toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
+import { useGetAppConfigQuery } from "api/app/app.api";
 
 export default function AdminPage() {
     const {
@@ -29,7 +30,9 @@ export default function AdminPage() {
         sortAsc
     });
 
+    const { data: appConfig } = useGetAppConfigQuery();
     const { t } = useTranslation();
+    const [roleModalVisible, setRoleModalVisible] = useState(false);
 
     const [deleteUsers] = useDeleteUsersByIdsMutation();
     const [blockUsers] = useBlockUsersByIdsMutation();
@@ -94,7 +97,25 @@ export default function AdminPage() {
         }
     }
     const handleChangeRoleClick = () => {
+        setRoleModalVisible(true);
+    }
+    const handleHideRoleModal = () => {
+        setRoleModalVisible(false);
+    }
+    const handleRoleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
+        const formData = new FormData(event.currentTarget);
+        const selectedRole = formData.get('role');
+
+        setRoleModalVisible(false);
+
+        changeRole({
+            ids: [...checkedIds],
+            role: selectedRole as string
+        }).unwrap()
+            .then(refreshData)
+            .catch(handleError);
     }
 
     if (error) {
@@ -179,6 +200,28 @@ export default function AdminPage() {
                     </tbody>
                 </Table>
             </InfiniteScroll>
+
+            <Modal show={roleModalVisible} onHide={handleHideRoleModal}>
+                <Modal.Header>{t('admin.btnRole')}</Modal.Header>
+                <Modal.Body>
+
+                    <Form onSubmit={handleRoleSubmit}>
+                        <Form.Select
+                            className='mb-3'
+                            name="role">
+                            {appConfig?.userRoles?.map((role) => (
+                                <option key={role} value={role}>{role}</option>
+                            ))}
+                        </Form.Select>
+                        <Button
+                            className="btn btn-primary"
+                            type='submit'>
+                            {t('admin.btnChange')}
+                        </Button>
+                    </Form>
+
+                </Modal.Body>
+            </Modal>
 
         </Col>
     </Container >
