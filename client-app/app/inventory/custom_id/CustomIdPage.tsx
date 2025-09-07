@@ -13,6 +13,7 @@ import AppToastContainer from "~/components/AppToastContainer";
 import { useTranslation } from "react-i18next";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import type { TFunction } from "i18next";
+import { useErrorFormatter } from "~/components/error.formatter";
 
 const getCustomIdTypeLabel = (type: CustomIdType, t: TFunction): string => {
     switch (type) {
@@ -48,6 +49,7 @@ export default function CustomIdPage() {
     const { data: appConfig } = useGetAppConfigQuery();
     const { inventory } = useContext(InventoryContext);
     const { data: customIdsQuery } = useGetCustomIdsQuery(inventory?.id ?? 0, { skip: !inventory });
+    const { formatError } = useErrorFormatter();
     const [createItem] = useCreateCustomIdMutation();
     const [updateItem] = useUpdateCustomIdMutation();
     const [deleteItem] = useDeleteCustomIdMutation();
@@ -65,7 +67,7 @@ export default function CustomIdPage() {
     }, [customIdsQuery]);
 
     const handleError = (err: any) => {
-        toast.error(err.data ? err.data.message : t('networkError'));
+        toast.error(formatError(err));
     }
 
     const setItem = (newItem: InventoryCustomId) => {
@@ -216,7 +218,6 @@ export default function CustomIdPage() {
                     <MdAdd /> {t('customId.btnAdd')}
                 </Button>
             )}
-            <AppToastContainer />
         </Col>
     </Container>
 }

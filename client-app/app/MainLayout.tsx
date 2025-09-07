@@ -6,6 +6,9 @@ import classNames from 'classnames';
 import { useDispatch, useSelector } from "react-redux";
 import { useSignOutMutation } from "api/auth/auth.api";
 import { logout } from "api/slice/auth.slice";
+import AppToastContainer from "./components/AppToastContainer";
+import { toast } from 'react-toastify';
+import { useErrorFormatter } from "./components/error.formatter";
 
 export default function AuthLayout() {
     const [isDarkMode, setDarkMode] = useState(false);
@@ -13,6 +16,7 @@ export default function AuthLayout() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [signOut] = useSignOutMutation();
+    const { formatError } = useErrorFormatter();
 
     useEffect(() => {
         document.documentElement.setAttribute('data-bs-theme', isDarkMode ? 'dark' : 'light')
@@ -27,7 +31,8 @@ export default function AuthLayout() {
             .then(() => {
                 dispatch(logout());
                 navigate('/');
-            });
+            })
+            .catch(err => toast.error(formatError(err)));
     }
 
     return <div>
@@ -60,6 +65,7 @@ export default function AuthLayout() {
         </div>
         <div className="p-3">
             <Outlet />
+            <AppToastContainer />
         </div>
     </div>
 }

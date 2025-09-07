@@ -4,7 +4,7 @@ const controller = {
 
     getList: async (req, res) => {
         const params = req.validatedQuery || {};
-        params.userId = req.user?.id;
+        params.userId = params.userId || req.user?.id;
         res.send(params.tagId ? await service.getListByTag(params) : await service.getList(params));
     },
 

@@ -16,6 +16,7 @@ import { InventoryContext } from "../InventoryPage";
 import type { InventoryTag } from "api/tag/tag.types";
 import { useNavigate } from "react-router";
 import { toast } from 'react-toastify';
+import { useErrorFormatter } from "~/components/error.formatter";
 
 interface InventoryForm {
     title: string;
@@ -32,6 +33,7 @@ interface InventoryImageForm {
 export default function InventoryEditorForm() {
     const typeaheadRef = useRef<any>(null);
     const { inventory, setInventory, handleInventoryError } = useContext(InventoryContext);
+    const { formatError } = useErrorFormatter();
 
     const [uploadImage, { isLoading: isUploadingImage }] = useUploadImageMutation();
     const [deleteImage] = useDeleteImageMutation();
@@ -64,7 +66,7 @@ export default function InventoryEditorForm() {
     };
 
     const handleError = (err: any) => {
-        toast.error(err.data ? err.data.message : t('networkError'));
+        toast.error(formatError(err));
     }
 
     const handleTagFilter = (option: any) => !selectedTags.some(tag => tag.id === option.id);

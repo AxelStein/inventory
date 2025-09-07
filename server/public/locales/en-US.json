@@ -113,5 +113,13 @@
   },
   "inventoryList": {
     "titleByTag": "Inventories with tag #{{tagName}}"
+  },
+  "account": {
+    "btnDeleteAccount": "Delete account",
+    "confirmDeleteDialog": {
+      "msg": "Are you sure you want to delete your account? This action cannot be undone.",
+      "btnConfirm": "Delete"
+    },
+    "lastSeen": "Last seen"
   }
 }

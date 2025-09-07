@@ -7,7 +7,6 @@ import SubmitButton from "~/auth/components/SubmitButton";
 import { useAuthSignIn } from "~/auth/components/useAuthSignIn";
 import { Link } from "react-router";
 import { useSignInMutation, useSignUpMutation } from 'api/auth/auth.api';
-import AppToastContainer from '~/components/AppToastContainer';
 import { useForm } from 'react-hook-form';
 
 interface AuthForm {
@@ -122,7 +121,5 @@ export default function AuthPage({ isSignIn }: { isSignIn: boolean }) {
                 {t('auth.labelHaveAccount')} <Link to='/auth/sign-in' replace={true}>{t('auth.btnSignIn')}</Link>
             </div>
         )}
-
-        <AppToastContainer />
     </>;
 }

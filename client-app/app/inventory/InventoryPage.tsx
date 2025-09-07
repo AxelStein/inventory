@@ -1,7 +1,7 @@
 import { useGetInventoryByIdQuery } from "api/inventory/inventory.api";
 import React, { useCallback, useEffect, useState } from "react";
 import InventoryEditorForm from "./components/InventoryEditorForm";
-import { Col, Container, Tab, Tabs } from "react-bootstrap";
+import { Alert, Col, Container, Tab, Tabs } from "react-bootstrap";
 import ItemPage from "~/inventory/item/ItemPage";
 import { type Inventory } from "api/inventory/inventory.types";
 import FieldsPage from "./fields/FieldsPage";
@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import AppToastContainer from "~/components/AppToastContainer";
 import { useTranslation } from "react-i18next";
 import Loader from "~/components/Loader";
+import { useErrorFormatter } from "~/components/error.formatter";
 
 export const InventoryContext = React.createContext<InventoryContextData>({});
 
@@ -25,22 +26,26 @@ interface InventoryPageProps {
 }
 
 export default function InventoryPage({ inventoryId }: InventoryPageProps) {
-    const { data, refetch, isLoading } = useGetInventoryByIdQuery({ id: inventoryId, asGuest: isGuest() });
+    const { data, error, refetch, isLoading } = useGetInventoryByIdQuery({ id: inventoryId, asGuest: isGuest() });
     const [inventory, setInventory] = useState<Inventory | undefined>();
     const { t } = useTranslation();
+    const { formatError } = useErrorFormatter();
 
     const handleInventoryError = (err: any) => {
         if (err.status === 409) {
             refetch();
         } else {
-            toast.error(err.data ? err.data.message : t('networkError'));
+            toast.error(formatError(err));
         }
     }
 
     useEffect(() => setInventory(data), [data]);
 
+    if (error) {
+        return <Alert variant="danger">{formatError(error)}</Alert>
+    }
     if (isLoading || !inventory) {
-        return <Loader/>;
+        return <Loader />;
     }
 
     const canEditInventory = inventory.permissions?.inventory?.update == true;
@@ -68,7 +73,6 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
                     </Tab>
                 ]}
             </Tabs>
-            <AppToastContainer />
         </Col>
     </InventoryContext.Provider>;
 }

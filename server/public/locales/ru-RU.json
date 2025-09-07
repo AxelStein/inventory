@@ -113,5 +113,13 @@
   },
   "inventoryList": {
     "titleByTag": "Инвентари с тегом #{{tagName}}"
+  },
+  "account": {
+    "btnDeleteAccount": "Удалить учётную запись",
+    "confirmDeleteDialog": {
+      "msg": "Вы уверены, что хотите удалить свою учётную запись? Это действие не может быть отменено.",
+      "btnConfirm": "Удалить"
+    },
+    "lastSeen": "Был онлайн"
   }
 }

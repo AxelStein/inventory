@@ -125,7 +125,5 @@ export default function ResetPasswordPage() {
                 isSubmit={isSubmit}
                 label={t(token ? 'auth.btnRestore' : 'auth.btnReset')} />
         </Form>
-
-        <AppToastContainer />
     </>;
 }

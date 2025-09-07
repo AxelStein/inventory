@@ -5,7 +5,7 @@ export interface User {
     role: string;
     verified: boolean;
     isBlocked: boolean;
-    lastSeen: string;
+    lastSeen: Date;
 }
 
 export interface UserSettings {

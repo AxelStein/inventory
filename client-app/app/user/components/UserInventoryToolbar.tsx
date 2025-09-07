@@ -8,9 +8,6 @@ export default function UserInventoryToolbar() {
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const showCreateModal = () => setCreateModalVisible(true);
     const hideCreateModal = () => setCreateModalVisible(false);
-    const onInventoryCreated = (inventory: Inventory) => {
-        hideCreateModal();
-    };
 
     return <div className='mb-3'>
         <Button variant='outline-primary' className='me-2' onClick={showCreateModal}>
@@ -22,7 +19,6 @@ export default function UserInventoryToolbar() {
 
         <CreateInventoryModal
             show={createModalVisible}
-            onHide={hideCreateModal}
-            onChanged={onInventoryCreated}/>
+            onHide={hideCreateModal}/>
     </div>;
 }
