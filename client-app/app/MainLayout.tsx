@@ -76,12 +76,15 @@ export default function MainLayout() {
             }
         }
 
+        const selectedFlag = langs.find(lang => lang.locale === locale)?.flag ?? 'US';
+
         return <ReactFlagsSelect
             fullWidth={false}
             countries={langs.map(lang => lang.flag)}
             customLabels={labels}
-            selected={langs.find(lang => lang.locale === locale)?.flag ?? 'US'}
+            selected={selectedFlag}
             onSelect={handleSelectLang}
+            placeholder={<span/>}
             showSelectedLabel={false}
             selectButtonClassName="main-lang-selector-btn"
             className="main-lang-selector" />
