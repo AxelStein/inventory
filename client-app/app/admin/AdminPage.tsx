@@ -11,6 +11,7 @@ import TableDateData from "~/components/TableDateData";
 import { toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
 import { useGetAppConfigQuery } from "api/app/app.api";
+import ErrorAlert from "~/components/ErrorAlert";
 
 export default function AdminPage() {
     const {
@@ -119,7 +120,7 @@ export default function AdminPage() {
     }
 
     if (error) {
-        return <Alert variant="danger">{formatError(error)}</Alert>
+        return <ErrorAlert error={error} />;
     }
     if (!data) {
         return <Loader />;

@@ -86,7 +86,8 @@
   },
   "actions": {
     "cancel": "Cancel",
-    "add": "Add"
+    "add": "Add",
+    "save": "Save"
   },
   "tag": {
     "noData": "No tags"
@@ -114,7 +115,15 @@
       "sequence": "Sequence"
     },
     "btnAdd": "Add ID",
-    "example": "Example:"
+    "example": "Example:",
+    "titleAddField": "Add field",
+    "titleEditField": "Edit field",
+    "tableColumns": {
+      "name": "Name",
+      "description": "Description",
+      "type": "Type",
+      "state": "State"
+    }
   },
   "inventoryList": {
     "titleByTag": "Inventories with tag #{{tagName}}"

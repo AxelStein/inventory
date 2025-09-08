@@ -2,20 +2,19 @@ import { InventoryFieldState, InventoryFieldType, type InventoryField } from "ap
 import { useDeleteItemsByIdsMutation, useGetItemsQuery } from "api/item/item.api";
 import type { InventoryItem } from "api/item/item.types";
 import { useContext, useEffect, useState } from "react";
-import { Button, Col, FormCheck, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
+import { Button, Col, FormCheck, Table } from "react-bootstrap";
 import { InventoryContext } from "../InventoryPage";
-import { MdAdd, MdArrowDownward, MdArrowDropDown, MdArrowUpward, MdCheckBox, MdCheckBoxOutlineBlank, MdDelete, MdDeleteOutline, MdFavorite, MdFavoriteBorder, MdHeartBroken } from "react-icons/md";
+import { MdAdd, MdCheckBox, MdCheckBoxOutlineBlank, MdDeleteOutline, MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import ItemEditorModal from "./ItemEditorModal";
 import { isGuest } from "~/auth/auth.check.guest";
-import { formatRelative } from "date-fns/formatRelative";
 import { useSelector } from "react-redux";
 import { useLikeItemMutation, useUnlikeItemMutation } from "api/item/item.like.api";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { format } from "date-fns";
 import TableDateData from "~/components/TableDateData";
 import { useTranslation } from "react-i18next";
 import Loader from "~/components/Loader";
 import { usePagingListState } from "~/components/paging.list.state";
+import ErrorAlert from "~/components/ErrorAlert";
 
 export default function ItemPage() {
     const { t } = useTranslation();
@@ -29,7 +28,7 @@ export default function ItemPage() {
         renderSortIndicator,
         setPage
     } = usePagingListState('customId');
-    const { data, isLoading, refetch } = useGetItemsQuery({
+    const { data, isLoading, error, refetch } = useGetItemsQuery({
         inventoryId: inventory!.id,
         asGuest: isGuest(),
         sortBy: sortBy,
@@ -102,10 +101,6 @@ export default function ItemPage() {
         }).unwrap().then(refreshData);
     }
 
-    if (!data || isLoading || !inventory) {
-        return <Loader />;
-    }
-
     const fields = inventory!.fields?.filter(f => f.state == 'visible') || [];
     fields.unshift({
         uid: "customId",
@@ -134,60 +129,79 @@ export default function ItemPage() {
         type: InventoryFieldType.customId
     });
 
+    const Actions = () => {
+        if (!canAdd && !canDelete) return null;
+        return <div className="mb-3">
+            {canAdd && (
+                <Button
+                    variant='outline-primary'
+                    className='me-2'
+                    onClick={handleOnAddClick}>
+                    <MdAdd /> {t('actions.add')}
+                </Button>
+            )}
+            {canDelete && (
+                <Button
+                    variant='outline-danger'
+                    className='me-2'
+                    onClick={handleDeleteItemsClick}
+                    disabled={checkedItems.size === 0}>
+                    <MdDeleteOutline />
+                </Button>
+            )}
+        </div>
+    }
+    const TableHeaders = () => {
+        return <>
+            <th>
+                <FormCheck
+                    checked={checkedItems.size === items.length}
+                    onClick={handleAllItemsCheck} />
+            </th>
+            {
+                tableFields.map((field) => (
+                    <th onClick={() => handleColumnClick(field.uid)}>{field.name} {renderSortIndicator(field.uid)}</th>
+                ))
+            }
+        </>
+    }
+    const Rows = () => {
+        return items.map(item => (
+            <ItemRow
+                item={item}
+                fields={tableFields}
+                onClick={handleItemClick}
+                isChecked={checkedItems.has(item.id)}
+                toggleChecked={handleItemCheck} />
+        ));
+    }
+    const NoData = () => {
+        if (isLoading || error) return null;
+        return items.length === 0 && <p className="no-data">{t('items.noData')}</p>;
+    }
+    const Error = () => <ErrorAlert error={error} />
+
     return <InfiniteScroll
-        hasMore={data.hasMore}
+        hasMore={data?.hasMore === true}
         dataLength={items.length}
         next={fetchNextPage}
         loader={(<Loader />)}>
         <Col>
-            {(canAdd || canDelete) && (
-                <div className="mb-3">
-                    {canAdd && (
-                        <Button
-                            variant='outline-primary'
-                            className='me-2'
-                            onClick={handleOnAddClick}>
-                            <MdAdd /> {t('actions.add')}
-                        </Button>
-                    )}
-                    {canDelete && (
-                        <Button
-                            variant='outline-danger'
-                            className='me-2'
-                            onClick={handleDeleteItemsClick}
-                            disabled={checkedItems.size === 0}>
-                            <MdDeleteOutline />
-                        </Button>
-                    )}
-                </div>
-            )}
+            <Actions />
             <Table hover responsive>
                 <thead>
                     <tr>
-                        <th>
-                            <FormCheck
-                                checked={checkedItems.size === items.length}
-                                onClick={handleAllItemsCheck} />
-                        </th>
-                        {tableFields.map((field) => (
-                            <th onClick={() => handleColumnClick(field.uid)}>{field.name} {renderSortIndicator(field.uid)}</th>
-                        ))}
+                        <TableHeaders />
                     </tr>
                 </thead>
                 <tbody>
-                    {items.map(item => (
-                        <ItemRow
-                            item={item}
-                            fields={tableFields}
-                            onClick={handleItemClick}
-                            isChecked={checkedItems.has(item.id)}
-                            toggleChecked={handleItemCheck} />
-                    ))}
+                    <Rows />
+                    <NoData />
+                    <Error />
+                    <Loader loading={isLoading && page === 1} />
                 </tbody>
             </Table>
-            {items.length === 0 && (
-                <p className="no-data">{t('items.noData')}</p>
-            )}
+
             {inventory && (
                 <ItemEditorModal
                     canDelete={canDelete}

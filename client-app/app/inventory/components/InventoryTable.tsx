@@ -1,20 +1,13 @@
-import { Button, Col, Form, Table } from "react-bootstrap";
-import { formatRelative } from "date-fns";
+import { Col, Form, Table } from "react-bootstrap";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
 import type { Inventory } from "api/inventory/inventory.types";
 import { useTranslation } from "react-i18next";
-import { ru, enUS } from 'date-fns/locale';
 import ReactMarkdown from 'react-markdown';
 import TableDateData from "~/components/TableDateData";
 import type { TFunction } from "i18next";
-
-interface InventoryTableProps {
-    title?: string | null;
-    inventories?: Inventory[];
-    handleColumnClick?: (column: string) => void;
-    renderSortIndicator?: (column: string) => void;
-}
+import ErrorAlert from "~/components/ErrorAlert";
+import Loader from "~/components/Loader";
 
 export enum InventoryTableColumn {
     CHECKBOX,
@@ -26,6 +19,77 @@ export enum InventoryTableColumn {
     ITEM_COUNT,
     CREATED_AT,
     UPDATED_AT
+}
+
+const columns = [
+    InventoryTableColumn.IMAGE,
+    InventoryTableColumn.TITLE,
+    InventoryTableColumn.DESCRIPTION,
+    InventoryTableColumn.AUTHOR,
+    InventoryTableColumn.CATEGORY,
+    InventoryTableColumn.ITEM_COUNT,
+    InventoryTableColumn.CREATED_AT
+];
+
+interface InventoryTableProps {
+    title?: string | null;
+    inventories?: Inventory[];
+    handleColumnClick?: (column: string) => void;
+    renderSortIndicator?: (column: string) => void;
+    error?: any;
+    isLoading?: boolean;
+    hasMoreLink?: string;
+}
+
+export function InventoryTable({
+    title,
+    inventories,
+    error,
+    isLoading,
+    hasMoreLink,
+    handleColumnClick,
+    renderSortIndicator
+}: InventoryTableProps) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    const noData = !inventories || inventories.length === 0;
+
+    const Title = () => title ? <h4>{title}</h4> : null;
+    const NoData = () => !error && !isLoading && noData ? (<p className="no-data">{t('inventory.noData')}</p>) : null;
+    const MainTable = () => {
+        return <Table hover responsive>
+            <thead>
+                <tr>
+                    {columns && columns.map(col => createColumn(t, col, handleColumnClick, renderSortIndicator))}
+                </tr>
+            </thead>
+            {!error && !isLoading && (
+                <tbody>
+                    {inventories && inventories.map((inventory) => createRow(
+                        columns,
+                        inventory,
+                        () => navigate(`/inventory/${inventory.id}`),
+                        () => navigate(`/user/${inventory.owner?.id}`)
+                    ))}
+
+                </tbody>
+            )}
+        </Table>
+    }
+    const MoreLink = () => hasMoreLink && (
+        <div className="mb-3">
+            <Link to={hasMoreLink}>{t('dashboard.btnShowMore')}</Link>
+        </div>
+    );
+
+    return <Col>
+        <Title />
+        <ErrorAlert error={error} />
+        <MainTable />
+        <Loader loading={isLoading} />
+        <NoData />
+        <MoreLink />
+    </Col>;
 }
 
 function createColumn(
@@ -145,43 +209,4 @@ function createRow(
                 }
             })
         }</tr>
-}
-
-const columns = [
-    InventoryTableColumn.IMAGE,
-    InventoryTableColumn.TITLE,
-    InventoryTableColumn.DESCRIPTION,
-    InventoryTableColumn.AUTHOR,
-    InventoryTableColumn.CATEGORY,
-    InventoryTableColumn.ITEM_COUNT,
-    InventoryTableColumn.CREATED_AT
-];
-
-export function InventoryTable({ title, inventories, handleColumnClick, renderSortIndicator }: InventoryTableProps) {
-    const { t } = useTranslation();
-    const navigate = useNavigate();
-    return <Col>
-        {title && <h4>{title}</h4>}
-
-        {(!inventories || inventories.length === 0) ? (
-            <p className="no-data">{t('inventory.noData')}</p>
-        ) : (
-            <Table hover responsive>
-                <thead>
-                    <tr>
-                        {columns && columns.map(col => createColumn(t, col, handleColumnClick, renderSortIndicator))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {inventories && inventories.map((inventory) => createRow(
-                        columns,
-                        inventory,
-                        () => navigate(`/inventory/${inventory.id}`),
-                        () => navigate(`/user/${inventory.owner?.id}`)
-                    ))}
-
-                </tbody>
-            </Table>
-        )}
-    </Col>;
 }

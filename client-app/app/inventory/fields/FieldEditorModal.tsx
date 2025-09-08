@@ -1,12 +1,14 @@
 import { useGetAppConfigQuery } from "api/app/app.api";
 import { useUpdateInventoryMutation } from "api/inventory/inventory.api";
 import type { Inventory, InventoryField } from "api/inventory/inventory.types";
-import { useCallback, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
 import { InventoryContext } from "../InventoryPage";
 import Loader from "~/components/Loader";
+import { useTranslation } from "react-i18next";
+import ErrorAlert from "~/components/ErrorAlert";
 
 interface FieldEditorModalProps {
     inventory: Inventory;
@@ -23,10 +25,11 @@ interface FieldEditorForm {
 }
 
 export default function FieldEditorModal({ show, onHide, inventory, editField }: FieldEditorModalProps) {
-    const { data: appConfig } = useGetAppConfigQuery();
+    const { data: appConfig, isLoading: isLoadingAppConfig, error: errorAppConfig } = useGetAppConfigQuery();
     const [updateInventory] = useUpdateInventoryMutation();
     const { register, handleSubmit, reset: resetForm } = useForm<FieldEditorForm>();
     const { setInventory, handleInventoryError } = useContext(InventoryContext);
+    const { t } = useTranslation();
 
     const config = appConfig?.inventory.customField;
 
@@ -71,23 +74,26 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
         }
     }
 
-    if (!appConfig) {
+    if (isLoadingAppConfig) {
         return <Loader />;
     }
+    if (errorAppConfig) {
+        return <ErrorAlert error={errorAppConfig} />;
+    }
     return <Modal show={show} onHide={onHide}>
-        <Modal.Header>{editField != null ? 'Edit' : 'Add'} field</Modal.Header>
+        <Modal.Header>{t(editField != null ? 'customId.titleEditField' : 'customId.titleAddField')}</Modal.Header>
         <Modal.Body>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Control
                     className="mb-3"
                     type="text"
-                    placeholder="Name"
+                    placeholder={t('customId.tableColumns.name')}
                     {...register('name', { required: true })} />
 
                 <Form.Control
                     className="mb-3"
                     type="text"
-                    placeholder="Description"
+                    placeholder={t('customId.tableColumns.description')}
                     {...register('description')} />
 
                 <Form.Select
@@ -112,7 +118,7 @@ export default function FieldEditorModal({ show, onHide, inventory, editField }:
                     <Button
                         className="btn btn-primary"
                         type='submit'>
-                        {editField != null ? 'Save' : 'Add'}
+                        {t(editField != null ? 'actions.save' : 'actions.add')}
                     </Button>
                 </div>
             </Form>

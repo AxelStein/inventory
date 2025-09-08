@@ -86,7 +86,8 @@
   },
   "actions": {
     "cancel": "Отмена",
-    "add": "Добавить"
+    "add": "Добавить",
+    "save": "Сохранить"
   },
   "tag": {
     "noData": "Нет тегов"
@@ -114,7 +115,15 @@
       "sequence": "Последовательность"
     },
     "btnAdd": "Добавить ID",
-    "example": "Пример:"
+    "example": "Пример:",
+    "titleAddField": "Добавить поле",
+    "titleEditField": "Редактировать поле",
+    "tableColumns": {
+      "name": "Имя",
+      "description": "Описание",
+      "type": "Тип",
+      "state": "Состояние"
+    }
   },
   "inventoryList": {
     "titleByTag": "Инвентари с тегом #{{tagName}}"

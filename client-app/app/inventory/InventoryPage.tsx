@@ -12,6 +12,7 @@ import AppToastContainer from "~/components/AppToastContainer";
 import { useTranslation } from "react-i18next";
 import Loader from "~/components/Loader";
 import { useErrorFormatter } from "~/components/error.formatter";
+import ErrorAlert from "~/components/ErrorAlert";
 
 export const InventoryContext = React.createContext<InventoryContextData>({});
 
@@ -42,7 +43,7 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
     useEffect(() => setInventory(data), [data]);
 
     if (error) {
-        return <Alert variant="danger">{formatError(error)}</Alert>
+        return <ErrorAlert error={error} />;
     }
     if (isLoading || !inventory) {
         return <Loader />;

@@ -14,6 +14,8 @@ import { useTranslation } from "react-i18next";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import type { TFunction } from "i18next";
 import { useErrorFormatter } from "~/components/error.formatter";
+import Loader from "~/components/Loader";
+import ErrorAlert from "~/components/ErrorAlert";
 
 const getCustomIdTypeLabel = (type: CustomIdType, t: TFunction): string => {
     switch (type) {
@@ -48,7 +50,7 @@ const MAX_ID_COUNT = 10;
 export default function CustomIdPage() {
     const { data: appConfig } = useGetAppConfigQuery();
     const { inventory } = useContext(InventoryContext);
-    const { data: customIdsQuery } = useGetCustomIdsQuery(inventory?.id ?? 0, { skip: !inventory });
+    const { data: customIdsQuery, error, isLoading } = useGetCustomIdsQuery(inventory?.id ?? 0, { skip: !inventory });
     const { formatError } = useErrorFormatter();
     const [createItem] = useCreateCustomIdMutation();
     const [updateItem] = useUpdateCustomIdMutation();
@@ -158,6 +160,13 @@ export default function CustomIdPage() {
             case CustomIdType.RND_32_BIT:
                 return t('customId.tooltips.rnd32bit');
         }
+    }
+
+    if (isLoading) {
+        return <Loader />
+    }
+    if (error) {
+        return <ErrorAlert error={error} />
     }
 
     return <Container className="d-flex justify-content-center">

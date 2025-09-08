@@ -18,6 +18,7 @@ import { logout } from "api/slice/auth.slice";
 import { usePagingListState } from "~/components/paging.list.state";
 import type { PagingList } from "api/types";
 import type { Inventory } from "api/inventory/inventory.types";
+import ErrorAlert from "~/components/ErrorAlert";
 
 const createPagingItems = (
     list: PagingList<Inventory> | undefined,
@@ -44,7 +45,7 @@ export default function UserPage() {
     const guest = isGuest();
     const { id } = useParams();
     const currentUser = useSelector((state: any) => state.auth.user);
-    const { data: userAccount, error } = useGetUserAccountByIdQuery(id, { skip: guest });
+    const { data: userAccount, error, isLoading } = useGetUserAccountByIdQuery(id, { skip: guest });
     const { formatError } = useErrorFormatter();
     const isOwn = userAccount && userAccount.id == currentUser?.id;
     const userId = Number(id);
@@ -57,7 +58,11 @@ export default function UserPage() {
     const { page: ownPage, setPage: setOwnPage } = usePagingListState();
     const { page: writeAccessPage, setPage: setWriteAccessPage } = usePagingListState();
 
-    const { data: ownInventories } = useGetInventoriesQuery({
+    const {
+        data: ownInventories,
+        isLoading: isLoadingOwnInventories,
+        error: errorOwnInventories
+    } = useGetInventoriesQuery({
         filter: 'own',
         userId: Number.isInteger(userId) ? userId : undefined,
         page: ownPage,
@@ -70,7 +75,11 @@ export default function UserPage() {
         );
     }, [ownInventories, ownPage]);
 
-    const { data: writeAccessInventories } = useGetInventoriesQuery({
+    const {
+        data: writeAccessInventories,
+        isLoading: isLoadingWriteAccessInventories,
+        error: errorWriteAccessInventories
+    } = useGetInventoriesQuery({
         filter: 'writeAccess',
         userId: Number.isInteger(userId) ? userId : undefined,
         page: writeAccessPage
@@ -82,7 +91,6 @@ export default function UserPage() {
             createPagingItems(writeAccessInventories, writeAccessPage, setWriteAccessPage)
         );
     }, [writeAccessInventories, writeAccessPage]);
-
 
     const handleDeleteAccountClick = () => {
         showAlertDialog({
@@ -107,20 +115,21 @@ export default function UserPage() {
         return <Alert variant="danger"><Trans i18nKey='account.forbiddenSignIn'>You have to <Link to='/auth/sign-in'>Sign in</Link> to view this page</Trans></Alert>
     }
     if (error) {
-        return <Alert variant="danger">{formatError(error)}</Alert>
+        return <ErrorAlert error={error} />
     }
-    if (!userAccount) {
+    if (isLoading) {
         return <Loader />
     }
-
     return <Col>
         <Container>
-            <UserInfo
-                user={userAccount}
-                onDeleteAccountClick={handleDeleteAccountClick}
-                canDelete={userAccount?.id === currentUser?.id}
-                isAdmin={isOwn === true && userAccount.role === 'admin'}
-                onAdminClick={() => navigate('/admin')} />
+            {userAccount && (
+                <UserInfo
+                    user={userAccount}
+                    onDeleteAccountClick={handleDeleteAccountClick}
+                    canDelete={isOwn === true}
+                    isAdmin={isOwn === true && userAccount.role === 'admin'}
+                    onAdminClick={() => navigate('/admin')} />
+            )}
 
             <h4>{t('dashboard.title.ownInventories')}</h4>
             {isOwn && (
@@ -131,8 +140,11 @@ export default function UserPage() {
                     <MdAdd /> {t('actions.add')}
                 </Button>
             )}
+
             <InventoryTable
-                inventories={ownInventories?.items} />
+                inventories={ownInventories?.items}
+                isLoading={isLoadingOwnInventories}
+                error={errorOwnInventories} />
 
             {ownPagingItems && ownPagingItems?.length !== 0 && (
                 <Pagination>{ownPagingItems}</Pagination>
@@ -140,7 +152,9 @@ export default function UserPage() {
 
             <h4 className="mt-3">{t('dashboard.title.writeAccessInventories')}</h4>
             <InventoryTable
-                inventories={writeAccessInventories?.items} />
+                inventories={writeAccessInventories?.items}
+                isLoading={isLoadingWriteAccessInventories}
+                error={errorWriteAccessInventories} />
 
             {writeAccessPagingItems && writeAccessPagingItems?.length !== 0 && (
                 <Pagination>{writeAccessPagingItems}</Pagination>

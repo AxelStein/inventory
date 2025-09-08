@@ -27,7 +27,7 @@ export default function InventoryListPage() {
     );
     const [items, setItems] = useState<Inventory[]>([]);
 
-    const { data } = useGetInventoriesQuery({
+    const { data, error, isLoading } = useGetInventoriesQuery({
         page: page,
         perPage: 20,
         sortBy: sortBy,
@@ -46,17 +46,15 @@ export default function InventoryListPage() {
         }
     }, [data]);
 
-    if (!data) {
-        return <Loader />;
-    }
-
     return <InfiniteScroll
-        hasMore={data.hasMore}
+        hasMore={data?.hasMore == true}
         dataLength={items.length}
         next={fetchNextPage}
         loader={(<Loader />)}>
         <InventoryTable
             title={tagName ? t('inventoryList.titleByTag', { tagName }) : undefined}
+            error={error}
+            isLoading={isLoading && page === 1}
             handleColumnClick={handleColumnClick}
             renderSortIndicator={renderSortIndicator}
             inventories={items} />

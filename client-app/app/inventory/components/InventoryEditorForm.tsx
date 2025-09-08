@@ -214,6 +214,7 @@ export default function InventoryEditorForm() {
 
             <Form.Control
                 as='textarea'
+                rows={8}
                 placeholder={t('inventory.editorForm.placeholderDescription')}
                 className='mb-3'
                 disabled={isSubmit}
