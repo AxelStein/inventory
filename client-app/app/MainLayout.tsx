@@ -16,14 +16,14 @@ import type { AppLanguage } from "api/app/app.types";
 import { useSaveUserSettingsMutation } from "api/user/user.api";
 
 export default function MainLayout() {
+    const { t, i18n } = useTranslation();
     const [isDarkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
-    const [locale, setLocale] = useState<string | null>(localStorage.getItem('locale'));
+    const [locale, setLocale] = useState<string | null>(localStorage.getItem('locale') ?? i18n.language);
     const user = useSelector((state: any) => state.auth.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [signOut] = useSignOutMutation();
     const { formatError } = useErrorFormatter();
-    const { t, i18n } = useTranslation();
     const { data: appConfig } = useGetAppConfigQuery();
     const [saveUserSettings] = useSaveUserSettingsMutation();
 
