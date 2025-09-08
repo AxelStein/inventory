@@ -71,6 +71,9 @@
     },
     "noData": "No inventories"
   },
+  "items": {
+    "noData": "No items"
+  },
   "dashboard": {
     "title": {
       "latestInventories": "Latest inventories",

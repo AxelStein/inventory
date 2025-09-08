@@ -34,6 +34,11 @@ export default function AuthPage({ isSignIn }: { isSignIn: boolean }) {
     const passwordError = authFormErrors.password?.message;
 
     const handleError = useCallback((err: any) => {
+        if (!err.data) {
+            toast.error(t('networkError'));
+            return;
+        }
+        
         const details = err.data.details;
         if (!details) {
             toast.error(err.data.message);

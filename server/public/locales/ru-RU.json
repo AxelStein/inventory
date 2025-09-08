@@ -71,6 +71,9 @@
     },
     "noData": "Нет инвентарей"
   },
+  "items": {
+    "noData": "Нет элементов"
+  },
   "dashboard": {
     "title": {
       "latestInventories": "Последние инвентари",

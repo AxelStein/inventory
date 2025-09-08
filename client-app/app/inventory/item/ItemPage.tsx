@@ -185,6 +185,9 @@ export default function ItemPage() {
                     ))}
                 </tbody>
             </Table>
+            {items.length === 0 && (
+                <p className="no-data">{t('items.noData')}</p>
+            )}
             {inventory && (
                 <ItemEditorModal
                     canDelete={canDelete}
