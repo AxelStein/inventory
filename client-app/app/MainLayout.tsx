@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dropdown, SplitButton } from "react-bootstrap";
+import { Dropdown, DropdownButton, SplitButton } from "react-bootstrap";
 import { Link, Outlet, useNavigate } from "react-router";
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import classNames from 'classnames';
@@ -10,19 +10,42 @@ import AppToastContainer from "./components/AppToastContainer";
 import { toast } from 'react-toastify';
 import { useErrorFormatter } from "./components/error.formatter";
 import { useTranslation } from "react-i18next";
+import { useGetAppConfigQuery } from "api/app/app.api";
+import ReactFlagsSelect from "react-flags-select";
+import type { AppLanguage } from "api/app/app.types";
+import { useSaveUserSettingsMutation } from "api/user/user.api";
 
-export default function AuthLayout() {
-    const [isDarkMode, setDarkMode] = useState(false);
+export default function MainLayout() {
+    const [isDarkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
+    const [locale, setLocale] = useState<string | null>(localStorage.getItem('locale'));
     const user = useSelector((state: any) => state.auth.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [signOut] = useSignOutMutation();
     const { formatError } = useErrorFormatter();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const { data: appConfig } = useGetAppConfigQuery();
+    const [saveUserSettings] = useSaveUserSettingsMutation();
 
     useEffect(() => {
-        document.documentElement.setAttribute('data-bs-theme', isDarkMode ? 'dark' : 'light')
+        i18n.changeLanguage(locale ?? undefined);
+        if (locale) {
+            localStorage.setItem('locale', locale);
+        }
+        saveUserSettings({ locale: locale || undefined });
+    }, [locale]);
+
+    useEffect(() => {
+        const themeName = isDarkMode ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-bs-theme', themeName);
+        localStorage.setItem('theme', themeName);
+        saveUserSettings({ theme: themeName });
     }, [isDarkMode]);
+
+    useEffect(() => {
+        setDarkMode(localStorage.getItem('theme') === 'dark');
+        setLocale(localStorage.getItem('locale'));
+    }, [user]);
 
     const handleUserClick = () => {
         navigate('/user/own');
@@ -37,6 +60,33 @@ export default function AuthLayout() {
             .catch(err => toast.error(formatError(err)));
     }
 
+    const LanguageSelector = () => {
+        const langs = appConfig?.languages;
+        if (!langs) return null;
+
+        const labels = langs.reduce((acc, lang) => {
+            acc[lang.flag] = lang.name;
+            return acc;
+        }, {} as any);
+
+        const handleSelectLang = (value: string) => {
+            const lang = langs.find(lang => lang.flag === value);
+            if (lang) {
+                setLocale(lang.locale);
+            }
+        }
+
+        return <ReactFlagsSelect
+            fullWidth={false}
+            countries={langs.map(lang => lang.flag)}
+            customLabels={labels}
+            selected={langs.find(lang => lang.locale === locale)?.flag ?? 'US'}
+            onSelect={handleSelectLang}
+            showSelectedLabel={false}
+            selectButtonClassName="main-lang-selector-btn"
+            className="main-lang-selector" />
+    }
+
     return <div>
         <div className={classNames('app-bar', { 'app-bar-dark': isDarkMode })}>
             <Link
@@ -45,18 +95,20 @@ export default function AuthLayout() {
                 className="app-bar-title-link">
                 <h5 className='app-bar-title'>Inventory App</h5>
             </Link>
-            <div>
+
+            <div className="main-layout-actions">
+                <LanguageSelector />
+
                 <DarkModeSwitch
                     className="me-3"
                     checked={isDarkMode}
                     onChange={setDarkMode}
                 />
+
                 {user != null ? (
                     <SplitButton
                         onClick={handleUserClick}
-                        title={<span className="app-bar-username">
-                            {user.name}
-                        </span>}
+                        title={<span className="app-bar-username">{user.name}</span>}
                         variant='outline-primary'>
                         <Dropdown.Item onClick={handleSignOutClick}>Sign out</Dropdown.Item>
                     </SplitButton>

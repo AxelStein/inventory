@@ -22,11 +22,13 @@ export const appConfig = {
     languages: [
         {
             locale: 'en-US',
+            flag: 'US',
             name: 'English',
             default: true,
         },
         {
             locale: 'ru-RU',
+            flag: 'RU',
             name: 'Русский',
         },
     ],

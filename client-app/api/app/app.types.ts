@@ -9,6 +9,7 @@ export interface AppLanguage {
     locale: string;
     name: string;
     default: boolean;
+    flag: string;
 }
 
 export interface InventoryConfig {

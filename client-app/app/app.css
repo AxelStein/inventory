@@ -67,6 +67,7 @@
   align-items: center;
   padding: 1rem;
   z-index: 1020;
+  height: 72px;
 }
 
 .app-bar-dark {
@@ -124,4 +125,18 @@
   margin-top: .25rem;
   font-size: .875em;
   color: #dc3545;
+}
+
+.main-layout-actions {
+  display: flex;
+  align-items: center;
+}
+
+.main-lang-selector {
+  padding-bottom: 0px !important;
+  margin-right: 1rem;
+}
+
+.main-lang-selector-btn {
+  border: none !important;
 }

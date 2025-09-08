@@ -1,15 +1,14 @@
 import { googleLogout } from '@react-oauth/google';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { SignInResponse } from 'api/auth/auth.types';
 import type { User, UserSettings } from 'api/user/user.types';
 
 interface AuthState {
     user: User | null;
-    settings: UserSettings | null;
 }
 
 const initialState: AuthState = {
     user: null,
-    settings: null,
 };
 
 try {
@@ -18,11 +17,6 @@ try {
 
 const clearStorage = () => {
     removeUserFromStorage();
-    removeSettingsFromStorage();
-}
-
-const removeSettingsFromStorage = () => {
-    localStorage.removeItem('settings');
 }
 
 const removeUserFromStorage = () => {
@@ -33,8 +27,14 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        setUser(state, action: PayloadAction<User | null>) {
-            state.user = action.payload;
+        signIn(state, action: PayloadAction<SignInResponse>) {
+            const settings = action.payload.settings;
+            if (settings) {
+                localStorage.setItem('theme', settings.theme);
+                localStorage.setItem('locale', settings.locale);
+            }
+
+            state.user = action.payload.user ?? null;
             if (state.user != null) {
                 localStorage.setItem('user', JSON.stringify(state.user));
             } else {
@@ -43,12 +43,11 @@ const authSlice = createSlice({
         },
         logout(state) {
             state.user = null;
-            state.settings = null;
             clearStorage();
             googleLogout();
         },
     },
 });
 
-export const { setUser, logout } = authSlice.actions;
+export const { signIn, logout } = authSlice.actions;
 export default authSlice.reducer;

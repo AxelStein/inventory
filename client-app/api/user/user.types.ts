@@ -30,3 +30,8 @@ export interface ChangeUsersRolesByIdsProps {
     ids: number[];
     role: string;
 }
+
+export interface SaveUserSettingsProps {
+    theme?: string;
+    locale?: string;
+}

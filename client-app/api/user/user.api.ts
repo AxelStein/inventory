@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQuery } from "api/base.query";
-import { type User } from "./user.types";
+import { type SaveUserSettingsProps, type User, type UserSettings } from "./user.types";
 
 export const userApi = createApi({
     reducerPath: 'userApi',
@@ -18,11 +18,19 @@ export const userApi = createApi({
                 method: 'delete',
                 responseHandler: 'text'
             })
-        })
+        }),
+        saveUserSettings: builder.mutation<UserSettings, SaveUserSettingsProps>({
+            query: (body) => ({
+                url: '/settings/save',
+                method: 'post',
+                body
+            })
+        }),
     })
 });
 
 export const {
     useGetUserAccountByIdQuery,
-    useDeleteAccountMutation
+    useDeleteAccountMutation,
+    useSaveUserSettingsMutation
 } = userApi;

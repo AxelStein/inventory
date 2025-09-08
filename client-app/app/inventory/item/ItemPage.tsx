@@ -196,11 +196,12 @@ export default function ItemPage() {
                 </thead>
                 <tbody>
                     <Rows />
-                    <NoData />
-                    <Error />
-                    <Loader loading={isLoading && page === 1} />
                 </tbody>
             </Table>
+
+            <NoData />
+            <Error />
+            <Loader loading={isLoading && page === 1} />
 
             {inventory && (
                 <ItemEditorModal
