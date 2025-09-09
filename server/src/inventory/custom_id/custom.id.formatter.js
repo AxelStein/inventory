@@ -25,16 +25,17 @@ export const formatCustomId = (customId) => {
             const regex = /\{num}/gi;
             const padRegex = /\{num,(\d+)}/gi;
             const num = customId.nextSequence;
-            if (!rule) return num.toString();
             return rule
                 .replace(' ', '')
-                .replace(padRegex, (match, n) => num.toString().padStart(n || 0, '0'))
-                .replace(regex, num.toString());
+                .replace(padRegex, (_match, n) => num.toString().padStart(n || 0, '0'))
+                .replace(regex, num.toString())
+                || num.toString();
 
         default:
             const number = generateRandomNumberForCustomId(customId.type);
             const hex = number.toString(16);
             return rule.replace(/{num}/gi, number.toString())
-                .replace(/{hex}/gi, hex);
+                .replace(/{hex}/gi, hex)
+                || number.toString();
     }
 };
