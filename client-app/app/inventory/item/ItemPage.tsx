@@ -101,33 +101,36 @@ export default function ItemPage() {
         }).unwrap().then(refreshData);
     }
 
-    const fields = inventory!.fields?.filter(f => f.state == 'visible') || [];
-    fields.unshift({
-        uid: "customId",
-        name: "ID",
-        state: InventoryFieldState.visible,
-        type: InventoryFieldType.customId
-    });
-
-    const tableFields = [...fields];
-    tableFields.push({
-        uid: 'createdAt',
-        name: 'Created at',
-        state: InventoryFieldState.visible,
-        type: InventoryFieldType.customId
-    });
-    tableFields.push({
-        uid: 'updatedAt',
-        name: 'Updated at',
-        state: InventoryFieldState.visible,
-        type: InventoryFieldType.customId
-    });
-    tableFields.push({
-        uid: 'likeCount',
-        name: 'Likes',
-        state: InventoryFieldState.visible,
-        type: InventoryFieldType.customId
-    });
+    const fields = [
+        {
+            uid: "customId",
+            name: "ID",
+            state: InventoryFieldState.visible,
+            type: InventoryFieldType.customId
+        },
+        ...(inventory!.fields?.filter(f => f.state == 'visible') || [])
+    ];
+    const tableFields = [
+        ...fields,
+        {
+            uid: 'createdAt',
+            name: 'Created at',
+            state: InventoryFieldState.visible,
+            type: InventoryFieldType.customId
+        },
+        {
+            uid: 'updatedAt',
+            name: 'Updated at',
+            state: InventoryFieldState.visible,
+            type: InventoryFieldType.customId
+        },
+        {
+            uid: 'likeCount',
+            name: 'Likes',
+            state: InventoryFieldState.visible,
+            type: InventoryFieldType.customId
+        }
+    ];
 
     const Actions = () => {
         if (!canAdd && !canDelete) return null;
@@ -153,11 +156,13 @@ export default function ItemPage() {
     }
     const TableHeaders = () => {
         return <>
-            <th>
-                <FormCheck
-                    checked={checkedItems.size === items.length}
-                    onClick={handleAllItemsCheck} />
-            </th>
+            {canDelete && (
+                <th>
+                    <FormCheck
+                        checked={items.length > 0 && checkedItems.size === items.length}
+                        onChange={handleAllItemsCheck} />
+                </th>
+            )}
             {
                 tableFields.map((field) => (
                     <th onClick={() => handleColumnClick(field.uid)}>{field.name} {renderSortIndicator(field.uid)}</th>
@@ -171,6 +176,7 @@ export default function ItemPage() {
                 item={item}
                 fields={tableFields}
                 onClick={handleItemClick}
+                checkable={canDelete}
                 isChecked={checkedItems.has(item.id)}
                 toggleChecked={handleItemCheck} />
         ));
@@ -223,9 +229,10 @@ interface ItemRowProps {
     onClick: (item: InventoryItem) => void;
     isChecked: boolean;
     toggleChecked: (item: InventoryItem) => void;
+    checkable: boolean;
 }
 
-function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowProps) {
+function ItemRow({ item, fields, onClick, checkable, isChecked, toggleChecked }: ItemRowProps) {
     const currentUser = useSelector((state: any) => state.auth.user);
     const [likeCount, setLikeCount] = useState<number>(0);
     const [ownLike, setOwnLike] = useState<boolean>(false);
@@ -256,13 +263,15 @@ function ItemRow({ item, fields, onClick, isChecked, toggleChecked }: ItemRowPro
     }
 
     return <tr onClick={handleClick}>
-        <td>
-            <FormCheck
-                className="no-row-click"
-                checked={isChecked}
-                onChange={() => toggleChecked(item)}
-            />
-        </td>
+        {checkable && (
+            <td>
+                <FormCheck
+                    className="no-row-click"
+                    checked={isChecked}
+                    onChange={() => toggleChecked(item)}
+                />
+            </td>
+        )}
         {
             fields.map(field => {
                 const value = (item as any)[field.uid];

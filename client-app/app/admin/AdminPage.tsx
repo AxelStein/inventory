@@ -174,7 +174,7 @@ export default function AdminPage() {
                             <th>
                                 <Form.Check
                                     checked={checkedIds.size === users.length}
-                                    onClick={handleAllItemsCheck} />
+                                    onChange={handleAllItemsCheck} />
                             </th>
                             <th onClick={() => handleColumnClick('name')}>Name {renderSortIndicator('name')}</th>
                             <th onClick={() => handleColumnClick('email')}>Email {renderSortIndicator('email')}</th>
@@ -187,7 +187,7 @@ export default function AdminPage() {
                             <tr key={user.id} style={{ opacity: user.isBlocked ? 0.4 : 1 }}>
                                 <td>
                                     <Form.Check
-                                        onClick={() => handleUserCheck(user)}
+                                        onChange={() => handleUserCheck(user)}
                                         checked={checkedIds.has(user.id)} />
                                 </td>
                                 <td className={user.isBlocked ? 'text-decoration-line-through' : undefined}>{user.name}</td>

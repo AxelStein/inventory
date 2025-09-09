@@ -131,7 +131,7 @@ export default function CustomIdPage() {
         reorderItems({
             inventoryId: inventory!.id,
             customIds: ids,
-        }).unwrap().catch(handleError);
+        }).unwrap().then(refreshPreview).catch(handleError);
     }
 
     const createTooltip = (item: InventoryCustomId) => {
