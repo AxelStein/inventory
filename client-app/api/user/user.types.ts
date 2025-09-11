@@ -4,10 +4,16 @@ export interface User {
     id: number;
     name: string;
     email: string;
-    role: string;
+    role: UserRole | string;
+    salesforceAccountId: string;
     verified: boolean;
     isBlocked: boolean;
     lastSeen: Date;
+}
+
+export enum UserRole {
+    admin = 'admin',
+    user = 'user'
 }
 
 export interface UserSettings {

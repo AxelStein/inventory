@@ -38,6 +38,11 @@ User.init({
             unique: true,
             allowNull: true,
         },
+        salesforceAccountId: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: true
+        },
         verified: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router";
 import { Alert, Button, Col, Container, Pagination } from "react-bootstrap";
-import UserInfo from "~/user/components/UserInfo";
+import UserInfo, { SalesforceAccountAction } from "~/user/components/UserInfo";
 import { useDeleteAccountMutation, useGetUserAccountByIdQuery } from "api/user/user.api";
 import { useErrorFormatter } from "~/components/error.formatter";
 import { isGuest } from "~/auth/auth.check.guest";
@@ -19,6 +19,8 @@ import { usePagingListState } from "~/components/paging.list.state";
 import type { PagingList } from "api/types";
 import type { Inventory } from "api/inventory/inventory.types";
 import ErrorAlert from "~/components/ErrorAlert";
+import { UserRole } from "api/user/user.types";
+import CreateSalesforceAccountModal from "./components/CreateSalesforceAccountModal";
 
 const createPagingItems = (
     list: PagingList<Inventory> | undefined,
@@ -47,8 +49,16 @@ export default function UserPage() {
     const currentUser = useSelector((state: any) => state.auth.user);
     const { data: userAccount, error, isLoading } = useGetUserAccountByIdQuery(id, { skip: guest });
     const { formatError } = useErrorFormatter();
+
     const isOwn = userAccount && userAccount.id == currentUser?.id;
     const userId = Number(id);
+
+    const [createSalesforceAccountModalVisible, setCreateSalesforceAccountModalVisible] = useState(false);
+    let salesforceAccountAction;
+    if (userAccount && (isOwn || currentUser?.role === UserRole.admin)) {
+        salesforceAccountAction = userAccount?.salesforceAccountId ? SalesforceAccountAction.view : SalesforceAccountAction.create;
+    }
+
     const { showAlertDialog } = useAlertDialog();
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const hideCreateModal = () => setCreateModalVisible(false);
@@ -110,6 +120,19 @@ export default function UserPage() {
     const handleOnAddInventoryClick = () => {
         setCreateModalVisible(true);
     }
+    const handleSalesforceAccountClick = (action: SalesforceAccountAction) => {
+        switch (action) {
+            case SalesforceAccountAction.create:
+                setCreateSalesforceAccountModalVisible(true);
+                break;
+
+            case SalesforceAccountAction.view:
+                break;
+        }
+    }
+    const handleHideCreateSalesforceAccount = () => {
+        setCreateSalesforceAccountModalVisible(false);
+    }
 
     if (guest) {
         return <Alert variant="danger"><Trans i18nKey='account.forbiddenSignIn'>You have to <Link to='/auth/sign-in'>Sign in</Link> to view this page</Trans></Alert>
@@ -125,10 +148,12 @@ export default function UserPage() {
             {userAccount && (
                 <UserInfo
                     user={userAccount}
-                    onDeleteAccountClick={handleDeleteAccountClick}
+                    handleDeleteAccountClick={handleDeleteAccountClick}
                     canDelete={isOwn === true}
-                    isAdmin={isOwn === true && userAccount.role === 'admin'}
-                    onAdminClick={() => navigate('/admin')} />
+                    isAdmin={isOwn === true && userAccount.role === UserRole.admin}
+                    handleAdminClick={() => navigate('/admin')}
+                    salesforceAccountAction={salesforceAccountAction}
+                    handleSalesforceAccountClick={handleSalesforceAccountClick} />
             )}
 
             <h4>{t('dashboard.title.ownInventories')}</h4>
@@ -164,5 +189,9 @@ export default function UserPage() {
         <CreateInventoryModal
             show={createModalVisible}
             onHide={hideCreateModal} />
+
+        <CreateSalesforceAccountModal
+            show={createSalesforceAccountModalVisible}
+            onHide={handleHideCreateSalesforceAccount} />
     </Col>;
 }

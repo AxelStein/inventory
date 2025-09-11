@@ -12,6 +12,7 @@ import { itemLikeApi } from "./item/item.like.api";
 import { customIdApi } from "./custom_id/custom.id.api";
 import { userApi } from "./user/user.api";
 import { userAdminApi } from "./user/user.admin.api";
+import { salesforceApi } from "./salesforce/salesforce.api";
 
 export const store = configureStore({
     reducer: {
@@ -26,6 +27,7 @@ export const store = configureStore({
         [customIdApi.reducerPath]: customIdApi.reducer,
         [userApi.reducerPath]: userApi.reducer,
         [userAdminApi.reducerPath]: userAdminApi.reducer,
+        [salesforceApi.reducerPath]: salesforceApi.reducer,
         auth: authReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(

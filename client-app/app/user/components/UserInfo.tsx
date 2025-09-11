@@ -5,13 +5,28 @@ import { useTranslation } from "react-i18next";
 
 interface UserInfoProps {
     user?: User;
-    onDeleteAccountClick: () => void;
     canDelete: boolean;
+    handleDeleteAccountClick: () => void;
     isAdmin: boolean;
-    onAdminClick: () => void;
+    handleAdminClick: () => void;
+    salesforceAccountAction?: SalesforceAccountAction;
+    handleSalesforceAccountClick?: (action: SalesforceAccountAction) => void;
 }
 
-export default function UserInfo({ user, onDeleteAccountClick, canDelete, isAdmin, onAdminClick }: UserInfoProps) {
+export enum SalesforceAccountAction {
+    create,
+    view
+}
+
+export default function UserInfo({
+    user,
+    handleDeleteAccountClick,
+    canDelete,
+    isAdmin,
+    handleAdminClick,
+    salesforceAccountAction,
+    handleSalesforceAccountClick,
+}: UserInfoProps) {
     if (!user) {
         return null;
     }
@@ -20,20 +35,37 @@ export default function UserInfo({ user, onDeleteAccountClick, canDelete, isAdmi
         <h5>{user?.name}</h5>
         <p className="text-secondary">{user?.email}</p>
         <p className="mb-3">{t('account.lastSeen')}: {formatRelative(user?.lastSeen, new Date())}</p>
-        {isAdmin && (
-            <Button
-                className="btn mb-3 me-3"
-                onClick={onAdminClick}>
-                {t('admin.title')}
-            </Button>
-        )}
-        {canDelete && (
-            <Button
-                className="btn btn-danger mb-3"
-                onClick={onDeleteAccountClick}>
-                {t('account.btnDeleteAccount')}
-            </Button>
-        )}
-    
+
+        <div className="d-flex mb-3">
+            {isAdmin && (
+                <Button
+                    className="btn me-3"
+                    onClick={handleAdminClick}>
+                    {t('admin.title')}
+                </Button>
+            )}
+            {canDelete && (
+                <Button
+                    className="btn btn-danger me-3"
+                    onClick={handleDeleteAccountClick}>
+                    {t('account.btnDeleteAccount')}
+                </Button>
+            )}
+            {salesforceAccountAction === SalesforceAccountAction.create && (
+                <Button
+                    className="btn me-3"
+                    onClick={() => handleSalesforceAccountClick?.(SalesforceAccountAction.create)}>
+                    Create Salesforce Account
+                </Button>
+            )}
+            {salesforceAccountAction === SalesforceAccountAction.view && (
+                <Button
+                    className="btn me-3"
+                    onClick={() => handleSalesforceAccountClick?.(SalesforceAccountAction.view)}>
+                    View Salesforce Account
+                </Button>
+            )}
+        </div>
+
     </Col>;
 }
