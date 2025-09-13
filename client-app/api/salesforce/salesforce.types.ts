@@ -13,3 +13,12 @@ export interface SalesforceContact {
     phone: string;
     email: string;
 }
+
+export interface CreateSalesforceAccountProps {
+    userId: number;
+    name: string;
+    phone?: string;
+    industry: string;
+    website?: string;
+    contacts?: SalesforceContact[];
+}

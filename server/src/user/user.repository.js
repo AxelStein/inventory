@@ -59,6 +59,11 @@ const repository = {
         where: { id: { [Op.in]: ids } },
         transaction
     }),
+
+    setSaleforceAccountId: (id, salesforceAccountId) => User.update(
+        { salesforceAccountId },
+        { where: { id } }
+    ),
 }
 
 export default repository;

@@ -27,7 +27,9 @@ const service = {
     changeRoleByIds: async (ids, role) => db.transaction(async (transaction) => {
         const [count] = await repository.changeRoleByIds(ids, role, transaction);
         if (count !== ids.length) throw new ValidationError(__('user.error.invalidIds'));
-    })
+    }),
+
+    setSaleforceAccountId: (userId, accountId) => repository.setSaleforceAccountId(userId, accountId),
 }
 
 export default service;

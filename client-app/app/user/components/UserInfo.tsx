@@ -55,14 +55,14 @@ export default function UserInfo({
                 <Button
                     className="btn me-3"
                     onClick={() => handleSalesforceAccountClick?.(SalesforceAccountAction.create)}>
-                    Create Salesforce Account
+                    {t('account.salesforce.action.connect')}
                 </Button>
             )}
             {salesforceAccountAction === SalesforceAccountAction.view && (
                 <Button
                     className="btn me-3"
                     onClick={() => handleSalesforceAccountClick?.(SalesforceAccountAction.view)}>
-                    View Salesforce Account
+                    {t('account.salesforce.action.view')}
                 </Button>
             )}
         </div>

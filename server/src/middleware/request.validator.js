@@ -1,4 +1,4 @@
-import {ValidationError} from "../error/index.js";
+import { ValidationError } from "../error/index.js";
 import Joi from "joi";
 
 /**
@@ -29,7 +29,19 @@ export const validateSchema = (schema, data) => {
         const details = {};
         error.details.forEach((el) => {
             const path = el.path[0];
-            details[path] = el.message;
+            if (el.path.length === 3) {
+                const index = el.path[1];
+                const name = el.path[2];
+                if (!details[path]) {
+                    details[path] = {};
+                }
+                if (!details[path][index]) {
+                    details[path][index] = {};
+                }
+                details[path][index][name] = el.message;
+            } else {
+                details[path] = el.message;
+            }
         });
         throw new ValidationError(error.toString(), details);
     }

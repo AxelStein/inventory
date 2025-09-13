@@ -135,7 +135,30 @@
       "btnConfirm": "Delete"
     },
     "lastSeen": "Last seen",
-    "forbiddenSignIn": "You have to <1>sign in</1> to view this page"
+    "forbiddenSignIn": "You have to <1>sign in</1> to view this page",
+    "salesforce": {
+      "action": {
+        "connect": "Connect to Salesforce",
+        "view": "Salesforce account"
+      },
+      "modal": {
+        "title": "Create Salesforce account",
+        "titleAccount": "Account",
+        "titleContacts": "Contacts",
+        "noContacts": "No contacts",
+        "placeholder": {
+          "name": "Name",
+          "phone": "Phone",
+          "industry": "Industry",
+          "website": "Website",
+          "email": "Email",
+          "firstName": "First name",
+          "lastName": "Last name"
+        },
+        "btnAddContact": "Add contact",
+        "btnCreate": "Create"
+      }
+    }
   },
   "admin": {
     "title": "Admin panel",

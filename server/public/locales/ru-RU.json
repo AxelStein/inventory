@@ -135,7 +135,30 @@
       "btnConfirm": "Удалить"
     },
     "lastSeen": "Был онлайн",
-    "forbiddenSignIn": "Вам необходимо <1>войти</1>, чтобы просмотреть эту страницу"
+    "forbiddenSignIn": "Вам необходимо <1>войти</1>, чтобы просмотреть эту страницу",
+    "salesforce": {
+      "action": {
+        "connect": "Подключиться к Salesforce",
+        "view": "Аккаунт Salesforce"
+      },
+      "modal": {
+        "title": "Создать аккаунт Salesforce",
+        "titleAccount": "Аккаунт",
+        "titleContacts": "Контакты",
+        "noContacts": "Нет контактов",
+        "placeholder": {
+          "name": "Имя",
+          "phone": "Телефон",
+          "industry": "Отрасль",
+          "website": "Веб-сайт",
+          "email": "Электронная почта",
+          "firstName": "Имя",
+          "lastName": "Фамилия"
+        },
+        "btnAddContact": "Добавить контакт",
+        "btnCreate": "Создать"
+      }
+    }
   },
   "admin": {
     "title": "Панель администратора",

@@ -11,7 +11,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { InventoryTable } from "~/inventory/components/InventoryTable";
 import { useAlertDialog } from "~/components/AlertDialogContext";
 import { MdAdd } from "react-icons/md";
-import { useEffect, useState, type JSX } from "react";
+import { act, useEffect, useState, type JSX } from "react";
 import CreateInventoryModal from "~/inventory/components/CreateInventoryModal";
 import { toast } from 'react-toastify';
 import { logout } from "api/slice/auth.slice";
@@ -21,6 +21,8 @@ import type { Inventory } from "api/inventory/inventory.types";
 import ErrorAlert from "~/components/ErrorAlert";
 import { UserRole } from "api/user/user.types";
 import CreateSalesforceAccountModal from "./components/CreateSalesforceAccountModal";
+import type { SalesforceAccount } from "api/salesforce/salesforce.types";
+import { useGetAccountQuery } from "api/salesforce/salesforce.api";
 
 const createPagingItems = (
     list: PagingList<Inventory> | undefined,
@@ -46,18 +48,35 @@ export default function UserPage() {
     const { t } = useTranslation();
     const guest = isGuest();
     const { id } = useParams();
-    const currentUser = useSelector((state: any) => state.auth.user);
+
+    const { data: currentUser } = useGetUserAccountByIdQuery('own', { skip: guest });
     const { data: userAccount, error, isLoading } = useGetUserAccountByIdQuery(id, { skip: guest });
     const { formatError } = useErrorFormatter();
+    const currentUserIsAdmin = currentUser?.role === UserRole.admin;
 
     const isOwn = userAccount && userAccount.id == currentUser?.id;
-    const userId = Number(id);
+    const userId = Number.isInteger(id) ? Number(id) : undefined;
 
     const [createSalesforceAccountModalVisible, setCreateSalesforceAccountModalVisible] = useState(false);
-    let salesforceAccountAction;
-    if (userAccount && (isOwn || currentUser?.role === UserRole.admin)) {
-        salesforceAccountAction = userAccount?.salesforceAccountId ? SalesforceAccountAction.view : SalesforceAccountAction.create;
-    }
+    const [salesforceAccountAction, setSalesforceAccountAction] = useState<SalesforceAccountAction | undefined>();
+    const [salesforceAccount, setSalesforceAccount] = useState<SalesforceAccount | undefined>();
+    const { data: salesforceAccountQuery, isLoading: isFetchingSalesforceAccount } = useGetAccountQuery(
+        undefined,
+        { skip: (!isOwn && !currentUserIsAdmin) || !userAccount?.salesforceAccountId }
+    );
+
+    useEffect(() => {
+        setSalesforceAccount(salesforceAccountQuery);
+    }, [salesforceAccountQuery]);
+
+    useEffect(() => {
+        if (isFetchingSalesforceAccount) return;
+        if (salesforceAccount) {
+            setSalesforceAccountAction(SalesforceAccountAction.view);
+        } else if (userAccount && (isOwn || currentUserIsAdmin)) {
+            setSalesforceAccountAction(SalesforceAccountAction.create);
+        }
+    }, [salesforceAccount, userAccount, currentUser]);
 
     const { showAlertDialog } = useAlertDialog();
     const [createModalVisible, setCreateModalVisible] = useState(false);
@@ -74,7 +93,7 @@ export default function UserPage() {
         error: errorOwnInventories
     } = useGetInventoriesQuery({
         filter: 'own',
-        userId: Number.isInteger(userId) ? userId : undefined,
+        userId,
         page: ownPage,
     });
     const [ownPagingItems, setOwnPagingItems] = useState<JSX.Element[]>();
@@ -91,7 +110,7 @@ export default function UserPage() {
         error: errorWriteAccessInventories
     } = useGetInventoriesQuery({
         filter: 'writeAccess',
-        userId: Number.isInteger(userId) ? userId : undefined,
+        userId,
         page: writeAccessPage
     });
 
@@ -127,10 +146,16 @@ export default function UserPage() {
                 break;
 
             case SalesforceAccountAction.view:
+                setCreateSalesforceAccountModalVisible(true);
                 break;
         }
     }
     const handleHideCreateSalesforceAccount = () => {
+        setCreateSalesforceAccountModalVisible(false);
+    }
+
+    const handleCreateSalesforceAccount = (account: SalesforceAccount) => {
+        setSalesforceAccount(account);
         setCreateSalesforceAccountModalVisible(false);
     }
 
@@ -190,8 +215,14 @@ export default function UserPage() {
             show={createModalVisible}
             onHide={hideCreateModal} />
 
-        <CreateSalesforceAccountModal
-            show={createSalesforceAccountModalVisible}
-            onHide={handleHideCreateSalesforceAccount} />
+        {userAccount && (
+            <CreateSalesforceAccountModal
+                userId={userAccount.id}
+                account={salesforceAccount}
+                onCreateAccount={handleCreateSalesforceAccount}
+                show={createSalesforceAccountModalVisible}
+                onHide={handleHideCreateSalesforceAccount} />
+        )}
+
     </Col>;
 }

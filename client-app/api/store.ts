@@ -42,6 +42,7 @@ export const store = configureStore({
         customIdApi.middleware,
         userApi.middleware,
         userAdminApi.middleware,
+        salesforceApi.middleware
     ),
 });
 
