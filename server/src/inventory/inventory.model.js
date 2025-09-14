@@ -31,6 +31,10 @@ const columns = {
     },
     searchVector: {
         type: DataTypes.TSVECTOR,
+    },
+    odooToken: {
+        type: DataTypes.STRING,
+        unique: true
     }
 };
 

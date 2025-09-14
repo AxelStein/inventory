@@ -18,6 +18,7 @@ export interface Inventory {
     tags?: InventoryTag[] | null;
     fields?: InventoryField[] | null;
     permissions?: InventoryPermissionSet;
+    odooToken?: string | null;
 }
 
 export interface InventoryPermissionSet {

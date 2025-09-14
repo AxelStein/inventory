@@ -33,6 +33,14 @@ export const uploadImageSchema = Joi.object({
     version: Joi.number().integer().required()
 }).required();
 
+export const createOdooTokenSchema = Joi.object({
+    version: Joi.number().integer().required()
+}).required();
+
+export const getByOdooTokenSchema = Joi.object({
+    token: Joi.string().required()
+}).required();
+
 export const deleteImageSchema = Joi.object({
     version: Joi.number().integer().required()
 }).required();

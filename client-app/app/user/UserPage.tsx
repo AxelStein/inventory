@@ -48,6 +48,10 @@ export default function UserPage() {
     const { t } = useTranslation();
     const guest = isGuest();
     const { id } = useParams();
+    let userId: number | undefined = Number(id);
+    if (Number.isNaN(userId)) {
+        userId = undefined;
+    }
 
     const { data: currentUser } = useGetUserAccountByIdQuery('own', { skip: guest });
     const { data: userAccount, error, isLoading } = useGetUserAccountByIdQuery(id, { skip: guest });
@@ -55,7 +59,6 @@ export default function UserPage() {
     const currentUserIsAdmin = currentUser?.role === UserRole.admin;
 
     const isOwn = userAccount && userAccount.id == currentUser?.id;
-    const userId = Number.isInteger(id) ? Number(id) : undefined;
 
     const [createSalesforceAccountModalVisible, setCreateSalesforceAccountModalVisible] = useState(false);
     const [salesforceAccountAction, setSalesforceAccountAction] = useState<SalesforceAccountAction | undefined>();

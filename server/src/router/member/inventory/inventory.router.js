@@ -12,6 +12,7 @@ import { validateBody, validateParams, validateQuery } from '../../../middleware
 import {
     checkInventoryParamsSchema,
     createInventorySchema,
+    createOdooTokenSchema,
     deleteImageSchema,
     getInventoryListSchema, 
     searchInventorySchema, 
@@ -56,6 +57,14 @@ router.post(
     customFieldValidator,
     checkInventoryAccess(AccessAction.UPDATE),
     controller.update
+);
+
+router.post(
+    '/:inventoryId/create-odoo-token',
+    validateParams(checkInventoryParamsSchema),
+    validateBody(createOdooTokenSchema),
+    checkInventoryAccess(AccessAction.UPDATE),
+    controller.createOdooToken
 );
 
 router.post(

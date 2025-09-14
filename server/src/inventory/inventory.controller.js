@@ -20,6 +20,18 @@ const controller = {
         res.send(await service.create({ reqUser: req.user, data: req.body }));
     },
 
+    createOdooToken: async (req, res) => {
+        res.send(await service.createOdooToken({
+            reqUser: req.user,
+            id: req.params.inventoryId,
+            version: req.body.version
+        }));
+    },
+
+    getByOdooToken: async (req, res) => {
+        res.send(await service.getByOdooToken({ reqUser: req.user, odooToken: req.validatedQuery.token }));
+    },
+
     update: async (req, res) => {
         res.send(await service.update({
             reqUser: req.user,

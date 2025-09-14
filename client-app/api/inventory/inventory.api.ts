@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { DeleteImageProps, UploadImageProps } from "api/auth/auth.types";
+import type { CreateOdooTokenProps, DeleteImageProps, UploadImageProps } from "api/auth/auth.types";
 import { createBaseQuery, makeApiPath } from "api/base.query";
 import type { PagingList } from "api/types";
 import type { GetInventoriesProps, GetInventoryByIdProps, Inventory, UpdateInventoryProps } from "./inventory.types";
@@ -57,6 +57,13 @@ export const inventoryApi = createApi({
                 params: { version }
             }),
         }),
+        createOdooToken: builder.mutation<Inventory, CreateOdooTokenProps>({
+            query: ({ inventoryId, version }) => ({
+                url: makeApiPath(`inventory/${inventoryId}/create-odoo-token`),
+                method: 'post',
+                body: { version }
+            })
+        })
     }),
 });
 
@@ -67,5 +74,6 @@ export const {
     useUpdateInventoryMutation,
     useUploadImageMutation,
     useDeleteInventoryMutation,
-    useDeleteImageMutation
+    useDeleteImageMutation,
+    useCreateOdooTokenMutation
 } = inventoryApi;

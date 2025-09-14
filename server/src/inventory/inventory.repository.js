@@ -120,6 +120,17 @@ const repository = {
         return repository.getById({ reqUser, id: inventory.id });
     },
 
+    createOdooToken: async ({ reqUser, id, odooToken, version }) => {
+        await Inventory.optimisticLockUpdate(id, { version, odooToken });
+        return repository.getById({ reqUser, id });
+    },
+
+    getByOdooToken: async ({ odooToken }) => {
+        return mapInventory(await Inventory.findOne({
+            where: { odooToken },
+        }));
+    },
+
     update: async ({ reqUser, id, data }) => {
         await Inventory.optimisticLockUpdate(id, data);
         return repository.getById({ reqUser, id });

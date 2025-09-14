@@ -3,7 +3,7 @@ import { useRef, useCallback, useContext, useState, useEffect } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Button, Form } from "react-bootstrap";
 import { useCreateTagMutation, useDeleteTagMutation, useGetTagsQuery } from "api/tag/tag.api";
-import { useCreateInventoryMutation, useDeleteImageMutation, useDeleteInventoryMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
+import { useCreateInventoryMutation, useCreateOdooTokenMutation, useDeleteImageMutation, useDeleteInventoryMutation, useUpdateInventoryMutation, useUploadImageMutation } from "api/inventory/inventory.api";
 import { useForm } from 'react-hook-form';
 import { MdDelete } from "react-icons/md";
 import { filesize } from "filesize";
@@ -17,6 +17,7 @@ import type { InventoryTag } from "api/tag/tag.types";
 import { useNavigate } from "react-router";
 import { toast } from 'react-toastify';
 import { useErrorFormatter } from "~/components/error.formatter";
+import OdooTokenModal from "./OdooTokenModal";
 
 interface InventoryForm {
     title: string;
@@ -40,6 +41,7 @@ export default function InventoryEditorForm() {
     const [createInventory, { isLoading: isCreatingInventory }] = useCreateInventoryMutation();
     const [updateInventory, { isLoading: isUpdatingInventory }] = useUpdateInventoryMutation();
     const [deleteInventory, { isLoading: isDeletingInventory }] = useDeleteInventoryMutation();
+    const [createOdooToken, { isLoading: isCreatingOdooToken }] = useCreateOdooTokenMutation();
     const navigate = useNavigate();
     const isSubmit = isCreatingInventory || isUpdatingInventory;
 
@@ -49,11 +51,17 @@ export default function InventoryEditorForm() {
     const [deleteTag] = useDeleteTagMutation();
     const [availableTags, setAvailableTags] = useState<InventoryTag[]>([]);
     const [selectedTags, setSelectedTags] = useState<InventoryTag[]>([]);
+    const [odooToken, setOdooToken] = useState<string | undefined | null>();
+    const [odooTokenModalVisible, setOdooTokenModalVisible] = useState(false);
 
     useEffect(() => {
         setAvailableTags(tagsQuery || []);
         setSelectedTags(inventory?.tags || []);
     }, [tagsQuery]);
+
+    useEffect(() => {
+        setOdooToken(inventory?.odooToken);
+    }, [inventory]);
 
     const { data: appConfig } = useGetAppConfigQuery();
     const { t } = useTranslation();
@@ -196,6 +204,26 @@ export default function InventoryEditorForm() {
         });
     }, [inventory]);
 
+    const handleGetOdooToken = () => {
+        setOdooTokenModalVisible(true);
+    }
+
+    const handleCreateOdooToken = () => {
+        createOdooToken({
+            inventoryId: inventory!.id,
+            version: inventory!.version
+        }).unwrap()
+            .then(newInventory => {
+                setInventory?.(newInventory);
+                setOdooTokenModalVisible(true);
+            })
+            .catch(handleInventoryError);
+    }
+
+    const handleHideOdooTokenModal = () => {
+        setOdooTokenModalVisible(false);
+    }
+
     return <>
         <Form onSubmit={handleInventorySubmit(createInventoryCallback)} onChange={handleInventoryFormChange}>
             <Form.Control
@@ -301,6 +329,18 @@ export default function InventoryEditorForm() {
         }
 
         {inventory && (
+            <div className="mb-3">
+                {odooToken ? (
+                    <Button onClick={handleGetOdooToken}>Get Odoo token</Button>
+                ) : (
+                    <Button
+                        onClick={handleCreateOdooToken}
+                        disabled={isCreatingOdooToken}>Create Odoo token</Button>
+                )}
+            </div>
+        )}
+
+        {inventory && (
             <Button
                 className="btn btn-danger mb-3"
                 onClick={handleDeleteInventoryClick}
@@ -308,6 +348,12 @@ export default function InventoryEditorForm() {
                 {t('inventory.editorForm.btnDeleteInventory')}
             </Button>
         )}
+
+        <OdooTokenModal
+            show={odooTokenModalVisible}
+            onHide={handleHideOdooTokenModal}
+            token={odooToken}
+        />
     </>;
 }
 

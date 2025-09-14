@@ -21,6 +21,7 @@ export const mapInventory = (inventory) => {
         fields: [],
         tags: inventory.tags,
         permissions: inventory.permissions,
+        odooToken: inventory.odooToken,
     };
 
     inflateInventoryCustomFields((prefix, field) => {

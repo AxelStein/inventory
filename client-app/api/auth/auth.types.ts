@@ -29,3 +29,8 @@ export interface VerifyEmailBody {
     userId: number;
     code: string;
 }
+
+export interface CreateOdooTokenProps {
+    inventoryId: number;
+    version: number;
+}
