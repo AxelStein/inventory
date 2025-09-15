@@ -17,6 +17,8 @@ export const createAccountSchema = Joi.object({
     name: Joi.string().trim().required(),
     industry: Joi.string().trim().required(),
     phone: Joi.string().trim().allow('').allow(null),
-    website: Joi.string().uri().allow('').allow(null),
+    website: Joi.string().uri({
+        scheme: ['http', 'https']
+    }).allow('').allow(null),
     contacts: Joi.array().items(createContactSchema)
 }).required();

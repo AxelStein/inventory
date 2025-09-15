@@ -13,6 +13,7 @@ import { customIdApi } from "./custom_id/custom.id.api";
 import { userApi } from "./user/user.api";
 import { userAdminApi } from "./user/user.admin.api";
 import { salesforceApi } from "./salesforce/salesforce.api";
+import { supportApi } from "./support/support.api";
 
 export const store = configureStore({
     reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
         [userApi.reducerPath]: userApi.reducer,
         [userAdminApi.reducerPath]: userAdminApi.reducer,
         [salesforceApi.reducerPath]: salesforceApi.reducer,
+        [supportApi.reducerPath]: supportApi.reducer,
         auth: authReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
@@ -42,7 +44,8 @@ export const store = configureStore({
         customIdApi.middleware,
         userApi.middleware,
         userAdminApi.middleware,
-        salesforceApi.middleware
+        salesforceApi.middleware,
+        supportApi.middleware
     ),
 });
 

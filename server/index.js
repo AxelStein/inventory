@@ -37,7 +37,7 @@ passport.use(createPassportJwtStrategy());
 const port = process.env.PORT;
 const host = process.env.HOST;
 
-db.sync({alter: true}) // {alter: true}
+db.sync() // {alter: true}
     .then(() => {
         app.listen(port, host, () => {
             console.log(`Server running at http://${host}:${port}/`);

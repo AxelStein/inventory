@@ -1,6 +1,7 @@
 import { CustomFieldState, CustomFieldType } from "../inventory/inventory.custom.field.js";
 import CustomIdType from "../inventory/custom_id/custom.id.type.js";
 import UserRole from '../user/user.role.js';
+import SupportTicketPriority from "../support/support.ticket.priority.js";
 
 export const appConfig = {
     inventory: {
@@ -36,5 +37,6 @@ export const appConfig = {
         'light',
         'dark'
     ],
-    userRoles: Object.values(UserRole)
+    userRoles: Object.values(UserRole),
+    supportTicketPriority: Object.values(SupportTicketPriority)
 }

@@ -3,6 +3,7 @@ export interface AppConfig {
     themes: string[];
     languages: AppLanguage[];
     userRoles: string[];
+    supportTicketPriority: string[];
 }
 
 export interface AppLanguage {

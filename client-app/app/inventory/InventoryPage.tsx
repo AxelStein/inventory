@@ -1,14 +1,13 @@
 import { useGetInventoryByIdQuery } from "api/inventory/inventory.api";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InventoryEditorForm from "./components/InventoryEditorForm";
-import { Alert, Col, Container, Tab, Tabs } from "react-bootstrap";
+import { Col, Container, Tab, Tabs } from "react-bootstrap";
 import ItemPage from "~/inventory/item/ItemPage";
 import { type Inventory } from "api/inventory/inventory.types";
 import FieldsPage from "./fields/FieldsPage";
 import { isGuest } from "~/auth/auth.check.guest";
 import CustomIdPage from "./custom_id/CustomIdPage";
 import { toast } from 'react-toastify';
-import AppToastContainer from "~/components/AppToastContainer";
 import { useTranslation } from "react-i18next";
 import Loader from "~/components/Loader";
 import { useErrorFormatter } from "~/components/error.formatter";
@@ -41,6 +40,13 @@ export default function InventoryPage({ inventoryId }: InventoryPageProps) {
     }
 
     useEffect(() => setInventory(data), [data]);
+
+    useEffect(() => {
+        console.log('component mounted');
+        return () => {
+            console.log('component is unmounting');
+        };
+    }, []);
 
     if (error) {
         return <ErrorAlert error={error} />;
