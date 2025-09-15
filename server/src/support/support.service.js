@@ -10,7 +10,8 @@ const service = {
             reportedBy: user.email,
             link: data.link,
             priority: data.priority,
-            admins: ['diefaust1993@gmail.com']
+            admins: ['diefaust1993@gmail.com'],
+            summary: data.summary,
         };
         if (data.inventoryId) {
             const inventory = await inventoryService.getById({ id: data.inventoryId });
