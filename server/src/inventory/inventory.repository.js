@@ -4,6 +4,7 @@ import { mapInventory, mapInventoryList } from './inventory.mapper.js';
 import { Op, Sequelize } from "sequelize";
 import { createSortOrder } from "../db/sort.order.js";
 import { getInventoryPermissions, getInventoryAccessRole } from '../middleware/check.access.js';
+import db from '../db/index.js';
 
 const createListInclude = () => {
     return [
@@ -30,6 +31,49 @@ const getInventoryList = async (page, perPage, options) => {
     const data = await Inventory.getPage(page, perPage, options);
     data.items = mapInventoryList(data.items);
     return data;
+}
+
+const queryAggValues = async (inventoryId) => {
+    const result = await db.query(`
+        SELECT 
+            GREATEST(max1, max2, max3) as max_overall, 
+            LEAST(min1, min2, min3) as min_overall, (COALESCE(avg1,0) + COALESCE(avg2, 0) + COALESCE(avg3,0)) 
+                /
+                NULLIF(
+                    (CASE WHEN avg1 IS NOT NULL THEN 1 ELSE 0 END +
+                    CASE WHEN avg2 IS NOT NULL THEN 1 ELSE 0 END +
+                    CASE WHEN avg3 IS NOT NULL THEN 1 ELSE 0 END), 0
+                )
+            AS avg_overall
+        FROM (
+        SELECT 
+            MAX("customInt1") as max1,
+            MAX("customInt2") as max2,
+            MAX("customInt3") as max3,
+            MIN("customInt1") as min1,
+            MIN("customInt2") as min2,
+            MIN("customInt3") as min3,
+            AVG("customInt1") as avg1,
+            AVG("customInt2") as avg2,
+            AVG("customInt3") as avg3
+        FROM inventory_items WHERE "inventoryId" = ${inventoryId}
+    )`, { type: Sequelize.QueryTypes.SELECT });
+    return result[0];
+}
+
+const queryPopularValues = async (inventoryId) => {
+    const result = await db.query(`
+        SELECT word, COUNT(*) AS frequency
+        FROM (
+            SELECT unnest(tsvector_to_array("searchVector")) AS word
+            FROM inventory_items
+            WHERE "inventoryId" = ${inventoryId}
+        ) AS words
+        GROUP BY word
+        ORDER BY frequency DESC
+        LIMIT 5;
+    `);
+    return result[0]?.map(value => value.word);
 }
 
 const repository = {
@@ -126,9 +170,14 @@ const repository = {
     },
 
     getByOdooToken: async ({ odooToken }) => {
-        return mapInventory(await Inventory.findOne({
-            where: { odooToken },
-        }));
+        const inventory = mapInventory(
+            await Inventory.findOne({
+                where: { odooToken },
+            })
+        );
+        inventory.aggValues = await queryAggValues(inventory.id);
+        inventory.popularValues = await queryPopularValues(inventory.id);
+        return inventory;
     },
 
     update: async ({ reqUser, id, data }) => {
